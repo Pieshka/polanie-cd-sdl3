@@ -8,12 +8,12 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdio.h>
-#include <STRING.H>
+#include <string.h> // [PORT] Change case
 #include <stdlib.h>
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
-#include "zabezset.h"
+//#include "zabezset.h" // [PORT] Remove zabezset.h
 #include "playfli.h"
 #include "cd.h"
 //=======Zmienne ==============================

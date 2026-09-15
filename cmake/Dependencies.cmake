@@ -43,6 +43,11 @@ if(NOT USE_SYSTEM_SDL3_MIXER)
 
 endif()
 
+# Flic
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory(3rdparty/flic EXCLUDE_FROM_ALL)
+set(BUILD_SHARED_LIBS ON)
+
 # --------------------------------------
 # Install runtime dependencies
 # --------------------------------------

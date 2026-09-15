@@ -13,7 +13,7 @@
 #include "mouse.h"
 #include "image13h.h"
 #include "menegdma.h"
-#include "zabezset.h"
+//#include "zabezset.h" // [PORT] Remove zabezset.h
 
 //#define POMOC
 
@@ -34,6 +34,7 @@ int musik=1;
 int debug=0;
 int kody=0;
 int scrollTimer=0;
+#pragma pack(push, 1) // [PORT] Pack structure for file saving
 struct EditStr
 {
     int mode;//0-tereny(skaly,woda,droga,sucha ziemia,palisada),
@@ -56,7 +57,7 @@ struct EditStr
     char pName[20];
     char name[40];
 }E={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"",""};
-
+#pragma pack(pop) // [PORT] Pack structure for file saving
 int JestSB;
 int irq;
 int port;
@@ -101,6 +102,7 @@ int Map=0;
 int positioN[40][2];
 char decisionFaza=0;
 char cel1[70],cel2[70],showcel=0;
+#pragma pack(push, 1) // [PORT] Pack structure for file saving
 struct Plansza{
             char decisionType;   //0-miasto 1-bitwa dyn 2-stat 3,4-nic
             char gen; //0-nic 1-generator
@@ -118,10 +120,12 @@ struct Plansza{
             char ide;
             char next;
             }pl;
+#pragma pack(pop) // [PORT] Pack structure for file saving
 extern struct MMessage Msg;
 int ScreenX=3,ScreenY=1;
 
 //---dane dla modulu decyzyjnego---------------------
+#pragma pack(push, 1) // [PORT] Pack structure for file saving
 struct Mem{
       char index;//nr budynku
       char aindex;//nr budynku do ataku
@@ -137,6 +141,7 @@ struct Mem{
       int atak; //nr ataku
       class Castle *c;//wskaznik na zamek
       }mem;
+#pragma pack(pop) // [PORT] Pack structure for file saving
 int xpastw;
 int ypastw;
 
@@ -2156,7 +2161,7 @@ if(!type)
 
     ////nowe plansze
 
-    sprintf(name,"%slevels\\level.%d",drive,level);
+    sprintf(name,"%slevels/level.%d",drive,level); // [PORT] Replace \ with /
    // SetScreen(0);
    // Bar13h(0,0,320,200,0);
    // OutText13h(50,5,"Otwieram plik:",255);
@@ -2929,7 +2934,7 @@ int SaveGame()
         fwrite(&ScreenX,4,1,file);
         fwrite(&ScreenY,4,1,file);
         fwrite(&drzewa,4,1,file);
-        fwrite(&mem,sizeof(Mem),1,file);
+        fwrite(&mem,sizeof(Mem) - sizeof(Castle *) + 4,1,file); // [PORT] Pointers size shenanigans. Fixes backwards compatibility with DOS saves
         for(j=0;j<2;j++)
         {
         fwrite(&castle[j].milk,4,1,file);
@@ -3079,7 +3084,7 @@ int LoadGame()
         fread(&ScreenX,4,1,file);
         fread(&ScreenY,4,1,file);
         fread(&drzewa,4,1,file);
-        fread(&mem,sizeof(Mem),1,file);  mem.c=&castle[1];
+        fread(&mem,sizeof(Mem) - sizeof(Castle *) + 4,1,file);  mem.c=&castle[1]; // [PORT] Pointers size shenanigans. Fixes backwards compatibility with DOS saves
         for(j=0;j<2;j++)
         {
         fread(&castle[j].milk,4,1,file);
@@ -3840,5 +3845,6 @@ if(select.co==1)
 ///////////////////////////////////////////////////////////////////////////
 void RefreshScreen(void)
 {
+    PORT_SDLPumpEvents(0); // [PORT] Add SDL Event Pumping
     showAll=1;
 }

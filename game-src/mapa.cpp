@@ -8,7 +8,7 @@
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
-#include "zabezset.h"
+//#include "zabezset.h" // [PORT] Remove zabezset.h
 /////////////zmienne//////////////////////////
 #define RED 148
 #define YELLOW 233

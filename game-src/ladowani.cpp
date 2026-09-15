@@ -1,4 +1,4 @@
-#include <iostream.h>
+#include <iostream> // [PORT] Fix wrong header name
 #include <stdio.h>
 //#include <dos.h>      //delay()
 #include <conio.h>    //cprintf();
@@ -34,7 +34,7 @@ int ladowanie(void)
 {
   int Adlib = 0;
   int jest_SB = 0;
-
+/* [PORT] SETUP.INI is not necessary anymore
   FILE *plik;
   if ((plik = fopen("SETUP.INI", "rb")) == NULL)
      return 1;
@@ -45,7 +45,8 @@ int ladowanie(void)
   fread(&port,2,1,plik);
   fread(&kanal,2,1,plik);
   fclose(plik);
-
+[PORT] SETUP.INI is not necessary anymore */
+  Adlib = 1; jest_SB = 1; irq = 15; port = 544; kanal = 131;//[PORT] SETUP.INI is not necessary anymore
   //UstawAdlibPresent(Adlib);
   SND.Init(jest_SB,irq,port,kanal);
 //  SND.Osiagniecia();
@@ -69,7 +70,7 @@ int ladowanie(void)
      
    cprintf("Inicjalizacja dzwieku ");
    char ss[50];
-   sprintf(ss,"%sdata\\sound.dat",drive);
+   sprintf(ss,"%sdata/sound.dat",drive); // [PORT] Replace \\ with /
    SND.LoadGlobalData(ss,183);
    /*
    for(int i=1;i<10;i++)

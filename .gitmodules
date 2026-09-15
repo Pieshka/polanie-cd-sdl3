@@ -6,3 +6,6 @@
 	path = 3rdparty/SDL_mixer
 	url = https://github.com/libsdl-org/SDL_mixer.git
 	branch = release-3.2.4
+[submodule "3rdparty/flic"]
+	path = 3rdparty/flic
+	url = https://github.com/Pieshka/flic.git

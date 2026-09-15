@@ -1,9 +1,24 @@
-set(COMPATLIB_SOURCES 
-	src/dummy.cpp
+set(COMPATLIB_SOURCES
+	src/flic/flic_entry.cpp
+	src/sound/menegdma_entry.cpp
+	src/dos/i86_entry.c
+	src/dos/conio_entry.c
+	src/sound/cd_entry.c
+	src/io/timer.c
+	src/io/mouse.c
+		src/vga/sdl.c
 )
 
 set(COMPATLIB_HEADERS
-	include/dummy.h
+	include/i86.h
+	include/bios.h
+	include/cd.h
+	include/graph.h
+	include/menegdma.h
+	include/playfli.h
+	include/dos.h
+	include/conio.h
+		include/constants.h
 )
 
 add_library(compatlib STATIC
@@ -14,14 +29,23 @@ add_library(compatlib STATIC
 target_include_directories(compatlib
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
+		${CMAKE_SOURCE_DIR}/3rdparty/flic/
 )
 
 target_link_libraries(compatlib
 	PRIVATE
 		SDL3::SDL3
 		SDL3_mixer::SDL3_mixer
+		flic-lib
 )
 
 set_target_properties(compatlib PROPERTIES
 	OUTPUT_NAME "compat"
+)
+
+target_compile_definitions(compatlib PRIVATE
+		APP_VERSION_STRING="${APP_VERSION_STRING}"
+		APP_VERSION_MAJOR=${APP_VERSION_MAJOR}
+		APP_VERSION_MINOR=${APP_VERSION_MINOR}
+		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )

@@ -9,7 +9,6 @@
 #include <mem.h>
 #include <string.h>
 #include "image13h.h"
-#include "delayms.h"
 //////////////////////////////////////////////////////////////////
 // Zmienne srodowiskowe
 //////////////////////////////////////////////////////////////////
@@ -49,8 +48,7 @@ void ClearScreen13h()
 void ShowVirtualScreen(void)
 {
 if(RealVirtualScreen==NULL)return;
-memcpy((void*)0xA0000,(void*)RealVirtualScreen,64000);
-
+memcpy((void*)PORT_getFakeFramebuffer(),(void*)RealVirtualScreen,64000); // [PORT] Replace 0xA0000 with FakeFramebuffer
 }
 ///////////////////////////////////////////////////////////////////////////
 // Zwalnianie pamieci zajmowanej przez ekran
@@ -68,7 +66,7 @@ RealVirtualScreen=NULL;
 void SetScreen(int Screen)
 {
 if((Screen)&&(RealVirtualScreen!=NULL))VirtualScreen=RealVirtualScreen;
-     else VirtualScreen=(char *)0xA0000;
+     else VirtualScreen=(char *)PORT_getFakeFramebuffer(); // [PORT] Replace 0xA0000 with FakeFramebuffer
 }
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -82,7 +80,7 @@ void Init13h(void)
     r.h.al = 0x13;
     int386(0x10, &r, &r);
     SetScreen(0);
-    memset((void*)0xA0000,0,64000);             
+    memset((void*)PORT_getFakeFramebuffer(),0,64000);             // [PORT] Replace 0xA0000 with FakeFramebuffer
    
 }
 ///////////////////////////////////////////////////////////
@@ -639,7 +637,7 @@ while(*text!=NULL)
      PutImageChange13h(x,y,letter,1,255,colour1);
      x=x+length[znak-32]-1;
      if(x>320)return;
-     delay(del);
+     PORT_SDLPumpEvents(0); delay(del); // [PORT] Simple Fix to allow delay'ed text-writing
      text++;}
 }
 //--------------------------------------------------------
@@ -691,7 +689,7 @@ while(*text!=NULL)
 //             Write13h                wypisywanie liter
 //-------------------------------------------------------
 
-Write13h(int x,int y, int maxx, int maxdl, char *txt, int tcolour,int bcolour)
+int Write13h(int x,int y, int maxx, int maxdl, char *txt, int tcolour,int bcolour) // [PORT] Add return type
 {
   int cx=0,a,ll,xp,wsk=0,ile=0;
   char k,l;

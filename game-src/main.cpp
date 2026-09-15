@@ -64,10 +64,10 @@ int IsFile(char*);
 //
 ///////////////////////////////////////////////////////////////////////////
 int show;
-void main()
+int main() // [PORT] Main must return int
 {
 
-if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 4MB RAM\n"); return;}
+if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 4MB RAM\n"); return 1;} // [PORT] Main must return int
 _clearscreen(_GCLEARSCREEN);
 _setbkcolor(4);
 _settextcolor(14);
@@ -82,11 +82,12 @@ delay(500);
 //cprintf(" Wersja do wylacznego uzytku Ryszarda Cieslika szefa spolki CBS - Elektronik\n\r\n\r");
 //cprintf("                       Rozpowszechnianie zabronione!\n\r");
 
+/* [PORT] SETUP.INI is not necessary anymore
 FILE* f=fopen("setup.INI","rb");
 if(!f)
 {
     printf("Blad odczytu pliku SETUP.INI.\n Uruchom program SETUP.EXE \n");
-    return;
+    return 1; // [PORT] Main must return int
 }
 fseek(f,0,0);
 fread(drive,1,1,f);
@@ -104,6 +105,8 @@ fseek(f,7,0);
 fread(drive,1,1,f);
 fclose(f);
 printf("CD drive : %s\n",drive);
+[PORT] SETUP.INI is not necessary anymore */
+FILE *f; BigOnCDAudio(); OnCDAudio(); drive[0] = '.'; drive[1] = '/'; drive[2] = '\0'; // [PORT] SETUP.INI is not necessary anymore
 _settextcolor(7);
 char ss[30];
 sprintf(ss,"%sgraf.dat",drive);
@@ -115,14 +118,14 @@ do
     {
         printf("Brak dysku POLANIE.CD w napedzie %s \n Wloz dysk i nacisnij Enter lub Esc jezeli chesz zrezygnowac\n",drive);
         int key=getch();
-        if(key==27)return;
+        if(key==27)return 1; // [PORT] Main must return int
     }
 }while(f==NULL);
 fclose(f);
 
-if(!mouse.MouseInit()){cprintf("BLAD !!!\n\r----------- Brak sterownika myszy.---------");return;}
+if(!mouse.MouseInit()){cprintf("BLAD !!!\n\r----------- Brak sterownika myszy.---------");return 1;} // [PORT] Main must return int
 //------------------------------------------
-if(ladowanie()){cprintf("BLAD !!!\n\r----------- Brak pliku SETUP.INI.  Uruchom program SETUP.EXE.-----------\n"); return; }
+if(ladowanie()){cprintf("BLAD !!!\n\r----------- Brak pliku SETUP.INI.  Uruchom program SETUP.EXE.-----------\n"); return 1; } // [PORT] Main must return int
 //----------------------------------------------------------------------------
 /*** AZ DO NASTEPNYCH GWIAZDEK JEST TO KOD EKSPERYMENTALNY - NALEZY GO USUNAC *** ---
 sprintf(ss,"%sdata\\i001.dat",drive);
@@ -154,13 +157,13 @@ if(IsFile(ss))
 //--------------------------------------------
 
 cprintf("\n\rAlokacja pamieci niskiej - grafika..................................  \n\r");
-if(GetMemory()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 586kB RAM\n"); return;}
+if(GetMemory()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 586kB RAM\n"); return 1;} // [PORT] Main must return int
 
 cprintf("Alokacja ekranu wirtualnego......................  \n\r");
 if(!InitVirtualScreen())
 {
     cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. Program wymaga 4 MB RAM\n");
-    return;
+    return 1; // [PORT] Main must return int
 }
 
 cprintf("Inicjacja czytnika CD ROM........\n\r");
@@ -185,25 +188,25 @@ SetMaxTrack(15);
 
 Init13h();
 BlackPalette();
-if(InitText13h()){FreeBuffers13h();Close13h();cprintf("Blad inicjacji pamieci na czcionki, lub brak pliku %sFONT.DAT",drive);return;}
+if(InitText13h()){FreeBuffers13h();Close13h();cprintf("Blad inicjacji pamieci na czcionki, lub brak pliku %sFONT.DAT",drive);return 1;} // [PORT] Main must return int
 
 ///////// INTRO ///////////////
 SetScreen(0);
-sprintf(ss,"%sdata\\s000.dat",drive);
+sprintf(ss,"%sdata/s000.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))play(ss);//odtwarza flica USER
 
-sprintf(ss,"%sdata\\i001.dat",drive);
+sprintf(ss,"%sdata/i001.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))SND.PlayWav(ss);
-sprintf(ss,"%sdata\\s001.dat",drive);
+sprintf(ss,"%sdata/s001.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))play(ss);//odtwarza Drachma
-sprintf(ss,"%sdata\\i001.dat",drive);
+sprintf(ss,"%sdata/i001.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))SND.EndPlayWav();
 
-sprintf(ss,"%sdata\\i002.dat",drive);
+sprintf(ss,"%sdata/i002.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))SND.PlayWav(ss);
-sprintf(ss,"%sdata\\s002.dat",drive);
+sprintf(ss,"%sdata/s002.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))play(ss);//odtwarza flica Intro
-sprintf(ss,"%sdata\\i002.dat",drive);
+sprintf(ss,"%sdata/i002.dat",drive); // [PORT] Replace \ with /
 if(IsFile(ss))SND.EndPlayWav();
 
 ///////////////////////////////////
