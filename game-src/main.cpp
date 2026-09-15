@@ -8,6 +8,7 @@
 #include <dos.h>
 #include <malloc.h>
 #include <graph.h>
+#include <stdlib.h> // [PORT] Add stdlib for exit()
 #include "mouse.h"
 #include "mover.h"
 #include "image13h.h"

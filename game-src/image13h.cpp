@@ -20,7 +20,8 @@ char  *rgb=NULL,*Buffer330=NULL,*Rgb=NULL;
 int length[91]={5,3,5,7,7,7,7,7,5,5,7,7,3,5,3,7,7,6,7,7,7,7,7,7,7,7,3,3,9,7,9,7,8,
         9,8,8,8,7,7,9,8,3,6,8,7,9,8,9,7,9,8,8,7,8,9,12,8,9,8,8,8,8,7,8,
         5,7,7,7,7,7,5,7,7,3,3,6,3,9,7,7,7,7,5,7,4,7,7,11,7,7,7};
-char * index[91];
+char * _index[91]; // [PORT] Rename index to _index
+#define index _index // [PORT] Define _index as index to avoid conflict on Linux
 int lineLength=320;
 extern char drive[4];
 int ClipX1=0,ClipX2=319,ClipY1=0,ClipY2=199;

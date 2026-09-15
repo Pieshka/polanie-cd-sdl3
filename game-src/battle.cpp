@@ -151,7 +151,8 @@ struct SSelected{
         int nrb;   //nr budynku  0-19  20=zamek
         int nrm;   //nr zolnierza w budynku nr=place[x][y]-256*(IFF+1)-10*nrb-4;
         int co;   // 0-budynek 1-zolnierz
-        }select,posT[10]={{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0}};
+        }_select,posT[10]={{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0},{2,0,0,0}}; // [PORT] Rename select to _select
+#define select _select // [PORT] Define _select as select to avoid conflict on Linux
 char posTT[10][10][2];
 //------------------------------------
 char  *guzik[3],*lancuch[2];
@@ -426,7 +427,7 @@ do
             scrollTimer=licznik;
         }
         licznik2=licznik;
-        
+
         if(pl.ide)pl.ide--;
         if(Msg.licznik)Msg.licznik--;
         if(decisionFaza==2&&!quitLevel)endL=EndLevel();
@@ -766,7 +767,7 @@ if(mouseCommand>1&&mouseCommand<10&&!select.co)//budynek
         {
             if(placeG[x+i][y+j]>30&&placeG[x+i][y+j]<54)dr=1;
         }
-    if(y>62||x>62)dr=0;    
+    if(y>62||x>62)dr=0;
     int c=0;
     if(mouseCommand==3){dr=1;}  //palisada
     if(mouseCommand==2){c=1;}   //droga
@@ -868,7 +869,7 @@ PutImage13h(mouse.X-a,mouse.Y-b,Mysz[0],0);
 ////////////////////////////////////////////////////////////////////////
 void Scroll()
 {
-    
+
 if(scrollTimer+(5-skroller)>licznik)return;
 
 scrollTimer=licznik;
@@ -3739,7 +3740,7 @@ if(mode)
                 }
                 else
                     ShowPanel(0,0,0,0,0);
-                
+
                 return;
             }
             else

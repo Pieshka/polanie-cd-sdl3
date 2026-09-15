@@ -6,7 +6,7 @@ set(COMPATLIB_SOURCES
 	src/sound/cd_entry.c
 	src/io/timer.c
 	src/io/mouse.c
-		src/vga/sdl.c
+	src/vga/sdl.c
 )
 
 set(COMPATLIB_HEADERS
@@ -18,7 +18,9 @@ set(COMPATLIB_HEADERS
 	include/playfli.h
 	include/dos.h
 	include/conio.h
-		include/constants.h
+	include/constants.h
+	include/mem.h
+	include/process.h
 )
 
 add_library(compatlib STATIC
