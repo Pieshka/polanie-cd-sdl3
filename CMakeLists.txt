@@ -35,6 +35,17 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include(cmake/Dependencies.cmake)
 
 # --------------------------------------
+# Static libc++ on Windows (GCC/Clang)
+# --------------------------------------
+if(WIN32)
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        add_link_options(-static-libstdc++ -Wl,-Bstatic -lunwind -Wl,-Bdynamic)
+    endif()
+
+endif()
+
+# --------------------------------------
 # Application sub-projects
 # --------------------------------------
 
