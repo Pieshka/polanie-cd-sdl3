@@ -387,9 +387,9 @@ void NewGame()
                 level=15;
                 //play("data\\s002.dat");
                 char ss[50];
-                sprintf(ss,"%sdata\\i003.dat",drive);
+                sprintf(ss,"%sdata/i003.dat",drive); // [PORT] Replace \\ with /
                 if(IsFile(ss))SND.PlayWav(ss);
-                sprintf(ss,"%sdata\\s003.dat",drive);
+                sprintf(ss,"%sdata/s003.dat",drive); // [PORT] Replace \\ with /
                 if(IsFile(ss))play(ss);//odtwarza flica Intro Daniel
                 SND.EndPlayWav();
 

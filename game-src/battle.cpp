@@ -1681,7 +1681,7 @@ if(!type)
         placeG[i][j]=8;
         place[i][j]=0;
     }
-    sprintf(name,"%slevels\\level.dat",drive);
+    sprintf(name,"%slevels/level.dat",drive); // [PORT] Replace \\ with /
     castle[0].Init(1,2000);
     castle[1].Init(2,2000);
     ScreenX=10;ScreenY=10;

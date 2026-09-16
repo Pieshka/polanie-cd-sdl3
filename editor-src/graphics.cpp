@@ -1027,7 +1027,7 @@ void ShowText(int level,int t)
 
 {              //t=0 wstep t=1 zwyciestwo t=2 porazka t=3 koniec)
 FILE *plik;
-char name[20]="graf\\level.ini",z,l,line[150],endd=0;
+char name[20]="graf/level.ini",z,l,line[150],endd=0; // [PORT] Replace \\ with /
 int kolort=230,kolorb=1,k;
 //odswiez_Polan(generuj_graf(18)+1);
 DownPalette(0);

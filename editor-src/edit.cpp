@@ -526,7 +526,7 @@ E.yz=0;
 
 if(level>25)
 {
-    sprintf(name,"levels\\level.%d",level);
+    sprintf(name,"levels/level.%d",level); // [PORT] Replace \\ with /
     plikPlansz=fopen(name,"rb");
     if(plikPlansz==NULL)
     {
@@ -598,7 +598,7 @@ for(j=0;j<MaxY;j++)
  placeN[i][j]=0;
 for(j=0;j<MaxY;j++)
 for(i=0;i<MaxX;i++)place[i][j]=0;
-strcpy(name,"graf\\level.dat");
+strcpy(name,"graf/level.dat"); // [PORT] Replace \\ with /
 ScreenX=10;ScreenY=10;
 plikPlansz=fopen(name,"r");
 if (plikPlansz==NULL){Close13h();exit(0);}

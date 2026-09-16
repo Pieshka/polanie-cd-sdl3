@@ -1083,11 +1083,11 @@ void ShowText(int level,int t)
 
 Bar13h(0,0,319,199,0);
 FILE *plik;
-char name[40]="levels\\level.ini",z,l,line[150],endd=0;
+char name[40]="levels/level.ini",z,l,line[150],endd=0; // [PORT] Replace \\ with /
 
 
-if(level>25)sprintf(name,"levels\\level2.ini");
-else sprintf(name,"levels\\level.ini");
+if(level>25)sprintf(name,"levels/level2.ini"); // [PORT] Replace \\ with /
+else sprintf(name,"levels/level.ini"); // [PORT] Replace \\ with /
 
 int kolort=255,kolorb=1,k;
 
