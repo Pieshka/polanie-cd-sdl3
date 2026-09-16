@@ -9,6 +9,9 @@ int audioSubsystemCounter = 0;
 MIX_Mixer *globalMixer;
 static MIX_Track *musicTrack;
 
+/* Here is perfect place for this */
+extern void check_if_everything_is_ok();
+
 int init_audio_subsystem()
 {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Initializing SDL3 audio subsystem...");
@@ -154,7 +157,9 @@ void BigOffCDAudio()
 
 void BigOnCDAudio()
 {
-    /* This function enables CD Audio subsystem. Unimportant for us. */
+    /* This function enables CD Audio subsystem. */
+    /* As it is the first function ran by the game before everything else, it is the perfect place for sanity checks. */
+    check_if_everything_is_ok();
 }
 
 void OffCDAudio()

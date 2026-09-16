@@ -7,6 +7,7 @@ set(COMPATLIB_SOURCES
 	src/io/timer.c
 	src/io/mouse.c
 	src/vga/sdl.c
+	src/misc/preinit.c
 )
 
 set(COMPATLIB_HEADERS
@@ -51,3 +52,10 @@ target_compile_definitions(compatlib PRIVATE
 		APP_VERSION_MINOR=${APP_VERSION_MINOR}
 		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	target_compile_options(compatlib PRIVATE
+			-Wall
+			-Wextra
+	)
+endif()

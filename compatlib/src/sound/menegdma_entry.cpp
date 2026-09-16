@@ -33,6 +33,7 @@ MENEGERDMA::~MENEGERDMA()
     effectTrack = NULL;
 
     delete [] effects;
+    delete [] sounds;
     delete [] pcm_table;
 
     if (audioSubsystemCounter == 1)
@@ -87,7 +88,7 @@ int MENEGERDMA::PlayWav(const char *filepath)
 
     if(!f)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Unable to load %s file!", filepath);
+        SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO, "Unable to load %s file!", filepath);
         return -1;
     }
 
@@ -126,7 +127,7 @@ int MENEGERDMA::LoadGlobalData(const char *filepath, int sample_count)
     FILE* globalData = fopen(filepath, "rb");
     if(!globalData)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO,"[POLANIE-PORT: MENEGERDMA] Unable to load %s file!", filepath);
+        SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO,"[POLANIE-PORT: MENEGERDMA] Unable to load %s file!", filepath);
         return -1;
     }
 

@@ -27,7 +27,6 @@ private:
     } *pcm_table;
 
     unsigned char *sounds;
-    uint32_t sound_count;
 };
 
 #endif //POLANIE_MENEGDMA_H
