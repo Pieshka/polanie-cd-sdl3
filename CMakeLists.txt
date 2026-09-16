@@ -41,3 +41,9 @@ include(cmake/Dependencies.cmake)
 add_subdirectory(compatlib)
 add_subdirectory(game-src)
 add_subdirectory(editor-src)
+
+# --------------------------------------
+# CPack
+# --------------------------------------
+include(cmake/CPack.cmake)
+include(CPack)

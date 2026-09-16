@@ -38,14 +38,6 @@ target_compile_definitions(polanie-editor2 PRIVATE
         APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
 
-if(UNIX AND NOT APPLE)
-    install(
-            FILES "${CMAKE_SOURCE_DIR}/resources/common/icon-editor.bmp"
-            DESTINATION .
-            RENAME icon.bmp
-    )
-endif()
-
 # (Open)Watcom assumes char = unsigned char
 # Polanie also assumes that, so -funsigned-char \ /J
 if(MSVC)
@@ -61,4 +53,36 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             -fno-strict-aliasing
             -fbounds-check
     )
+endif()
+
+include(GNUInstallDirs)
+
+if(WIN32)
+
+    install(
+            TARGETS polanie-editor2
+            RUNTIME DESTINATION .
+    )
+
+    get_filename_component(CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+
+    install(FILES
+            "${CLANG_BIN_DIR}/libc++.dll"
+            "${CLANG_BIN_DIR}/libunwind.dll"
+            DESTINATION .
+    )
+
+else()
+
+    install(
+            TARGETS polanie-editor2
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
+
+    install(
+            FILES "${CMAKE_SOURCE_DIR}/resources/common/icon-editor.bmp"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            RENAME icon.bmp
+    )
+
 endif()

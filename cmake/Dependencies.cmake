@@ -52,18 +52,34 @@ set(BUILD_SHARED_LIBS ON)
 # Install runtime dependencies
 # --------------------------------------
 
-if(TARGET SDL3-shared AND NOT WIN32)
-    install(
-        TARGETS SDL3-shared
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    )
+if(TARGET SDL3-shared)
+    if(WIN32)
+        install(
+            TARGETS SDL3-shared
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+        )
+    else()
+        install(
+            TARGETS SDL3-shared
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        )
+    endif()
 endif()
 
-if(TARGET SDL3_mixer-shared AND NOT WIN32)
-    install(
-        TARGETS SDL3_mixer-shared
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    )
+if(TARGET SDL3_mixer-shared)
+    if(WIN32)
+        install(
+            TARGETS SDL3_mixer-shared
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+        )
+    else()
+        install(
+            TARGETS SDL3_mixer-shared
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        )
+    endif()
 endif()
