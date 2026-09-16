@@ -28,7 +28,7 @@ target_link_libraries(polanie
 if(WIN32)
 
 	target_sources(polanie PRIVATE
-			${CMAKE_SOURCE_DIR}/resources/windows/version.rc
+			${CMAKE_SOURCE_DIR}/resources/windows/version-game.rc
 	)
 
 endif()
@@ -40,10 +40,11 @@ target_compile_definitions(polanie PRIVATE
 		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
 
-if(LINUX)
+if(UNIX AND NOT APPLE)
 	install(
-			FILES "${CMAKE_SOURCE_DIR}/resources/common/icon.bmp"
+			FILES "${CMAKE_SOURCE_DIR}/resources/common/icon-game.bmp"
 			DESTINATION .
+			RENAME icon.bmp
 	)
 endif()
 

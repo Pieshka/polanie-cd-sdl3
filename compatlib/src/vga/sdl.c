@@ -148,9 +148,9 @@ static void init_sdl()
 
 static void quit_sdl()
 {
+    SDL_DestroyTexture(screen);
     SDL_DestroyRenderer(state.renderer);
     SDL_DestroyWindow(state.window);
-    SDL_DestroyTexture(screen);
     SDL_ShowCursor();
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

@@ -7,7 +7,7 @@
 
 LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 
-IDI_ICON1 ICON DISCARDABLE "icon.ico"
+IDI_ICON1 ICON DISCARDABLE "icon-editor.ico"
 
 VS_VERSION_INFO VERSIONINFO
 
@@ -27,11 +27,11 @@ BEGIN
 	
 		BLOCK "041504E2"
 		BEGIN
-			VALUE "FileDescription", "Polanie CD"
+			VALUE "FileDescription", "Polanie CD - Level Editor"
 			VALUE "FileVersion", STRINGIZE(APP_VERSION_MAJOR) "." STRINGIZE(APP_VERSION_MINOR) "." STRINGIZE(APP_VERSION_PATCH)
-			VALUE "ProductName", "Polanie CD"
+			VALUE "ProductName", "Polanie CD - Level Editor"
             VALUE "ProductVersion", STRINGIZE(APP_VERSION_MAJOR) "." STRINGIZE(APP_VERSION_MINOR) "." STRINGIZE(APP_VERSION_PATCH)
-			VALUE "OriginalFilename", "polanie.exe"
+			VALUE "OriginalFilename", "polanie-editor2.exe"
 		END
 		
 	END
