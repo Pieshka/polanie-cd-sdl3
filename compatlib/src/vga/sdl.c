@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "icons.h"
 #include <SDL3/SDL.h>
+#include <stdlib.h>
 
 #define SET_VIDEO_MODE 0x00
 #define VGA_DAC_MASK_REGISTER 0x3C6
