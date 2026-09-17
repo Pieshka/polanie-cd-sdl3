@@ -33,18 +33,18 @@ set_target_properties(${POLANIE_TARGET_NAME} PROPERTIES
 install(TARGETS ${POLANIE_TARGET_NAME} DESTINATION ./)
 install(CODE "
 	include(BundleUtilities)
-	fixup_bundle(${CMAKE_BINARY_DIR}/${POLANIE_TARGET_NAME}.app \"\" \"\")
+	fixup_bundle(${CMAKE_BINARY_DIR}/bin/${POLANIE_TARGET_NAME}.app \"\" \"\")
 	"
 	COMPONENT Runtime)
 install(CODE "
 	execute_process(COMMAND /usr/bin/codesign
 	  --force --deep --sign - --timestamp
-	  \"\$\{CMAKE_INSTALL_PREFIX\}/${POLANIE_TARGET_NAME}.app/Contents/MacOS/${POLANIE_TARGET_NAME}\")
+	  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${POLANIE_TARGET_NAME}.app/Contents/MacOS/${POLANIE_TARGET_NAME}\")
 	")
 install(CODE "
 file(RENAME
-  \"\$\{CMAKE_INSTALL_PREFIX\}/${POLANIE_TARGET_NAME}.app\"
-  \"\$\{CMAKE_INSTALL_PREFIX\}/${MACOSX_POLANIE_BUNDLE_DISPLAY_NAME}.app\")
+  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${POLANIE_TARGET_NAME}.app\"
+  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${MACOSX_POLANIE_BUNDLE_DISPLAY_NAME}.app\")
 ")
 
 configure_file(
@@ -62,22 +62,22 @@ set_target_properties(${EDITOR_TARGET_NAME} PROPERTIES
 install(TARGETS ${EDITOR_TARGET_NAME} DESTINATION ./)
 install(CODE "
 	include(BundleUtilities)
-	fixup_bundle(${CMAKE_BINARY_DIR}/${EDITOR_TARGET_NAME}.app \"\" \"\")
+	fixup_bundle(${CMAKE_BINARY_DIR}/bin/${EDITOR_TARGET_NAME}.app \"\" \"\")
 	"
 	COMPONENT Runtime)
 
 install(CODE "
 	execute_process(COMMAND /usr/bin/install_name_tool
 	  -add_rpath \"@executable_path/../Frameworks\"
-	  \"\$\{CMAKE_INSTALL_PREFIX\}/${EDITOR_TARGET_NAME}.app/Contents/MacOS/${EDITOR_TARGET_NAME}\")
+	  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${EDITOR_TARGET_NAME}.app/Contents/MacOS/${EDITOR_TARGET_NAME}\")
 	")
 install(CODE "
 	execute_process(COMMAND /usr/bin/codesign
 	  --force --deep --sign - --timestamp
-	  \"\$\{CMAKE_INSTALL_PREFIX\}/${EDITOR_TARGET_NAME}.app/Contents/MacOS/${EDITOR_TARGET_NAME}\")
+	  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${EDITOR_TARGET_NAME}.app/Contents/MacOS/${EDITOR_TARGET_NAME}\")
 	")
 install(CODE "
 	file(RENAME
-	  \"\$\{CMAKE_INSTALL_PREFIX\}/${EDITOR_TARGET_NAME}.app\"
-	  \"\$\{CMAKE_INSTALL_PREFIX\}/${MACOSX_EDITOR_BUNDLE_DISPLAY_NAME}.app\")
+	  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${EDITOR_TARGET_NAME}.app\"
+	  \"\$\{CMAKE_INSTALL_PREFIX\}/bin/${MACOSX_EDITOR_BUNDLE_DISPLAY_NAME}.app\")
 	")
