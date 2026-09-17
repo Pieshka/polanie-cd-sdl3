@@ -64,14 +64,14 @@ void MENEGERDMA::Init(int is_SoundBlaster, int irq, int port, int channel)
     soundTrack = MIX_CreateTrack(globalMixer);
     if (!soundTrack)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Mixer sound track cannot be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Mixer sound track cannot be created! SDL_Error: %s\n", SDL_GetError());
         return;
     }
 
     effectTrack = MIX_CreateTrack(globalMixer);
     if (!effectTrack)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Mixer effect track cannot be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Mixer effect track cannot be created! SDL_Error: %s\n", SDL_GetError());
         return;
     }
 
@@ -88,7 +88,7 @@ int MENEGERDMA::PlayWav(const char *filepath)
 
     if(!f)
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO, "Unable to load %s file!", filepath);
+        SDL_LogDebug(SDL_LOG_CATEGORY_ERROR, "Unable to load %s file!", filepath);
         return -1;
     }
 
@@ -127,7 +127,7 @@ int MENEGERDMA::LoadGlobalData(const char *filepath, int sample_count)
     FILE* globalData = fopen(filepath, "rb");
     if(!globalData)
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO,"[POLANIE-PORT: MENEGERDMA] Unable to load %s file!", filepath);
+        SDL_LogDebug(SDL_LOG_CATEGORY_ERROR,"[POLANIE-PORT: MENEGERDMA] Unable to load %s file!", filepath);
         return -1;
     }
 

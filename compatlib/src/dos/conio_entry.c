@@ -52,7 +52,7 @@ unsigned ___outp(unsigned __port, unsigned __value)
             return video_virtual_outp_handler(__port, __value);
     }
 
-    SDL_Log("[POLANIE-PORT: conio_entry] outp unhandled port: %02x, value=%02x\n", \
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[POLANIE-PORT: conio_entry] outp unhandled port: %02x, value=%02x\n", \
         __port, __value);
     return 0;
 }

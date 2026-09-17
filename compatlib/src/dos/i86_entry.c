@@ -28,7 +28,7 @@ int int386(int interrupt, union REGS* inRegs, union REGS* outRegs)
             return video_virtual_interrupt_handler(inRegs, outRegs);
     }
 
-    SDL_Log("[POLANIE-PORT: i86_Entry] int386 unhandled interrupt: %02x, ax=%02x, bx=%02x, cx=%02x, dx=%02x\n", \
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[POLANIE-PORT: i86_Entry] int386 unhandled interrupt: %02x, ax=%02x, bx=%02x, cx=%02x, dx=%02x\n", \
         interrupt, inRegs->w.ax, inRegs->w.bx, inRegs->w.cx, inRegs->w.dx);
     return 0;
 }

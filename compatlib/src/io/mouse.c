@@ -110,7 +110,7 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
             return outRegs->w.ax;
     }
 
-    SDL_Log("[POLANIE-PORT: mouse.c] int386 unhandled interrupt: ax=%02x, bx=%02x, cx=%02x, dx=%02x\n", \
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[POLANIE-PORT: mouse.c] int386 unhandled interrupt: ax=%02x, bx=%02x, cx=%02x, dx=%02x\n", \
         inRegs->w.ax, inRegs->w.bx, inRegs->w.cx, inRegs->w.dx);
     return outRegs->w.ax;
 }

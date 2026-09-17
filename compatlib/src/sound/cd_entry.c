@@ -14,23 +14,23 @@ extern void check_if_everything_is_ok();
 
 int init_audio_subsystem()
 {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Initializing SDL3 audio subsystem...");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Initializing SDL3 audio subsystem...");
     if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "SDL audio subsystem could not initialize! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL audio subsystem could not initialize! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
     if (!MIX_Init())
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "SDL_mixer could not initialize! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_mixer could not initialize! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
     globalMixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
     if (!globalMixer)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Global mixer cannot be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Global mixer cannot be created! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
@@ -40,7 +40,7 @@ int init_audio_subsystem()
 
 void deinit_audio_subsystem()
 {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Quitting SDL3 audio subsystem...");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Quitting SDL3 audio subsystem...");
 
     MIX_DestroyMixer(globalMixer);
     globalMixer = NULL;
@@ -59,7 +59,7 @@ int InitCD()
     musicTrack = MIX_CreateTrack(globalMixer);
     if (!musicTrack)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "Mixer music track cannot be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Mixer music track cannot be created! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
@@ -159,6 +159,9 @@ void BigOnCDAudio()
 {
     /* This function enables CD Audio subsystem. */
     /* As it is the first function ran by the game before everything else, it is the perfect place for sanity checks. */
+#ifdef DEBUG_MODE
+    SDL_SetLogPriorities(SDL_LOG_PRIORITY_DEBUG);
+#endif
     check_if_everything_is_ok();
 }
 

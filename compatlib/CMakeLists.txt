@@ -62,6 +62,8 @@ target_compile_definitions(compatlib PRIVATE
 		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
 
+target_compile_definitions(compatlib PRIVATE $<$<CONFIG:Debug>:DEBUG_MODE>)
+
 # --------------------------------------
 # Compile options
 # --------------------------------------

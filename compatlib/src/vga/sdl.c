@@ -121,7 +121,7 @@ static void init_sdl()
 {
     if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "SDL video subsystem could not initialize! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL video subsystem could not initialize! SDL_Error: %s\n", SDL_GetError());
         SDL_Quit();
         exit(-1); /* We have no response for this, so just quit the app */
     }
@@ -129,7 +129,7 @@ static void init_sdl()
     const char *window_title = state.is_editor ? EDITOR_TITLE : GAME_TITLE;
     if (!SDL_CreateWindowAndRenderer(window_title, BASE_WINDOW_WIDTH * 4, BASE_WINDOW_HEIGHT * 4, SDL_WINDOW_RESIZABLE, &state.window, &state.renderer))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "SDL could not create window! SDL_Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL could not create window! SDL_Error: %s\n", SDL_GetError());
         SDL_Quit();
         exit(-1); /* We have no response for this, so just quit the app */
     }
@@ -172,11 +172,11 @@ int video_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
             switch (inRegs->h.al)
             {
                 case 0x13: /* Initialize SDL */
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Initializing SDL3 video subsystem...");
+                    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Initializing SDL3 video subsystem...");
                     init_sdl();
                     return outRegs->w.ax;
                 case 0x03: /* Deinitialize SDL */
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Quitting SDL3 video subsystem...");
+                    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "POLANIE-PORT: Quitting SDL3 video subsystem...");
                     quit_sdl();
                     return outRegs->w.ax;
             }
@@ -230,7 +230,7 @@ unsigned video_virtual_outp_handler(unsigned port, unsigned value)
             return 0;
     }
 
-    SDL_Log("[POLANIE-PORT: sdl.c] outp unhandled port: %02x, value=%02x\n", \
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[POLANIE-PORT: sdl.c] outp unhandled port: %02x, value=%02x\n", \
         port, value);
     return 1;
 }
