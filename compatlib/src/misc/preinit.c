@@ -54,14 +54,14 @@ void check_if_everything_is_ok()
         if (localCount > 0 && SDL_strcmp(prefLocales[0]->language, "pl") == 0)
         {
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Błąd wczytywania zasobów",
-                "Nie można odnaleźć plików potrzebnych do działania gry.\n\nInformacje na temat przygotowania gry"
-                "do działania \ni skopiowania odpowiednich zasobów z płyty CD\nmożna znaleźć na stronie projektu.", NULL);
+                "Nie można odnaleźć plików potrzebnych do działania gry.\n\nInformacje na temat przygotowania gry "
+                "do działania i skopiowania odpowiednich zasobów z płyty CD można znaleźć na stronie projektu.", NULL);
         }
         else
         {
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error loading resources",
                 "The files required for the game to run cannot be found.\n\nInformation on how to set up the game "
-                "\nand copy the necessary resources from\nthe CD can be found on the project's website.", NULL);
+                "and copy the necessary resources from the CD can be found on the project's website.", NULL);
         }
 
         exit(2);
