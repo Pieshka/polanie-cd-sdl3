@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL3/SDL_log.h>
+#include "constants.h"
 
 static char* filenames[7] = {
     "font.dat",
@@ -15,28 +16,37 @@ static char* filenames[7] = {
 /* This functions checks if everything is in place before starting the game */
 void check_if_everything_is_ok()
 {
+    char buf[1024];
     int ok = 1;
     for (int i = 0; i < 7; i++)
     {
-        FILE* f = fopen(filenames[i], "rb");
+#ifdef SDL_PLATFORM_WINDOWS
+        FILE *f = fopen(filenames[i], "rb");
+#else
+        sprintf(buf, "%s/%s", NON_WIN_ASSET_PATH, filenames[i]);
+        FILE *f = fopen(buf, "rb");
+#endif
         if (!f)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", filenames[i]);
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", buf);
             ok = 0;
         }
         else
             fclose(f);
     }
 
-    char filename[25];
-
     for (int i = 26; i <= 52; i++)
     {
-        sprintf(filename, "levels/level.%d", i);
-        FILE* f = fopen(filename, "rb");
+#ifdef SDL_PLATFORM_WINDOWS
+        sprintf(buf, "levels/level.%d", i);
+#else
+        sprintf(buf, "%s/levels/level.%d", NON_WIN_ASSET_PATH, i);
+#endif
+        FILE *f = fopen(buf, "rb");
+
         if (!f)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", filenames[i]);
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", buf);
             ok = 0;
         }
         else
@@ -45,12 +55,12 @@ void check_if_everything_is_ok()
 
     if (!ok)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "[POLANIE-PORT] The files required to run the game cannot be "
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] The files required to run the game cannot be "
                                                    "found. If you have the game disc, insert it into the drive, and "
                                                    "then run the PolanieInstall utility to copy the necessary files "
                                                    "and music from the CD to your hard drive.\n\n");
 
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "[POLANIE-PORT] Nie można odnaleźć plików potrzebnych do "
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Nie można odnaleźć plików potrzebnych do "
                                                    "działania gry. Jeżeli posiadasz płytę z grą, włóż ją do napędu, "
                                                    "a następnie uruchom pomocniczy program PolanieInstall, aby skopiować "
                                                    "potrzebne pliki i muzykę z płyty CD na dysk.\n\n");
