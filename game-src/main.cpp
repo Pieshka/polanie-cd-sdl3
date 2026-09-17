@@ -107,7 +107,7 @@ fread(drive,1,1,f);
 fclose(f);
 printf("CD drive : %s\n",drive);
 [PORT] SETUP.INI is not necessary anymore */
-FILE *f; BigOnCDAudio(); OnCDAudio(); drive[0] = '.'; drive[1] = '/'; drive[2] = '\0'; // [PORT] SETUP.INI is not necessary anymore
+FILE *f; BigOnCDAudio(); OnCDAudio(); drive[0] = '\0';; // [PORT] SETUP.INI is not necessary anymore
 _settextcolor(7);
 char ss[30];
 sprintf(ss,"%sgraf.dat",drive);

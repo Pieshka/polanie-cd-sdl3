@@ -1,5 +1,6 @@
 #include "i86.h"
 #include "constants.h"
+#include "icons.h"
 #include <SDL3/SDL.h>
 
 #define SET_VIDEO_MODE 0x00
@@ -8,7 +9,7 @@
 #define VGA_DAC_CONTROL_2 0x3C9
 
 static unsigned char dos_framebuffer[64000];
-AppState state = {};
+AppState state = {0};
 static SDL_Texture *screen;
 static SDL_Color palette_colors[256];
 
@@ -17,6 +18,11 @@ extern void PIT_update();
 void* PORT_getFakeFramebuffer()
 {
     return &dos_framebuffer[0];
+}
+
+void PORT_setEditor()
+{
+    state.is_editor = 1;
 }
 
 static void refresh_framebuffer()
@@ -120,7 +126,8 @@ static void init_sdl()
         exit(-1); /* We have no response for this, so just quit the app */
     }
 
-    if (!SDL_CreateWindowAndRenderer(APP_NAME " ver. " APP_VERSION_STRING, BASE_WINDOW_WIDTH * 4, BASE_WINDOW_HEIGHT * 4, SDL_WINDOW_RESIZABLE, &state.window, &state.renderer))
+    const char *window_title = state.is_editor ? EDITOR_TITLE : GAME_TITLE;
+    if (!SDL_CreateWindowAndRenderer(window_title, BASE_WINDOW_WIDTH * 4, BASE_WINDOW_HEIGHT * 4, SDL_WINDOW_RESIZABLE, &state.window, &state.renderer))
     {
         SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "SDL could not create window! SDL_Error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -136,14 +143,16 @@ static void init_sdl()
     SDL_HideCursor();
     SDL_StartTextInput(state.window);
 
-#ifdef SDL_PLATFORM_LINUX
-    SDL_Surface *icon = SDL_LoadBMP("icon.bmp");
-    if (icon)
+    SDL_IOStream* icon_stream = SDL_IOFromMem(state.is_editor ? editor_bmp : game_bmp, state.is_editor ? editor_bmp_len : game_bmp_len);
+    if (icon_stream)
     {
-        SDL_SetWindowIcon(state.window, icon);
-        SDL_DestroySurface(icon);
+        SDL_Surface* icon = SDL_LoadBMP_IO(icon_stream, true);
+        if (icon)
+        {
+            SDL_SetWindowIcon(state.window, icon);
+            SDL_DestroySurface(icon);
+        }
     }
-#endif
 }
 
 static void quit_sdl()

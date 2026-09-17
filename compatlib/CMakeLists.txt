@@ -1,3 +1,7 @@
+# --------------------------------------
+# Library sources
+# --------------------------------------
+
 set(COMPATLIB_SOURCES
 	src/flic/flic_entry.cpp
 	src/sound/menegdma_entry.cpp
@@ -8,6 +12,7 @@ set(COMPATLIB_SOURCES
 	src/io/mouse.c
 	src/vga/sdl.c
 	src/misc/preinit.c
+		src/misc/fopen.c
 )
 
 set(COMPATLIB_HEADERS
@@ -46,12 +51,20 @@ set_target_properties(compatlib PROPERTIES
 	OUTPUT_NAME "compat"
 )
 
+# --------------------------------------
+# Compile definitions
+# --------------------------------------
+
 target_compile_definitions(compatlib PRIVATE
 		APP_VERSION_STRING="${APP_VERSION_STRING}"
 		APP_VERSION_MAJOR=${APP_VERSION_MAJOR}
 		APP_VERSION_MINOR=${APP_VERSION_MINOR}
 		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
+
+# --------------------------------------
+# Compile options
+# --------------------------------------
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	target_compile_options(compatlib PRIVATE

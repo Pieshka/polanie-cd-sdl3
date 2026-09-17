@@ -1,0 +1,32 @@
+[Desktop Entry]
+Version=1.5
+
+Name=@APP_NAME@
+Comment=@APP_SUMMARY@
+
+Icon=@APP_ID@
+Type=Application
+Categories=Game
+
+Keywords=Slaves;Slaves CD
+Keywords[cz]=Osadníci;Osadníci CD
+Keywords[de]=Victory;Victory CD
+Keywords[pl]=Polanie;Polanie CD
+
+SingleMainWindow=true
+StartupWMClass=@APP_ID@
+
+TryExec=polanie
+Exec=polanie
+
+Actions=play;editor
+
+[Desktop Action play]
+Name=Play Game
+Icon=currenttrack_play
+Exec=polanie
+
+[Desktop Action editor]
+Name=Open the Level Editor
+Icon=draw-brush
+Exec=polanie-editor2

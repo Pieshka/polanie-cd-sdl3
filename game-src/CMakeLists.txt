@@ -1,17 +1,22 @@
+# --------------------------------------
+# Application sources
+# --------------------------------------
+
 set(GAME_SOURCES
-	battle.cpp
-	graphics.cpp
-	image13h.cpp
-	ladowani.cpp
-	main.cpp
-	mapa.cpp
-	mouse.cpp
-	mover1.cpp
-	world.cpp
+		battle.cpp
+		graphics.cpp
+		image13h.cpp
+		ladowani.cpp
+		main.cpp
+		mapa.cpp
+		mouse.cpp
+		mover1.cpp
+		world.cpp
 )
 
 add_executable(polanie
-	${GAME_SOURCES}
+		${GAME_SOURCES}
+		res/polanie.rc
 )
 
 target_include_directories(polanie
@@ -25,13 +30,9 @@ target_link_libraries(polanie
 		compatlib
 )
 
-if(WIN32)
-
-	target_sources(polanie PRIVATE
-			${CMAKE_SOURCE_DIR}/resources/windows/version-game.rc
-	)
-
-endif()
+# --------------------------------------
+# Compile definitions
+# --------------------------------------
 
 target_compile_definitions(polanie PRIVATE
 		APP_VERSION_STRING="${APP_VERSION_STRING}"
@@ -39,6 +40,10 @@ target_compile_definitions(polanie PRIVATE
 		APP_VERSION_MINOR=${APP_VERSION_MINOR}
 		APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
+
+# --------------------------------------
+# Compile options
+# --------------------------------------
 
 # (Open)Watcom assumes char = unsigned char
 # Polanie also assumes that, so -funsigned-char \ /J
@@ -57,34 +62,26 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	)
 endif()
 
+# --------------------------------------
+# Install definitions
+# --------------------------------------
+
 include(GNUInstallDirs)
 
+install(
+		TARGETS polanie
+		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
 if(WIN32)
-
-	install(
-			TARGETS polanie
-			RUNTIME DESTINATION .
-	)
-
+	# Install C++ standard library and its dependencies
 	get_filename_component(CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
-
-	install(FILES
+	install(
+			FILES
 			"${CLANG_BIN_DIR}/libc++.dll"
 			"${CLANG_BIN_DIR}/libunwind.dll"
-			DESTINATION .
-	)
-
-else()
-
-	install(
-			TARGETS polanie
-			RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-	)
-
-	install(
-			FILES "${CMAKE_SOURCE_DIR}/resources/common/icon-game.bmp"
-			DESTINATION "${CMAKE_INSTALL_BINDIR}"
-			RENAME icon.bmp
+			DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
 endif()

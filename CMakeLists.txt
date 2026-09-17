@@ -43,6 +43,11 @@ add_subdirectory(game-src)
 add_subdirectory(editor-src)
 
 # --------------------------------------
+# Packaging
+# --------------------------------------
+add_subdirectory(packaging)
+
+# --------------------------------------
 # CPack
 # --------------------------------------
 include(cmake/CPack.cmake)

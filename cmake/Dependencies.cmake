@@ -43,6 +43,10 @@ if(NOT USE_SYSTEM_SDL3_MIXER)
 
 endif()
 
+# --------------------------------------
+# Add all the other libraries
+# --------------------------------------
+
 # Flic
 set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(3rdparty/flic EXCLUDE_FROM_ALL)
@@ -53,33 +57,17 @@ set(BUILD_SHARED_LIBS ON)
 # --------------------------------------
 
 if(TARGET SDL3-shared)
-    if(WIN32)
-        install(
-            TARGETS SDL3-shared
-            RUNTIME DESTINATION .
-            LIBRARY DESTINATION .
-        )
-    else()
-        install(
+    install(
             TARGETS SDL3-shared
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-    endif()
+    )
 endif()
 
 if(TARGET SDL3_mixer-shared)
-    if(WIN32)
-        install(
-            TARGETS SDL3_mixer-shared
-            RUNTIME DESTINATION .
-            LIBRARY DESTINATION .
-        )
-    else()
-        install(
+    install(
             TARGETS SDL3_mixer-shared
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-    endif()
+    )
 endif()

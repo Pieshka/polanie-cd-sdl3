@@ -1,0 +1,24 @@
+# Borrowed from: https://github.com/isledecomp/isle-portable/blob/master/packaging/CMakeLists.txt
+
+set(APP_ID "org.polaniecd.polanie")
+set(APP_NAME "Polanie CD")
+set(APP_SUMMARY "Portable version of the Polanie CD game")
+set(APP_SPDX "LGPL-3.0-or-later")
+
+string(TIMESTAMP BUILD_DATE UTC)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/icons)
+file(COPY_FILE icons/polanie.png ${CMAKE_BINARY_DIR}/icons/${APP_ID}.png)
+
+# The following will need to be refined if we wish to post actual releases to a repo such as Flathub
+if(DEFINED ENV{GITHUB_ACTIONS} AND ENV{GITHUB_ACTIONS} EQUAL TRUE)
+    # Use the sequential run# of the current pipeline when running in GH Actions
+    set(SEMANTIC_VERSION "${PROJECT_VERSION}~build$ENV{GITHUB_RUN_NUMBER}")
+else()
+    # Don't worry about the build number for local builds
+    set(SEMANTIC_VERSION "${PROJECT_VERSION}")
+endif()
+
+if(LINUX)
+    add_subdirectory(linux)
+endif()

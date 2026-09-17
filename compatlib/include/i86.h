@@ -58,6 +58,7 @@ int int386(int, union REGS*, union REGS* );
 /* Virtual Functions, not in the original i86.h */
 void* PORT_getFakeFramebuffer();
 void PORT_SDLPumpEvents(int only_pump);
+void PORT_setEditor();
 
 #pragma pack(pop)
 

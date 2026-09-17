@@ -69,6 +69,7 @@ extern int FreePaternMemory();
 ///////////////////////////////////////////////////////////////////////////
 int main() // [PORT] main must return int
 {
+PORT_setEditor(); // [PORT] Set editor flag
 if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 586kB RAM\n"); return 1;} // [PORT] main must return int
 //Init13h(); // [PORT] Unnecessary
 //BlackPalette(); // [PORT] Unnecessary
