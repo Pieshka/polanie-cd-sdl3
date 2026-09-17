@@ -73,6 +73,7 @@ void PORT_SDLPumpEvents(int only_pump)
         switch (event.type)
         {
             case SDL_EVENT_TEXT_INPUT:
+            {
                 const char* text = event.text.text;
 
                 while (*text)
@@ -82,38 +83,53 @@ void PORT_SDLPumpEvents(int only_pump)
                     text++;
                 }
                 break;
+            }
 
             case SDL_EVENT_KEY_DOWN:
+            {
                 switch (event.key.key)
                 {
                     case SDLK_ESCAPE:
+                    {
                         state.key_queue[state.key_queue_write] = 27;
                         state.key_queue_write =
                             (state.key_queue_write + 1) % 32;
                         break;
+                    }
 
                     case SDLK_RETURN:
+                    {
                         state.key_queue[state.key_queue_write] = '\r';
                         state.key_queue_write =
                             (state.key_queue_write + 1) % 32;
                         break;
+                    }
 
                     case SDLK_BACKSPACE:
+                    {
                         state.key_queue[state.key_queue_write] = '\b';
                         state.key_queue_write =
                             (state.key_queue_write + 1) % 32;
                         break;
+                    }
+                    default:
+                        break;
                 }
                 break;
+            }
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            {
                 if (event.button.button == SDL_BUTTON_LEFT) state.left_mouse_button_presses++;
                 if (event.button.button == SDL_BUTTON_RIGHT) state.right_mouse_button_presses++;
                 break;
+            }
 
             case SDL_EVENT_QUIT:
+            {
                 SDL_Quit();
                 exit(-1);
+            }
         }
     }
 }
