@@ -5,6 +5,7 @@
 
 extern "C"
 {
+#include "constants.h"
 extern int audioSubsystemCounter;
 extern MIX_Mixer *globalMixer;
 extern int init_audio_subsystem();
@@ -84,7 +85,13 @@ void MENEGERDMA::Init(int is_SoundBlaster, int irq, int port, int channel)
 int MENEGERDMA::PlayWav(const char *filepath)
 {
     uint32_t data_length; uint8_t *buffer;
+#ifdef SDL_PLATFORM_WINDOWS
     FILE *f = fopen(filepath, "rb");
+#else
+    char buf[1024];
+    sprintf(buf, "%s/%s", NON_WIN_ASSET_PATH, filepath);
+    FILE *f = fopen(buf, "rb");
+#endif
 
     if(!f)
     {
@@ -124,7 +131,13 @@ int MENEGERDMA::LoadGlobalData(const char *filepath, int sample_count)
 {
     uint32_t data_length; unsigned char *buffer_cursor;
 
-    FILE* globalData = fopen(filepath, "rb");
+#ifdef SDL_PLATFORM_WINDOWS
+    FILE *globalData = fopen(filepath, "rb");
+#else
+    char buf[1024];
+    sprintf(buf, "%s/%s", NON_WIN_ASSET_PATH, filepath);
+    FILE *globalData = fopen(buf, "rb");
+#endif
     if(!globalData)
     {
         SDL_LogDebug(SDL_LOG_CATEGORY_ERROR,"[POLANIE-PORT: MENEGERDMA] Unable to load %s file!", filepath);
