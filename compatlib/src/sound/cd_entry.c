@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "cd.h"
-#include "constants.h"
 #include <SDL3_mixer/SDL_mixer.h>
 
 int track = 0;
@@ -12,6 +11,8 @@ static MIX_Track *musicTrack;
 
 /* Here is perfect place for this */
 extern void check_if_everything_is_ok();
+
+extern const char* get_asset_path(const char* file);
 
 int init_audio_subsystem()
 {
@@ -99,13 +100,9 @@ int PlayTrack(int newTrack)
     }
 
     char filename[512];
-#ifdef SDL_PLATFORM_WINDOWS
     sprintf(filename, "music/track%d.flac", newTrack);
-#else
-    sprintf(filename, "%s/music/track%d.flac", NON_WIN_ASSET_PATH, newTrack);
-#endif
 
-    MIX_Audio *musicAudio = MIX_LoadAudio(globalMixer, filename, false);
+    MIX_Audio *musicAudio = MIX_LoadAudio(globalMixer, get_asset_path(filename), false);
     if (!musicAudio)
         return 1;
 

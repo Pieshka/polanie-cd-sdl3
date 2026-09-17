@@ -1,5 +1,17 @@
 #include <stdio.h>
-#include "constants.h"
+#include <SDL3/SDL_filesystem.h>
+#include <SDL3/SDL_platform_defines.h>
+
+const char* get_asset_path(const char* file)
+{
+#ifdef SDL_PLATFORM_WINDOWS
+    return file;
+#else
+    static char buffer[256];
+    sprintf(buffer, "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+    return buffer;
+#endif
+}
 
 FILE *PORT_fopen(const char * file, const char * mode)
 {
@@ -14,6 +26,5 @@ FILE *PORT_fopen(const char * file, const char * mode)
     }
 
     /* Everything else goes to the standard path */
-    sprintf(buffer, "%s/%s", NON_WIN_ASSET_PATH, file);
-    return fopen(file, mode);
+    return fopen(get_asset_path(file), mode);
 }

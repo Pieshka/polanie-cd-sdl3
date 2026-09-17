@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL3/SDL_log.h>
-#include "constants.h"
+
+extern const char* get_asset_path(const char* file);
 
 static char* filenames[7] = {
     "font.dat",
@@ -20,15 +21,10 @@ void check_if_everything_is_ok()
     int ok = 1;
     for (int i = 0; i < 7; i++)
     {
-#ifdef SDL_PLATFORM_WINDOWS
-        FILE *f = fopen(filenames[i], "rb");
-#else
-        sprintf(buf, "%s/%s", NON_WIN_ASSET_PATH, filenames[i]);
-        FILE *f = fopen(buf, "rb");
-#endif
+        FILE *f = fopen(get_asset_path(filenames[i]), "rb");
         if (!f)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", buf);
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", get_asset_path(filenames[i]));
             ok = 0;
         }
         else
@@ -37,16 +33,12 @@ void check_if_everything_is_ok()
 
     for (int i = 26; i <= 52; i++)
     {
-#ifdef SDL_PLATFORM_WINDOWS
         sprintf(buf, "levels/level.%d", i);
-#else
-        sprintf(buf, "%s/levels/level.%d", NON_WIN_ASSET_PATH, i);
-#endif
-        FILE *f = fopen(buf, "rb");
+        FILE *f = fopen(get_asset_path(buf), "rb");
 
         if (!f)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", buf);
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Can't find file / Nie można znaleźć pliku: %s\n", get_asset_path(buf));
             ok = 0;
         }
         else

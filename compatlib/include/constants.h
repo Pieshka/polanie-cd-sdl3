@@ -5,7 +5,6 @@
 
 #define BASE_WINDOW_WIDTH 320
 #define BASE_WINDOW_HEIGHT 200
-#define NON_WIN_ASSET_PATH "~/Games/PolanieCD"
 
 static const char* GAME_TITLE = "Polanie CD" " ver. " APP_VERSION_STRING;
 static const char* EDITOR_TITLE = "Polanie CD - Level Editor" " ver. " APP_VERSION_STRING;

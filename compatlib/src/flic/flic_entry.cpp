@@ -4,6 +4,8 @@
 #include "i86.h"
 #include <SDL3/SDL.h>
 
+extern "C" const char* get_asset_path(const char* file);
+
 static void render_frame(SDL_Texture *screen, flic::Frame &frame, flic::Header &header)
 {
     void *pixels;
@@ -37,7 +39,7 @@ static void render_frame(SDL_Texture *screen, flic::Frame &frame, flic::Header &
 
 void play(char *filename)
 {
-    FILE *f = fopen(filename,"rb");
+    FILE *f = fopen(get_asset_path(filename), "rb");
     if(f == nullptr)
     {
         return;
