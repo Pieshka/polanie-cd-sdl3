@@ -18,7 +18,7 @@ if(UNIX)
     endif()
 	
 	find_package(SDL3_mixer CONFIG QUIET)
-    if(SDL3_MIXER_FOUND)
+    if(SDL3_mixer_FOUND)
         message(STATUS "Using system SDL3_Mixer")
         set(USE_SYSTEM_SDL3_MIXER ON)
     endif()
