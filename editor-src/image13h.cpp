@@ -48,7 +48,7 @@ void ClearScreen13h()
 void ShowVirtualScreen(void)
 {
 if(RealVirtualScreen==NULL)return;
-memcpy((void*)PORT_getFakeFramebuffer(),(void*)RealVirtualScreen,64000); // [PORT] Replace 0xA0000 with FakeFramebuffer, fix size
+memcpy((void*)PORT_getFakeFramebuffer(),(void*)RealVirtualScreen,63680); // [PORT] Replace 0xA0000 with FakeFramebuffer
 
 }
 ///////////////////////////////////////////////////////////////////////////

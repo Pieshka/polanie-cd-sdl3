@@ -256,6 +256,14 @@ M=1;
 
 int colorM=White;    //LightGreen;
 int a=8,b=7;
+/* [PORT] Port mouse bounding constraints from main game to avoid buffer overflows */
+if(mouse.X>261)M=1;//panel
+if(mouse.Y>192){mouse.Y=192;M=9;if(ScreenY==MaxY-14)M=12;}
+if(mouse.Y>192-7&&M==1){mouse.Y=192;M=9;if(ScreenY==MaxY-14)M=12;}
+if(mouse.Y<8){mouse.Y=7;M=8;if(ScreenY==1)M=12;}
+if(mouse.X<11){mouse.X=8;M=10;if(ScreenX==1)M=12;}
+if(mouse.X>306){mouse.X=311;M=11;if(ScreenX==MaxX-17)M=12;}
+/* END [PORT] Port mouse bounding constraints from main game to avoid buffer overflows */
 GetImage13h(mouse.X-8,mouse.Y-7,mouse.X+8,mouse.Y+7,Mysz[0]);
 PutImageChange13h(mouse.X-8,mouse.Y-7,buttons[5],1,Color1,colorM);
 
