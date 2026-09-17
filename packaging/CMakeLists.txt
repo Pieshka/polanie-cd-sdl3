@@ -22,3 +22,7 @@ endif()
 if(LINUX)
     add_subdirectory(linux)
 endif()
+
+if(APPLE AND NOT IOS)
+    add_subdirectory(macos)
+endif()
