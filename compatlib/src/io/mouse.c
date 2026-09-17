@@ -18,6 +18,7 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
     switch (inRegs->w.ax)
     {
         case MOUSE_RESET_GET_INSTALLED:
+        {
             /* https://stanislavs.org/helppc/int_33-0.html
              *
              * - resets mouse to default driver values:
@@ -34,7 +35,9 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
             outRegs->w.ax = 0xFFFF;
             outRegs->w.bx = 0x3;
             return outRegs->w.ax;
+        }
         case MOUSE_GET_POSITION_AND_BUTTON_STATUS:
+        {
             /*
              * on return:
              *  CX = horizontal (X) position  (0..639)
@@ -63,6 +66,7 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
 
             outRegs->w.bx = flags; /* SDL output is compatible with int33h */
             return outRegs->w.ax;
+        }
         case MOUSE_SET_CURSOR_POSITION:
             /*
              * AX = 4
@@ -82,18 +86,21 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
             SDL_WarpMouseInWindow(state.window, (float)inRegs->w.dx / 2 / scale, (float)inRegs->w.cx / scale);*/
             return outRegs->w.ax;
         case MOUSE_GET_BUTTON_PRESS_INFO:
-           /*
+        {
+            /*
             * on return:
             *   BX = count of button presses (0-32767), set to zero after call
             *   CX = horizontal position at last press
             *   DX = vertical position at last press
             *   AX = status:
             */
+            float mouse_x, mouse_y; SDL_MouseButtonFlags flags;
             flags = SDL_GetMouseState(&mouse_x, &mouse_y);
 
+            int window_width, window_height;
             SDL_GetWindowSize(state.window, &window_width, &window_height);
 
-            scale = min((float)BASE_WINDOW_WIDTH / (float)window_width,
+            float scale = min((float)BASE_WINDOW_WIDTH / (float)window_width,
                 (float)BASE_WINDOW_HEIGHT / (float)window_height);
 
             outRegs->w.cx = (int)(mouse_x * 2 * scale); /* Two times because, we need to be in 0-639 range, and we have 320px width */
@@ -108,6 +115,7 @@ int mouse_virtual_interrupt_handler(union REGS* inRegs, union REGS* outRegs)
                 state.left_mouse_button_presses = 0;
 
             return outRegs->w.ax;
+        }
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[POLANIE-PORT: mouse.c] int386 unhandled interrupt: ax=%02x, bx=%02x, cx=%02x, dx=%02x\n", \
