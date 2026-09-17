@@ -1,0 +1,72 @@
+{
+    "id": "org.polaniecd.Polanie",
+    "runtime": "org.kde.Platform",
+    "sdk": "org.kde.Sdk",
+    "runtime-version": "6.8",
+    "command": "polanie",
+    "finish-args": [
+        "--share=ipc",
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--device=all",
+        "--filesystem=/run/media/:ro",
+        "--filesystem=/media/:ro",
+        "--filesystem=/mnt/:ro",
+        "--filesystem=home:ro"
+    ],
+    "modules": [
+        {
+            "name": "polanie",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../../../3rdparty",
+                    "dest": "3rdparty/"
+                },
+                {
+                    "type": "dir",
+                    "path": "../../../cmake",
+                    "dest": "cmake/"
+                },
+                {
+                    "type": "dir",
+                    "path": "../../../compatlib",
+                    "dest": "compatlib/"
+                },
+                {
+                    "type": "dir",
+                    "path": "../../../editor-src",
+                    "dest": "editor-src/"
+                },
+                {
+                    "type": "dir",
+                    "path": "../../../game-src",
+                    "dest": "game-src/"
+                },
+                {
+                    "type": "dir",
+                    "path": "../../../packaging",
+                    "dest": "packaging/"
+                },
+                {
+                    "type": "file",
+                    "path": "../../../version.txt"
+                },
+                {
+                    "type": "file",
+                    "path": "../../../CMakeLists.txt"
+                }
+            ],
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ]
+            }
+        }
+    ]
+}

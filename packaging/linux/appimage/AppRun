@@ -1,0 +1,21 @@
+#!/bin/sh
+# Borrowed from: https://github.com/isledecomp/isle-portable/blob/master/packaging/linux/appimage/AppRun
+HERE="$(dirname "$(readlink -f "${0}")")"
+
+MAIN=$(grep -r "^Exec=.*" "$HERE"/*.desktop | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
+
+# MAIN_BIN=$(find "$HERE/usr/bin" -name "$MAIN" | head -n 1)
+MAIN_BIN="$HERE/usr/bin/polanie"
+
+export PATH="${HERE}/usr/bin/:$PATH" # Prefer bundled binaries
+
+if [ ! -z "$APPIMAGE" ]; then
+  BINARY_NAME="$(basename "$ARGV0")"
+  if [ -e "$HERE/usr/bin/$BINARY_NAME" ]; then
+    exec "$HERE/usr/bin/$BINARY_NAME" "$@"
+  else
+    exec "${MAIN_BIN}" "$@"
+  fi
+else
+  exec "${MAIN_BIN}" "$@"
+fi

@@ -125,3 +125,4 @@ google-services.json
 # Others
 old-src/
 assets/
+.flatpak-builder/

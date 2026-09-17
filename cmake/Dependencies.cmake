@@ -56,6 +56,8 @@ set(BUILD_SHARED_LIBS ON)
 # Install runtime dependencies
 # --------------------------------------
 
+include(GNUInstallDirs)
+
 if(TARGET SDL3-shared)
     install(
             TARGETS SDL3-shared

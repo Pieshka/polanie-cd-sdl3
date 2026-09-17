@@ -1,6 +1,6 @@
 # Borrowed from: https://github.com/isledecomp/isle-portable/blob/master/packaging/CMakeLists.txt
 
-set(APP_ID "org.polaniecd.polanie")
+set(APP_ID "org.polaniecd.Polanie")
 set(APP_NAME "Polanie CD")
 set(APP_SUMMARY "Portable version of the Polanie CD game")
 set(APP_SPDX "LGPL-3.0-or-later")
