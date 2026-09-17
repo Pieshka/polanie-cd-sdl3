@@ -1,0 +1,4 @@
+#ifndef POLANIE_MALLOC_H
+#define POLANIE_MALLOC_H
+
+#endif //POLANIE_MALLOC_H
