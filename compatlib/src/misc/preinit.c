@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL3/SDL_log.h>
+#include <SDL3/SDL_messagebox.h>
+#include <SDL3/SDL_locale.h>
 
 extern const char* get_asset_path(const char* file);
 
@@ -47,15 +49,20 @@ void check_if_everything_is_ok()
 
     if (!ok)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] The files required to run the game cannot be "
-                                                   "found. If you have the game disc, insert it into the drive, and "
-                                                   "then run the PolanieInstall utility to copy the necessary files "
-                                                   "and music from the CD to your hard drive.\n\n");
-
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[POLANIE-PORT] Nie można odnaleźć plików potrzebnych do "
-                                                   "działania gry. Jeżeli posiadasz płytę z grą, włóż ją do napędu, "
-                                                   "a następnie uruchom pomocniczy program PolanieInstall, aby skopiować "
-                                                   "potrzebne pliki i muzykę z płyty CD na dysk.\n\n");
+        int localCount;
+        SDL_Locale** prefLocales = SDL_GetPreferredLocales(&localCount);
+        if (localCount > 0 && SDL_strcmp(prefLocales[0]->language, "pl") == 0)
+        {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Błąd wczytywania zasobów",
+                "Nie można odnaleźć plików potrzebnych do działania gry.\n\nInformacje na temat przygotowania gry"
+                "do działania \ni skopiowania odpowiednich zasobów z płyty CD\nmożna znaleźć na stronie projektu.", NULL);
+        }
+        else
+        {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error loading resources",
+                "The files required for the game to run cannot be found.\n\nInformation on how to set up the game "
+                "\nand copy the necessary resources from\nthe CD can be found on the project's website.", NULL);
+        }
 
         exit(2);
     }
