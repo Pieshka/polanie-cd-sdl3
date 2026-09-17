@@ -23,10 +23,12 @@ Actions=play;editor
 
 [Desktop Action play]
 Name=Play Game
+Name[pl]=Uruchom grę
 Icon=currenttrack_play
 Exec=polanie
 
 [Desktop Action editor]
 Name=Open the Level Editor
+Name[pl]=Otwórz edytor poziomów
 Icon=draw-brush
 Exec=polanie-editor2
