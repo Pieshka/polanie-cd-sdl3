@@ -2,6 +2,7 @@
 # CPack configuration
 # --------------------------------------
 
+include(cmake/detectcpu.cmake)
 DetectTargetCPUArchitectures(POLANIE_CPUS)
 string(REPLACE ";" "-" POLANIE_CPUS_STRING "${POLANIE_CPUS}")
 string(TOLOWER "${POLANIE_CPUS_STRING}" POLANIE_CPUS_STRING)
