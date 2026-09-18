@@ -130,16 +130,15 @@ jobs:
             -i icons/org.polaniecd.Polanie.png \
             --custom-apprun=../packaging/linux/appimage/AppRun \
             --appdir packaging/linux/appimage/AppDir \
-            --output appimage && \
-          mv *.AppImage dist/
+            --output appimage
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: '${{ matrix.name }}'
           path: |
-            build/dist/PolanieCD-*
-            build/dist/*.AppImage
+            build/PolanieCD-*
+            build/*.AppImage
 
   flatpak:
     name: "Flatpak (${{ matrix.arch }})"
