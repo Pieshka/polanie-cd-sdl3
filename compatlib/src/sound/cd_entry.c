@@ -2,6 +2,7 @@
 
 #include "cd.h"
 #include <SDL3_mixer/SDL_mixer.h>
+#include <SDL3/SDL_filesystem.h>
 
 int track = 0;
 
