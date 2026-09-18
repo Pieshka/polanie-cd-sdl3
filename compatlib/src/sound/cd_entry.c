@@ -101,6 +101,8 @@ int PlayTrack(int newTrack)
 
     char filename[512];
     sprintf(filename, "music/track%d.flac", newTrack);
+    if (!SDL_GetPathInfo(get_asset_path(filename), NULL))
+        sprintf(filename, "music/track%02d.flac", newTrack);
 
     MIX_Audio *musicAudio = MIX_LoadAudio(globalMixer, get_asset_path(filename), false);
     if (!musicAudio)
