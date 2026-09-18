@@ -2,6 +2,8 @@
 # Dependencies
 # --------------------------------------
 
+include(FetchContent)
+
 set(USE_SYSTEM_SDL3 OFF)
 set(USE_SYSTEM_SDL3_MIXER OFF)
 
@@ -33,13 +35,35 @@ endif()
 # SDL3
 if(NOT USE_SYSTEM_SDL3)
 
-    add_subdirectory(3rdparty/SDL EXCLUDE_FROM_ALL)
+    message(STATUS "Fetching SDL3")
+
+    set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+    set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+    set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+            SDL3
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG main
+    )
+
+    FetchContent_MakeAvailable(SDL3)
 
 endif()
 
 if(NOT USE_SYSTEM_SDL3_MIXER)
 
-    add_subdirectory(3rdparty/SDL_mixer EXCLUDE_FROM_ALL)
+    message(STATUS "Fetching SDL3_mixer")
+
+    set(SDLMIXER_VENDORED OFF CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+            SDL3_mixer
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+            GIT_TAG main
+    )
+
+    FetchContent_MakeAvailable(SDL3_mixer)
 
 endif()
 
@@ -49,7 +73,15 @@ endif()
 
 # Flic
 set(BUILD_SHARED_LIBS OFF)
-add_subdirectory(3rdparty/flic EXCLUDE_FROM_ALL)
+message(STATUS "Fetching flic-lib")
+
+FetchContent_Declare(
+        flic_lib
+        GIT_REPOSITORY https://github.com/Pieshka/flic.git
+        GIT_TAG main
+)
+
+FetchContent_MakeAvailable(flic_lib)
 set(BUILD_SHARED_LIBS ON)
 
 # --------------------------------------

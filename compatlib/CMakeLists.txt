@@ -37,7 +37,11 @@ add_library(compatlib STATIC
 target_include_directories(compatlib
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
-		${CMAKE_SOURCE_DIR}/3rdparty/flic/
+)
+
+target_include_directories(compatlib
+	PRIVATE
+		${flic_lib_SOURCE_DIR}
 )
 
 target_link_libraries(compatlib
