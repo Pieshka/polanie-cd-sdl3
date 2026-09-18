@@ -124,8 +124,8 @@ jobs:
           cd build && \
           export LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" && \
           NO_STRIP=1 ${{ steps.install-linuxdeploy.outputs.linuxdeploy }} \
-            -e polanie \
-            -e polanie-editor2 \
+            -e bin/polanie \
+            -e bin/polanie-editor2 \
             -d packaging/linux/org.polaniecd.Polanie.desktop \
             -i icons/org.polaniecd.Polanie.png \
             --custom-apprun=../packaging/linux/appimage/AppRun \

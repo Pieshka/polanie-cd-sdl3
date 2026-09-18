@@ -73,7 +73,7 @@ install(
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-if(WIN32)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # Install C++ standard library and its dependencies
     get_filename_component(CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
     install(
