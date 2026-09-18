@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <dos.h>
-#include <malloc.h>
+//#include <malloc.h> // [PORT] Remove malloc.h
 #include <graph.h>
 #include <stdlib.h> // [PORT] Add stdlib for exit()
 #include "mouse.h"

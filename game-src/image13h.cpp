@@ -4,7 +4,8 @@
 ////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <conio.h>
-#include <malloc.h>
+//#include <malloc.h> // [PORT] Remove malloc.h
+#include <stdlib.h> // [PORT] Remove malloc.h
 #include <dos.h>
 #include <mem.h>
 #include <string.h>

@@ -136,6 +136,8 @@ void PORT_SDLPumpEvents(int only_pump)
 
 static void init_sdl()
 {
+    SDL_SetAppMetadata("Polanie CD Portable", APP_VERSION_STRING, "org.polaniecd.Polanie");
+
     if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL video subsystem could not initialize! SDL_Error: %s\n", SDL_GetError());

@@ -27,7 +27,6 @@ set(COMPATLIB_HEADERS
 	include/constants.h
 	include/mem.h
 	include/process.h
-	include/malloc.h
 )
 
 add_library(compatlib STATIC

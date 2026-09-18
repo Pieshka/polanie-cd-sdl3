@@ -2,7 +2,7 @@
 //   Modul zawiera funkcje sluzace do obslugi grafiki bitmapowej
 //
 /////////////////////////////////////////////////////////////////////
-#include <malloc.h>
+//#include <malloc.h> // [PORT] Remove malloc.h
 #include <conio.h>
 #include <dos.h>
 #include <stdio.h>

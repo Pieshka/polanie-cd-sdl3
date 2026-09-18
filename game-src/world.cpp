@@ -3,7 +3,7 @@
 //  Modul zawiera procedurey sluzace do generacji i wyswietlania pola bitwy
 //
 ///////////////////////////////////////////////////////////////////////////
-#include <malloc.h>
+//#include <malloc.h> // [PORT] Remove malloc.h
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>

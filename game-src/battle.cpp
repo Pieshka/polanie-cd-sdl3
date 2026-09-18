@@ -7,7 +7,7 @@
 #include <dos.h>
 #include <bios.h>
 #include <string.h>
-#include <malloc.h>
+//#include <malloc.h> // [PORT] Remove malloc.h
 #include "cd.h"
 #include "mover.h"
 #include "mouse.h"
