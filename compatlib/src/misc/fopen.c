@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_platform_defines.h>
+#include <SDL3/SDL_stdinc.h>
 
 const char* get_asset_path(const char* file)
 {
@@ -8,7 +9,23 @@ const char* get_asset_path(const char* file)
     return file;
 #else
     static char buffer[256];
-    sprintf(buffer, "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+    static char upper_file[256];
+
+    snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+
+    if (SDL_GetPathInfo(buffer, nullptr))
+        return buffer;
+
+    SDL_strlcpy(upper_file, file, sizeof(upper_file));
+    SDL_strupr(upper_file);
+
+    snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), upper_file);
+
+    if (SDL_GetPathInfo(buffer, nullptr))
+        return buffer;
+
+    snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+
     return buffer;
 #endif
 }
