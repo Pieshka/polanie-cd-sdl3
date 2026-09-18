@@ -13,7 +13,7 @@ const char* get_asset_path(const char* file)
 
     snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
 
-    if (SDL_GetPathInfo(buffer, nullptr))
+    if (SDL_GetPathInfo(buffer, NULL))
         return buffer;
 
     SDL_strlcpy(upper_file, file, sizeof(upper_file));
@@ -21,7 +21,7 @@ const char* get_asset_path(const char* file)
 
     snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), upper_file);
 
-    if (SDL_GetPathInfo(buffer, nullptr))
+    if (SDL_GetPathInfo(buffer, NULL))
         return buffer;
 
     snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
