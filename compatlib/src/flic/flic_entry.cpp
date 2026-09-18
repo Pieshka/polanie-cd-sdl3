@@ -1,8 +1,11 @@
 #include "playfli.h"
-#include "constants.h"
 #include "flic.h"
 #include "i86.h"
 #include <SDL3/SDL.h>
+extern "C"
+{
+#include "constants.h"
+}
 
 extern "C" const char* get_asset_path(const char* file);
 

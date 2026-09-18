@@ -27,7 +27,7 @@ char FileName[4][12]={{"save.001"},{"save.002"},{"save.003"},{"save.004"}};
 int place[MaxX][MaxY];
 char placeN[MaxX][MaxY];
 int attack[MaxX][MaxY];
-extern int track;
+extern "C" int track; // [PORT] add extern C for compatibility
 char endL;
 int drzewa0;
 int musik=1;
@@ -161,7 +161,7 @@ char  *guzik[3],*lancuch[2];
 
 extern int quit=0;
 extern int level;
-extern int licznik;
+extern "C" int licznik; // [PORT] add extern C for compatibility
 extern char  *picture[MaxPictures],*missiles[6][3][3],*tlo,*Mysz[13];
 extern char  *movers[5][10][3][3],*ramka[4];   //faza:typ:dx:dy
 extern char  *buttons[16];

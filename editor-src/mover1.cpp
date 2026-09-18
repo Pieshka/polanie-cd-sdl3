@@ -65,7 +65,7 @@ extern char placeN[mMaxX][mMaxY];
 extern int placeG[mMaxX][mMaxY];
 extern int Xe[20],Ye[16];  //world
 extern char  *picture[MaxPictures],*missiles[4][3][3],*tlo,*Mysz[13];
-extern char  *movers[5][10][3][3];   //faza:typ:dx:dy
+extern char  *movers[5][13][3][3];   //faza:typ:dx:dy // [PORT] Change [10] to [13] to match external definition
 extern char  *Hit[2],*dead[3];
 extern char  *shadow;
 extern int MaxX;

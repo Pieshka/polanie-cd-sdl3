@@ -1,5 +1,4 @@
 #include <SDL3/SDL.h>
-#include <stdatomic.h>
 
 int licznik = 0;
 
