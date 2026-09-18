@@ -2,17 +2,17 @@
 
 <p align="center"><img src="./packaging/icons/polanie.png" height="200" /></p>
 
-This initiative is a portable version of Polanie (CD version 4.27, Poland) based on the original source code provided by Mirosław Dymek—the original author of Polanie—to the editor of polanie.srv.pl. Our main goal is to transform the codebase to achieve platform independence, thereby improving compatibility across different systems while preserving the spirit of the original game as faithfully as possible.
+This initiative is a portable version of Polanie (CD version 4.27, Poland) based on the original source code provided by Mirosław Dymek - the original author of Polanie - to the editor of polanie.srv.pl. Our main goal is to transform the codebase to achieve platform independence, thereby improving compatibility across different systems while preserving the spirit of the original game as faithfully as possible.
 
 Please note: This project is primarily dedicated to achieving platform independence without interfering with the core gameplay or rewriting the code just for the sake of improvement. Although these are quite worthwhile goals (Polanie multiplayer?), they are not within the scope of this project.
 
 ## Status
 
-| Platform | Status                                                                                                                                                    |
-| - |-----------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| Windows (x86, x64, arm64) | [![CI](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml) | 
-| MacOS (arm64, x64) | [![CI](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml)   |
-| Linux (x64, arm64) | [![CI](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Piehska/polanie-cd-sdl3/actions/workflows/ci.yml)   |
+| Platform | Status                                                                                                                                                      |
+| - |-------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| Windows (x86, x64, arm64) | [![CI](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml) | 
+| MacOS (arm64, x64) | [![CI](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml) |
+| Linux (x64, arm64) | [![CI](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml/badge.svg)](https://github.com/Pieshka/polanie-cd-sdl3/actions/workflows/ci.yml) |
 
 We are actively working to support more platforms. If you have experience with a particular platform, we encourage you to contribute to `polanie-cd-sdl3`.
 
