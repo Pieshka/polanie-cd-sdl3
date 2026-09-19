@@ -331,18 +331,18 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
     static char upper_file[256];
 
     char* prefPath = SDL_GetPrefPath("polaniecd", "polanie");
-    if (SDL_strcasecmp(file, "save") > 0)
+    if (SDL_strcasecmp(p_filename, "save") > 0)
     {
-        sprintf(buffer, "%s/%s", prefPath, file);
+        sprintf(buffer, "%s/%s", prefPath, p_filename);
         return fopen(buffer, mode);
     }
 
-    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
 
     if (SDL_GetPathInfo(buffer, NULL))
         return buffer;
 
-    SDL_strlcpy(upper_file, file, sizeof(upper_file));
+    SDL_strlcpy(upper_file, p_filename, sizeof(upper_file));
     SDL_strupr(upper_file);
 
     SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), upper_file);
@@ -350,7 +350,7 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
     if (SDL_GetPathInfo(buffer, NULL))
         return buffer;
 
-    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), file);
+    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
 
     return buffer;
 #endif
