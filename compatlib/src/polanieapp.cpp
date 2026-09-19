@@ -334,7 +334,7 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
     if (SDL_strcasecmp(p_filename, "save") > 0)
     {
         sprintf(buffer, "%s/%s", prefPath, p_filename);
-        return fopen(buffer, mode);
+        return buffer;
     }
 
     SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
