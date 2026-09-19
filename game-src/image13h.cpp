@@ -571,7 +571,7 @@ SDL_snprintf(ss,sizeof(ss),"%sfont.dat",drive); // [PORT] Replace sprintf with S
 literki=LoadImage13h(ss); //??????????
 if (literki==NULL) return 1;
 PutImage13h(0,0,literki,0);
-free(literki);
+SDL_free(literki); // [PORT] Replace free with SDL_free
 
 x1 = 7; x2 = 11;
 for(i=0;i<33;i++)
@@ -638,7 +638,7 @@ void ClearText13h()
 {
 int i;
 
-for(i=0;i<92;i++) if(index[i]!=NULL) free(index[i]);
+for(i=0;i<92;i++) if(index[i]!=NULL) SDL_free(index[i]); // [PORT] Replace free with SDL_free
 }
 //--------------------------------------------------------
 //             OutTextDelay13h                wypisywanie liter

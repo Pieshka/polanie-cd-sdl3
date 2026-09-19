@@ -99,7 +99,7 @@ char  *buf;
 unsigned int size;
 
 memoryBuf=NULL;
-memoryBuf=(char*)malloc(260000);
+memoryBuf=(char*)SDL_malloc(260000); // [PORT] Replace malloc with SDL_malloc
 
 if(memoryBuf==NULL){FreeMemory();return 1;}
 
@@ -904,7 +904,7 @@ if(Buttons[1]!=NULL)GetImage13h(108,114,219,132,Buttons[1]);
 //------------------------------------------------
 void FreeMemory()
 {
-if(memoryBuf!=NULL){ free(memoryBuf); memoryBuf = NULL; }
+if(memoryBuf!=NULL){ SDL_free(memoryBuf); memoryBuf = NULL; } // [PORT] Replace free with SDL_free
 }
 ////////////////////////////////////////////////////////////////////
 //
