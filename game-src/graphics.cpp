@@ -5,17 +5,18 @@
 /////////////////////////////////////////////////////////////////////
 
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <conio.h>
-#include <dos.h>
-#include <stdio.h>
-#include <string.h> // [PORT] Change case
-#include <stdlib.h>
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <dos.h> // [PORT] Remove dos.h
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <STRING.H> // [PORT] Remove string.h
+//#include <stdlib.h> // [PORT] Remove stdlib.h
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
 //#include "zabezset.h" // [PORT] Remove zabezset.h
-#include "playfli.h"
-#include "cd.h"
+//#include "playfli.h" // [PORT] Remove playfli.h
+//#include "cd.h" // [PORT] Remove cd.h
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 //=======Zmienne ==============================
 
              //  1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27
@@ -1055,7 +1056,7 @@ LoadExtendedPalette(9);
 ShowPicture(9,0);
 ShowPicture(25,100);
 RisePalette(1);
-delay(1500);
+SDL_Delay(1500); // [PORT] Replace delay with SDL_Delay
 /*
 DownPalette(1);
 LoadExtendedPalette(0);
@@ -1082,12 +1083,12 @@ void ShowText(int level,int t)
 
 
 Bar13h(0,0,319,199,0);
-FILE *plik;
+SDL_IOStream *plik; // [PORT] Replace FILE with SDL_IOStream
 char name[40]="levels/level.ini",z,l,line[150],endd=0; // [PORT] Replace \\ with /
 
 
-if(level>25)sprintf(name,"levels/level2.ini"); // [PORT] Replace \\ with /
-else sprintf(name,"levels/level.ini"); // [PORT] Replace \\ with /
+if(level>25)SDL_snprintf(name,sizeof(name),"levels/level2.ini"); // [PORT] Replace \\ with /; Replace sprintf with SDL_snprintf
+else SDL_snprintf(name,sizeof(name),"levels/level.ini"); // [PORT] Replace \\ with /
 
 int kolort=255,kolorb=1,k;
 
@@ -1115,7 +1116,7 @@ if(t==3&&level==15)// wstep do gry
 
 RisePalette(1);
 
-plik=fopen(name,"r");
+plik=SDL_IOFromFile(name,"r"); // [PORT] Replace fopen with SDL_IOFromFile
 if (plik==NULL)return;
 if(level<26)
 {
@@ -1123,7 +1124,7 @@ if(level<26)
 k=0;
 do
            {
-                z=getc(plik);
+                SDL_ReadU8(plik, SDL_reinterpret_cast(Uint8 *,&z));//z=getc(plik); // [PORT] Replace getc with SDL_ReadU8
                 if(z=='$')k++;
                 if(z=='@')return;
            }
@@ -1134,7 +1135,7 @@ else
     k=0;
     do
     {
-        z=getc(plik);
+        SDL_ReadU8(plik, SDL_reinterpret_cast(Uint8 *,&z));//z=getc(plik); // [PORT] Replace getc with SDL_ReadU8
         if(z=='$')k++;
         if(z=='@')return;
     }
@@ -1146,21 +1147,22 @@ k=0;
 mouse.Key=0;
 do
 {
-    CheckCD();
-}while(mouse.GetMsg13h());
+    //CheckCD(); // [PORT] CD Audio is replaced by Sound
+    g_polanie->ProcessEvents(); // [PORT] Instead of ReadMouse13h, we need to process events
+}while(mouse.IsInputReady()); // [PORT] Replace GetMsg13h with IsInputReady
 mouse.Key=0;
 endd=0;
 do
     {
     do
         {
-        z=getc(plik);
+        SDL_ReadU8(plik, SDL_reinterpret_cast(Uint8 *,&z));//z=getc(plik); // [PORT] Replace getc with SDL_ReadU8
         }
     while(z!='!');
     k=0;
     do
         {
-        line[k]=getc(plik);
+        SDL_ReadU8(plik, SDL_reinterpret_cast(Uint8 *,&line[k]));//line[k]=getc(plik);; // [PORT] Replace getc with SDL_ReadU8
         k++;
         }
         while(line[k-1]!='%');
@@ -1168,14 +1170,15 @@ do
     line[k]=0;
     if(k&&line[k-1]!='~')OutTextDelay13h(45,10*l+5,line,kolort,kolorb,30);
     l++;
-        mouse.GetMsg13h();
+    g_polanie->ProcessEvents(); // [PORT] Instead of ReadMouse13h, we need to process events
+        mouse.IsInputReady(); // [PORT] Replace GetMsg13h with IsInputReady
     if(mouse.Key==283)endd=1;  //esc
     if(mouse.Key==27)endd=1;  //esc
     }
 
 while(!endd&&line[k-1]!='~');
 
-if(mouse.Key!=283)do{}while(!mouse.GetMsg13h());
+if(mouse.Key!=283)do{g_polanie->ProcessEvents();}while(!mouse.IsInputReady()); // [PORT] Instead of ReadMouse13h, we need to process events; Replace GetMsg13h with IsInputReady
 
 mouse.Key=0;
 /*
@@ -1216,7 +1219,7 @@ if(!t)  //cel misji
     cel2[k-1]=0;
  }
 */
-fclose(plik);
+SDL_CloseIO(plik); // [PORT] Replace fclose with SDL_CloseIO
 DownPalette(1);
 }
 
@@ -1232,7 +1235,7 @@ int t=LoadToScreen13h(nr,b);
 ///////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 extern char  *rgb;
-
+/* [PORT] Replace ShowPicture2 with SDL friendly implementation
 void ShowPicture2(int nr)
 {
     char PicName[40];
@@ -1244,7 +1247,20 @@ void ShowPicture2(int nr)
     fread(rgb,1,768,f);
     fread(VirtualScreen,1,64000,f);
     fclose(f);
+}*/
+void ShowPicture2(int nr)
+{
+    char PicName[40];
+    SDL_snprintf(PicName, sizeof(PicName), g_polanie->GetFilePath("pic.dat"));
+    SDL_IOStream *f = SDL_IOFromFile(PicName, "rb");
+    DownPalette(1);
+    ClearScreen13h();
+    SDL_SeekIO(f, nr * 64768, SDL_IO_SEEK_SET);
+    SDL_ReadIO(f, rgb, 768);
+    SDL_ReadIO(f, VirtualScreen, 64000);
+    SDL_CloseIO(f);
 }
+// END [PORT] Replace ShowPicture2 with SDL friendly implementation
 ///////////////////////////////////////////////////////////////
 
 void Haslo(char *haslo,char nr)

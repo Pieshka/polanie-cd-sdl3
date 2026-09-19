@@ -4,12 +4,13 @@
 // Mover1
 // Missile
 //////////////////////////////////////////////////////////////////////////
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <conio.h>
+//#include <string.h> // [PORT] Remove string.h
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <stdlib.h> // [PORT] Remove stdlib.h
+//#include <conio.h> // [PORT] Remove conio.h
 #include "mover.h"
 #include "image13h.h"
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -463,8 +464,8 @@ yt=y2;
 target=place[xt][yt];
 dx=x2-x1;
 dy=y2-y1;
-if(abs(dx)-abs(dy)>1)dy=0;
-if(abs(dy)-abs(dx)>1)dx=0;
+if(SDL_abs(dx)-SDL_abs(dy)>1)dy=0; // [PORT] Replace abs with SDL_abs
+if(SDL_abs(dy)-SDL_abs(dx)>1)dx=0; // [PORT] Replace abs with SDL_abs
 if(dx>0)dx=-1;if(dx<0)dx=-1;
 if(dy>0)dy=1;if(dy<0)dy=-1;
 exist=6;
@@ -492,8 +493,8 @@ if(view!=NULL)
     {
     dx=x2-x1;
     dy=y2-y1;
-    max=abs(dx);
-    if(max<abs(dy))max=abs(dy);
+    max=SDL_abs(dx); // [PORT] Replace abs with SDL_abs
+    if(max<SDL_abs(dy))max=SDL_abs(dy); // [PORT] Replace abs with SDL_abs
     max=max<<1;
     if(max<1)max=2;
     dx=(int)(dx<<4)/max;
@@ -605,7 +606,7 @@ void Missile::Move()
                 Mover1* tar=Pointer(target);
                 if(tar!=NULL)
                 {
-                    if(abs(xt-tar->x)<2&&abs(yt-tar->y)<2)
+                    if(SDL_abs(xt-tar->x)<2&&SDL_abs(yt-tar->y)<2) // [PORT] Replace abs with SDL_abs
                     {
                         xt=tar->x;
                         yt=tar->y;
@@ -1573,7 +1574,7 @@ void Mover1::Run1()    // rycerze
                     for(i=1;i<MaxX;i++)
                     for(j=1;j<MaxY;j++)
                     {
-                        xx=abs(x-i);yy=abs(y-j);
+                        xx=SDL_abs(x-i);yy=SDL_abs(y-j); // [PORT] Replace abs with SDL_abs
                         if(xx+yy<18&&yy<14&&xx<14&&!placeN[i][j])placeN[i][j]=1;
                     }
 

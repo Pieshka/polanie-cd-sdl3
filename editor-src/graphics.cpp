@@ -3,15 +3,16 @@
 //
 /////////////////////////////////////////////////////////////////////
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <conio.h>
-#include <dos.h>
-#include <stdio.h>
-#include <string.h> // [PORT] Write string.h lowercase
-#include <stdlib.h>
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <dos.h> // [PORT] Remove dos.h
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <STRING.H> // [PORT] Remove STRING.h
+//#include <stdlib.h> // [PORT] Remove stdlib.h
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
 //#include "zabezset.h" // [PORT] Remove zabezset.h as it is not needed
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 //=======Zmienne ==============================
 int ExpColor[30];
 int Color1 =38;
@@ -79,7 +80,7 @@ unsigned int size;
 int i,typ;
 
 memoryBuf=NULL;
-memoryBuf=(char*)malloc(260000);
+memoryBuf=(char*)SDL_malloc(260000); // [PORT] Replace malloc with SDL_malloc
 
 if(memoryBuf==NULL){FreeMemory();return 1;}
 
@@ -872,7 +873,7 @@ if(Buttons[1]!=NULL)GetImage13h(108,114,219,132,Buttons[1]);
 //------------------------------------------------
 void FreeMemory()
 {
-if(memoryBuf==NULL)free(memoryBuf);
+if(memoryBuf==NULL)SDL_free(memoryBuf); // [PORT] Replace free with SDL_free
 }
 ////////////////////////////////////////////////////////////////////
 //
@@ -1005,7 +1006,7 @@ LoadExtendedPalette(9);
 ShowPicture(9,0);
 ShowPicture(25,100);
 RisePalette(15);
-delay(1500);
+SDL_Delay(1500); // [PORT] Replace delay with SDL_Delay
 /*
 DownPalette(10);
 LoadExtendedPalette(0);
@@ -1026,7 +1027,8 @@ ShowPicture(18,100);
 void ShowText(int level,int t)
 
 {              //t=0 wstep t=1 zwyciestwo t=2 porazka t=3 koniec)
-FILE *plik;
+/* [PORT] Remove unnecessary code
+ * FILE *plik;
 char name[20]="graf/level.ini",z,l,line[150],endd=0; // [PORT] Replace \\ with /
 int kolort=230,kolorb=1,k;
 //odswiez_Polan(generuj_graf(18)+1);
@@ -1113,7 +1115,7 @@ while(!endd&&line[k-1]!='~');
 if(mouse.Key!=283)do{}while(!mouse.GetMsg());
 
 fclose(plik);
-DownPalette(2);
+DownPalette(2);*/
 }
 
 /////////////////////////////////////////////////////////////////

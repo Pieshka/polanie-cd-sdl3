@@ -1,4 +1,0 @@
-#ifndef POLANIE_PROCESS_H
-#define POLANIE_PROCESS_H
-
-#endif //POLANIE_PROCESS_H

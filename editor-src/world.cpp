@@ -4,9 +4,9 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <stdio.h>
-#include <string.h>
-#include <conio.h>
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <string.h> // [PORT] Remove string.h
+//#include <conio.h> // [PORT] Remove conio.h
 #include "mover.h"
 #include "image13h.h"
 int placeG[mMaxX][mMaxY];      // Grafika

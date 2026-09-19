@@ -3,12 +3,13 @@
 //
 /////////////////////////////////////////////////////////////////////
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <conio.h>
-#include <stdlib.h>
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <stdlib.h> // [PORT] Remove stdlib.h
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
 //#include "zabezset.h" // [PORT] Remove zabezset.h
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 /////////////zmienne//////////////////////////
 #define RED 148
 #define YELLOW 233
@@ -47,28 +48,28 @@ void DispatchMapEvent(void)
 int i;
 for(i=0;i<25;i++)
         {
-    if(mouse.MWindow(wsp2[i][0]+5,wsp2[i][1]+5,wsp2[i][0]+30,wsp2[i][1]+25)&&prowintionA[i])
+    if(mouse.IsInBoundary(wsp2[i][0]+5,wsp2[i][1]+5,wsp2[i][0]+30,wsp2[i][1]+25)&&prowintionA[i]) // [PORT] Replace MWindow with IsInBoundary
         {
                      level=i+1;
                      EndMap=1;
                      return;
         }
        }
-if(mouse.MWindow(268,148,317,160))
+if(mouse.IsInBoundary(268,148,317,160)) // [PORT] Replace MWindow with IsInBoundary
     {
         diff=0;
         Rectangle13h(268,148,313,160,201);
         Rectangle13h(268,163,313,175,1);
         Rectangle13h(268,178,313,190,1);
     }
-if(mouse.MWindow(268,163,317,175))
+if(mouse.IsInBoundary(268,163,317,175)) // [PORT] Replace MWindow with IsInBoundary
     {
         diff=1;
         Rectangle13h(268,148,313,160,1);
         Rectangle13h(268,163,313,175,201);
         Rectangle13h(268,178,313,190,1);
     }
-if(mouse.MWindow(272,178,317,190))
+if(mouse.IsInBoundary(272,178,317,190)) // [PORT] Replace MWindow with IsInBoundary
     {
         diff=2;
         Rectangle13h(268,148,313,160,1);
@@ -101,7 +102,7 @@ for(i=0;i<25;i++)
 if(!diff)Rectangle13h(268,148,313,160,201);
 if(diff==1)Rectangle13h(268,163,313,175,201);
 if(diff==2)Rectangle13h(268,178,313,190,201);
-mouse.GMoveCursor(1,1);
+//mouse.GMoveCursor(1,1); // [PORT] Remove moving cursor
 //CenterText13h(10,180,270,199,"W[hle Dein n[chstes Ziel.",1);
 //CenterText13h(11,180,271,199,"W[hle Dein n[chstes Ziel.",255);
 CenterText13h(10,180,270,199,"Wybierz cel nastepnej wyprawy.",1);
@@ -109,9 +110,9 @@ CenterText13h(11,180,271,199,"Wybierz cel nastepnej wyprawy.",255);
 RisePalette(0);
 
 do{
-  mouse.ReadMouse13h();
-  if(mouse.X>300){mouse.X=300;mouse.GMoveCursor(600,mouse.Y);}
-  if(mouse.Y>180){mouse.Y=180;mouse.GMoveCursor(mouse.X*2,180);}
+  //mouse.ReadMouse13h(); // [PORT] We don't need this anymore
+  if(mouse.X>300){mouse.X=300;/*mouse.GMoveCursor(600,mouse.Y);*/} // [PORT] Remove moving cursor
+  if(mouse.Y>180){mouse.Y=180;/*mouse.GMoveCursor(mouse.X*2,180);*/} // [PORT] Remove moving cursor
   mouse.oldX=mouse.X;
   mouse.oldY=mouse.Y;
   GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
@@ -148,14 +149,16 @@ do{
     if(mouse.oldX!=mouse.X||mouse.oldY!=mouse.Y)
     {
         PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
-        if(mouse.X>300){mouse.X=300;mouse.GMoveCursor(600,mouse.Y);}
-        if(mouse.Y>180){mouse.Y=180;mouse.GMoveCursor(mouse.X*2,180);}
+        if(mouse.X>300){mouse.X=300;/*mouse.GMoveCursor(600,mouse.Y);*/} // [PORT] Remove moving cursor
+        if(mouse.Y>180){mouse.Y=180;/*mouse.GMoveCursor(mouse.X*2,180);*/} // [PORT] Remove moving cursor
         mouse.oldX=mouse.X;
         mouse.oldY=mouse.Y;
         GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
         PutImage13h(mouse.X,mouse.Y,buttons[6],1);
     }
-    }while(!mouse.GetMsg13h());
+    g_polanie->ProcessEvents(); // [PORT] Instead of ReadMouse13h, we need to process events
+    }while(!mouse.IsInputReady() && !g_polanie->IsExiting()); // [PORT] Replace GetMsg13h with IsInputReady; Add && !g_polanie->IsExiting() to allow easy game quiting
+    if (g_polanie->IsExiting()) return; // [PORT] Add quick return when g_polanie->IsExiting()
     PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
   DispatchMapEvent();
   }while(!EndMap);
@@ -172,6 +175,6 @@ switch(prowintion[level-1])
   case 2:CenterText13h(10,70,270,90,"Atakujemy Pomorzan",1);
          CenterText13h(11,70,271,90,"Atakujemy Pomorzan",GREEN+1);break;   //zielony
   }                                                                                          //zielony
-delay(1000);
+g_polanie->ProcessEvents();SDL_Delay(1000); // [PORT] Replace delay with SDL_Delay; Add event processing
 EndMap=0;
 }

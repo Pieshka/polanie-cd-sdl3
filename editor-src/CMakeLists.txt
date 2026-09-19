@@ -7,7 +7,6 @@ set(EDITOR_SOURCES
         graphics.cpp
         image13h.cpp
         main.cpp
-        mouse.cpp
         mover1.cpp
         world.cpp
 )

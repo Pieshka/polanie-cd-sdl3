@@ -1,4 +1,0 @@
-#ifndef POLANIE_BIOS_H
-#define POLANIE_BIOS_H
-
-#endif //POLANIE_BIOS_H

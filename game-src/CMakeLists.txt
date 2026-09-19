@@ -6,10 +6,8 @@ set(GAME_SOURCES
 		battle.cpp
 		graphics.cpp
 		image13h.cpp
-		ladowani.cpp
 		main.cpp
 		mapa.cpp
-		mouse.cpp
 		mover1.cpp
 		world.cpp
 )
