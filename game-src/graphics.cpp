@@ -450,7 +450,7 @@ for(x=1;x<13;x++)// 1-3
     {
         Close13h();
         cprintf("ERROR 3. Bitmap allocation failed.Mouse.");
-        exit(0);
+        return; // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
     }
 }
 
@@ -460,7 +460,7 @@ for(x=0;x<14;x++)
  {
  if(buttons[x]!=NULL)
         GetImage13h(11+x*16,22,27+x*16,22+14,buttons[x]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  }
 
 
@@ -470,42 +470,42 @@ for(x=0;x<2;x++)
  {
  if(tree[0+x*7]!=NULL)
         GetImage13h(235,22+x*56,235+16,36+x*56,tree[0+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[1+x*7]!=NULL)
         GetImage13h(235+16,22+x*56,235+32,36+x*56,tree[1+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[2+x*7]!=NULL)
         GetImage13h(235,36+x*56,235+16,50+x*56,tree[2+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[3+x*7]!=NULL)
         GetImage13h(235+16,36+x*56,235+32,50+x*56,tree[3+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[4+x*7]!=NULL)
         GetImage13h(235,50+x*56,235+16,64+x*56,tree[4+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[5+x*7]!=NULL)
         GetImage13h(235+16,50+x*56,235+32,64+x*56,tree[5+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  if(tree[6+x*7]!=NULL)
         GetImage13h(235+16,64+x*56,235+32,78+x*56,tree[6+x*7]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - tree (%d).",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  }
 
 
 if(buttons[14]!=NULL)
         GetImage13h(235+16,8,235+32,8+14,buttons[14]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (14).");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (14).");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 if(buttons[15]!=NULL)
         GetImage13h(235,8,235+16,8+14,buttons[15]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (15).");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - buttons (15).");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // Hit
 
 if(Hit[0]!=NULL)GetImage13h(11+12*16,8,27+12*16,21,Hit[0]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Hit 0");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Hit 0");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(Hit[1]!=NULL)GetImage13h(11+13*16,8,27+13*16,21,Hit[1]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Hit 1");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Hit 1");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 
 //dead - zwloki
@@ -513,7 +513,7 @@ for(x=0; x<3; x++)          // dead[typ]
   {
   if(dead[x]!=NULL)
               GetImage13h(11+13*16,8+(3+x)*14,27+13*16,8+(4+x)*14,dead[x]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - dead%d.",x);exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - dead%d.",x);return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
   }
 //*/
 
@@ -522,109 +522,109 @@ for(x=0; x<3; x++)          // dead[typ]
 for(x=0;x<3;x++)
  {
  if(picture[x+22]!=NULL)GetImage13h(235,134+(x*19),257,152+(x*19),picture[x+22]);
-      else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Dry Earth.");exit(0);}
+      else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Dry Earth.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  }
 // trawa  [0-8]
 for(x=0;x<3;x++)
   if(picture[x]!=NULL)GetImage13h(11+16*x,36,27+16*x,50,picture[x]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Grass.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Grass.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // gadgety   [54-64]
 for(x=3;x<14;x++)
   if(picture[x+54-3]!=NULL)
         GetImage13h(11+16*x,36,27+16*x,50,picture[x+54-3]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 // gadgety [65-67]
 for(x=0;x<3;x++)
   if(picture[x+65]!=NULL)
         GetImage13h(11+16*(x+11),8+140,27+16*(x+11),22+140,picture[x+65]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // gadgety [68-73]
 for(x=0;x<6;x++)
   if(picture[x+68]!=NULL)
         GetImage13h(11+16*(x+8),8+154,27+16*(x+8),22+154,picture[x+68]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - gadgets.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // water
 for(x=0;x<13;x++)
   if(picture[x+74]!=NULL)
         GetImage13h(11+16*x,50,27+16*x,64,picture[x+74]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 for(x=0;x<13;x++)
   if(picture[x+87]!=NULL)
         GetImage13h(11+16*x,64,27+16*x,78,picture[x+87]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 for(x=0;x<13;x++)
   if(picture[x+100]!=NULL)
         GetImage13h(11+16*x,78,27+16*x,92,picture[x+100]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - water.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // rocks
 for(x=0;x<13;x++)
   if(picture[x+9]!=NULL)
         GetImage13h(11+16*x,92,27+16*x,106,picture[x+9]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - rocks.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - rocks.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 
 // road  [31-34]
 for(x=3;x<13;x++)
   if(picture[x+22]!=NULL)
         GetImage13h(11+16*(x),8+126,27+16*(x),8+140,picture[x+22]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed -  road.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed -  road.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 //   [35-45]
 for(x=0;x<11;x++)
   if(picture[x+35]!=NULL)
         GetImage13h(11+16*x,8+140,27+16*x,8+154,picture[x+35]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed -  road.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed -  road.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 
 // bridge  [46-53]
 for(x=0;x<8;x++)
   if(picture[x+46]!=NULL)
         GetImage13h(11+16*x,8+154,27+16*x,8+168,picture[x+46]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - bridge.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - bridge.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // trees [113-119] dograc sprawe wielkosci drzew
 for(x=0;x<7;x++)
  {
  if(picture[x+113]!=NULL)
         GetImage13h(11+32*x,8+(8*14),43+32*x,8+(9*14),picture[x+113]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - trees.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - trees.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  }
 for(x=0;x<7;x++)
  {
  if(picture[x+120]!=NULL)
         GetImage13h(11+32*x,8+(7*14),43+32*x,8+(8*14),picture[x+120]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - trees.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - trees.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
  }
 
 // fire
 for(x=0;x<14;x++)
   if(fire[x]!=NULL)
         GetImage13h(11+16*x,8+168,27+16*x,8+168+14,fire[x]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - fire.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - fire.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 
 // ramka
 if(ramka[0]!=NULL)GetImage13h(0,0,11,197,ramka[0]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 0");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 0");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(ramka[1]!=NULL)GetImage13h(0,0,268,8,ramka[1]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 1");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 1");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(ramka[2]!=NULL)GetImage13h(267,0,274,199,ramka[2]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 2");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 2");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(ramka[3]!=NULL)GetImage13h(0,190,268,200,ramka[3]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 3");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Frame 3");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 //drewno
 if(drewno[0]!=NULL)GetImage13h(272,7,276,28,drewno[0]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(drewno[1]!=NULL)GetImage13h(278,7,310,28,drewno[1]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 if(drewno[2]!=NULL)GetImage13h(299,9,314,150,drewno[2]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wood 0");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 //przyciski
 if(Buttons[2]!=NULL)GetImage13h(274,38,292,54,Buttons[2]);
@@ -647,23 +647,23 @@ for(ii=0;ii<63999;ii++)if(RealVirtualScreen[ii]==1)RealVirtualScreen[ii]=0;
 for(x=0;x<6;x++)
   if(picture[x+3]!=NULL)
         GetImage13h(303,(2+x)*14,319,(3+x)*14,picture[x+3]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Grass.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Grass.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 // tarcza
 for(x=0;x<4;x++)
   if(picture[x+278]!=NULL)
         GetImage13h(303,(8+x)*14,319,(9+x)*14,picture[x+278]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Shield.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Shield.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 // leczenie
 for(x=0;x<2;x++)
   if(picture[x+282]!=NULL)
         GetImage13h(303,(x)*14,319,(1+x)*14,picture[x+282]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Heald.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Heald.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 // palisada
 for(x=0;x<12;x++)
   if(picture[x+266]!=NULL)
         GetImage13h(303-16,(x)*14,319-16,(x+1)*14,picture[x+266]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wall.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed. Wall.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 //  postacie   krowa-babcia
 for(typ=0;typ<4;typ++)         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 for(faza=0;faza<5;faza++)
@@ -674,7 +674,7 @@ for(y=0;y<3;y++)          // movers [faza][typ][x][y]
   {
    if(movers[faza][typ][x][y]!=NULL)
    GetImage13h(x*16+(faza*32),y*14+(typ*42),16+x*16+(faza*32),14+y*14+(typ*42),movers[faza][typ][x][y]);
-  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cow - girl.");exit(0);}
+  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cow - girl.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
   }
  }
  //walka - topornik
@@ -759,7 +759,7 @@ for(y=0;y<3;y++)          // movers [faza][typ][x][y]
   {
    if(movers[faza][typ+4][x][y]!=NULL)
    GetImage13h(x*16+(faza*32),y*14+(typ*42),16+x*16+(faza*32),14+y*14+(typ*42),movers[faza][typ+4][x][y]);
-  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cleric - hero.");exit(0);}
+  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cleric - hero.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
   }
  }
@@ -786,7 +786,7 @@ for(typ=0;typ<4;typ++)         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 if(shadow!=NULL)
    GetImage13h(6*32,12*14,6*32+32,12*14+28,shadow);
-  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - Shadow.");exit(0);}
+  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - Shadow.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
 //    pociski
 for(typ=0;typ<4;typ++)
@@ -795,7 +795,7 @@ for(y=0;y<3;y++)          // missiles [typ][x][y]
   {
   if(missiles[typ][x][y]!=NULL)
         GetImage13h((15+x)*16,y*14+(typ*42),(16+x)*16,14+y*14+(typ*42),missiles[typ][x][y]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - missiles.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - missiles.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
   }
 for(typ=0;typ<2;typ++)
 for(x=0;x<2;x++)         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -803,7 +803,7 @@ for(y=0;y<3;y++)          // missiles [typ][x][y]
   {
   if(missiles[typ+4][x][y]!=NULL)
         GetImage13h((17+x)*16,y*14+(typ*42),(18+x)*16,14+y*14+(typ*42),missiles[typ+4][x][y]);
-        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - missiles.");exit(0);}
+        else {Close13h();cprintf("ERROR 3. Bitmap allocation failed - missiles.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
   }
 
 //////////// tlo 4 ///////////////////////////////////////////////
@@ -827,7 +827,7 @@ for(y=0;y<3;y++)          // movers [faza][typ][x][y]
   {
    if(movers[faza][typ+8][x][y]!=NULL)
    GetImage13h(x*16+(faza*32),y*14+(typ*42),16+x*16+(faza*32),14+y*14+(typ*42),movers[faza][typ+8][x][y]);
-  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cleric - hero.");exit(0);}
+  else {Close13h();cprintf("ERROR 3. Bitmap allocation failed: cleric - hero.");return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
   }
  }
  //walka

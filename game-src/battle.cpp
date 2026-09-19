@@ -1693,13 +1693,13 @@ if(!type)
     if(level<26)
     {
         plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"r"); // [PORT] Replace fopen with SDL_IOFromFile
-        if (plikPlansz==NULL){Close13h();exit(0);}
+        if (plikPlansz==NULL){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
         do
         {
             SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
             if(z=='$')k++;
-            if(z=='@'){Close13h();exit(0);}
+            if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
         }
         while(k!=level);
         for(j=0;j<MaxY;j++)
@@ -1707,7 +1707,7 @@ if(!type)
             do
             {
                 SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
-                if(z=='@'){Close13h();exit(0);}
+                if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                 if(z=='D'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.decisionType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                 if(z=='E'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.endType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                 if(z=='G')pl.gen=1;
@@ -1741,7 +1741,7 @@ if(!type)
                 if(z=='@')
                 {
                     Close13h();
-                    exit(0);
+                    return; // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                 }
                 place[i][j]=0;
                 if(i==0||i==MaxX-1||j==0||j==MaxY-1)place[i][j]=10;
@@ -2178,7 +2178,7 @@ if(!type)
     {
         Close13h();
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Sorry bracie ale nie znalazlem pliku %s.",name); // [PORT] Replace printf with SDL_LogError
-        exit(0);
+        return; // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
     }
     //OutText13h(50,15,"Czytam nagl%wek",255);
     SDL_SeekIO(plikPlansz,MaxX*MaxY*4,SDL_IO_SEEK_SET); // [PORT] Replace fseek with SDL_SeekIO

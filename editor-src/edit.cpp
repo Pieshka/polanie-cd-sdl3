@@ -609,13 +609,13 @@ for(i=0;i<MaxX;i++)place[i][j]=0;
 SDL_strlcpy(name,"graf/level.dat",sizeof(name)); // [PORT] Replace \\ with /; Replace strcpy with SDL_strlcpy
 ScreenX=10;ScreenY=10;
 plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"r"); // [PORT] Replace fopen with SDL_IOFromFile
-if (plikPlansz==NULL){Close13h();exit(0);}
+if (plikPlansz==NULL){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
         {
         do
            {
                 SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
                 if(z=='$')k++;
-                if(z=='@'){Close13h();exit(0);}
+                if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
            }
         while(k!=level);
         for(j=0;j<MaxY;j++)
@@ -623,7 +623,7 @@ if (plikPlansz==NULL){Close13h();exit(0);}
                 do
                   {
                         SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
-                        if(z=='@'){Close13h();exit(0);}
+                        if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                         if(z=='D'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.decisionType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                         if(z=='E'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.endType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                         if(z=='G')pl.gen=1;
@@ -649,7 +649,7 @@ if (plikPlansz==NULL){Close13h();exit(0);}
                 if(pl.endType==4&&!p1)p1=1;
                 for(i=0;i<MaxX;i++){
                                          SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
-                                         if(z=='@'){Close13h();exit(0);}
+                                         if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                                          place[i][j]=0;
                                          if(i==0||i==MaxX-1||j==0||j==MaxY-1)place[i][j]=10;
                                          i=8;
