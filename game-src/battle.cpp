@@ -163,7 +163,7 @@ char  *guzik[3],*lancuch[2];
 
 extern int quit=0;
 extern int level;
-extern "C" int licznik; // [PORT] add extern C for compatibility
+extern int licznik;
 extern char  *picture[MaxPictures],*missiles[6][3][3],*tlo,*Mysz[13];
 extern char  *movers[5][10][3][3],*ramka[4];   //faza:typ:dx:dy
 extern char  *buttons[16];

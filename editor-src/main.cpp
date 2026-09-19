@@ -18,7 +18,7 @@
 
 //========zmienne=====================
 
-PolanieApp *g_polanie; int EndMap; // [PORT] Add g_polanie global and EndMap
+PolanieApp *g_polanie; char EndMap; // [PORT] Add g_polanie global and EndMap
 int   endGame=0;
 int   level=26;
 char  *picture[MaxPictures],*missiles[4][3][3],*tlo,*Mysz[13];
@@ -70,7 +70,7 @@ extern int FreePaternMemory();
 ///////////////////////////////////////////////////////////////////////////
 int main() // [PORT] main must return int
 {
-g_polanie = new PolanieApp; g_polanie->Init(1); // [PORT] Create PolanieApp and initialize
+g_polanie = new PolanieApp; if (!g_polanie->Init(0)) return 1; // [PORT] Create PolanieApp and initialize
 if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 586kB RAM\n"); return 1;} // [PORT] main must return int
 //Init13h(); // [PORT] Unnecessary
 //BlackPalette(); // [PORT] Unnecessary

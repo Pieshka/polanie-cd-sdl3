@@ -69,7 +69,7 @@ int IsFile(char*);
 int show;
 int main() // [PORT] Main must return int
 {
-g_polanie = new PolanieApp(); g_polanie->Init(0); SND.Init(); // [PORT] Add PolanieApp
+g_polanie = new PolanieApp(); if (!g_polanie->Init(0)) return 1; SND.Init(); // [PORT] Add PolanieApp
 if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 4MB RAM\n"); return 1;} // [PORT] Main must return int
 //_clearscreen(_GCLEARSCREEN); // [PORT] Remove conio remnants
 //_setbkcolor(4); // [PORT] Remove conio remnants

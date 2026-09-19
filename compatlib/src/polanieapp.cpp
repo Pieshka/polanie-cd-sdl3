@@ -6,7 +6,7 @@
 int licznik = 0; // For battle.cpp
 extern int quitLevel; // From battle.cpp
 extern int endGame; // From main.cpp
-extern int EndMap; // From mapa.cpp
+extern char EndMap; // From mapa.cpp
 extern const char* g_files[35];
 
 PolanieApp::PolanieApp()
@@ -269,7 +269,7 @@ void PolanieApp::PlayFlic(const char *filename)
 
     flic::StdioFileInterface file(f);
     flic::Decoder decoder(&file);
-    flic::Header header = {.frames = 0,.width = 0,.height = 0,.speed = 0};
+    flic::Header header = {};
 
     if (!decoder.readHeader(header))
         return;

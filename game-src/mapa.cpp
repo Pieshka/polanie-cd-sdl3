@@ -37,7 +37,7 @@ extern int level,diff;
 extern char prowintion[25];
 extern char prowintionA[25];
 extern char placeN[MaxX][MaxY];
-extern "C" int licznik; // [PORT] add extern C for compatibility
+extern int licznik;
 extern char *Mysz[13],*buttons[16];
 ////////////funkcje//////////////////////////////
 void NextConquest(void);
