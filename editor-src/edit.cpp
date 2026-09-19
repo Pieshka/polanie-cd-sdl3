@@ -107,7 +107,7 @@ int ScreenX=3,ScreenY=1;
 //=========== Zmienne extern ===========
 
 extern int level;
-extern "C" int licznik; // [PORT] Port licznik from the game
+extern int licznik; // [PORT] Port licznik from the game
 extern char  *tree[14];
 extern char  *picture[MaxPictures],*missiles[4][3][3],*tlo,*Mysz[13];
 extern char  *movers[5][13][3][3],*ramka[4];   //faza:typ:dx:dy
