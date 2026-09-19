@@ -1,19 +1,21 @@
 #include "shar.h"
 //#define bez_zegara
 // to wyciac jak tylko zalozymy obsluge zegara zwiekszajaca licznik
-#include <stdlib.h>
-#include <stdio.h>
-#include <conio.h>
-#include <dos.h>
-#include <bios.h>
-#include <string.h>
+//#include <stdlib.h> // [PORT] Remove stdlib.h
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <dos.h> // [PORT] Remove dos.h
+//#include <bios.h> // [PORT] Remove bios.h
+//#include <string.h> // [PORT] Remove string.h
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include "cd.h"
+//#include "cd.h" // [PORT] Remove cd.h
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
-#include "menegdma.h"
+//#include "menegdma.h" // [PORT] Remove menegdma.h
 //#include "zabezset.h" // [PORT] Remove zabezset.h
+#include "polanieapp.h" // [PORT] Add polanieapp.h
+#include "sound.h" // [PORT] Add sound.h
 
 //#define POMOC
 
@@ -27,7 +29,7 @@ char FileName[4][12]={{"save.001"},{"save.002"},{"save.003"},{"save.004"}};
 int place[MaxX][MaxY];
 char placeN[MaxX][MaxY];
 int attack[MaxX][MaxY];
-extern "C" int track; // [PORT] add extern C for compatibility
+//extern int track; // [PORT] Remove track
 char endL;
 int drzewa0;
 int musik=1;
@@ -161,7 +163,7 @@ char  *guzik[3],*lancuch[2];
 
 extern int quit=0;
 extern int level;
-extern "C" int licznik; // [PORT] add extern C for compatibility
+extern int licznik;
 extern char  *picture[MaxPictures],*missiles[6][3][3],*tlo,*Mysz[13];
 extern char  *movers[5][10][3][3],*ramka[4];   //faza:typ:dx:dy
 extern char  *buttons[16];
@@ -173,7 +175,8 @@ extern int placeG[MaxX][MaxY];
 //////////////
 int MVol;
 /////////////
-extern class MENEGERDMA SND;
+//extern class MENEGERDMA SND; // [Port] Replace MENEGERDMA with Sound
+extern class Sound SND; // [Port] Replace MENEGERDMA with Sound
 //===========Obiekty=================================
 
 class Mover1 *selectM;
@@ -246,11 +249,11 @@ do
 licznik2=0;
 if(type<2)
     {
-    PlayTrack(TRACK_TXT);
+    SND.PlayTrack(TRACK_TXT); // [PORT] Play tracks in now in SND
     ShowText(level,0);
     } else DownPalette(2);
 
-StopPlaying();
+SND.StopTrack(); // [PORT] Replace StopPlaying with SND.StopTrack
 kody=0;
 if(type<2)
 {
@@ -269,7 +272,7 @@ ShowPanel(0,0,0,0,0);
 if(Map)PressButton(16,2);else PressButton(16,3);
 PutImage13h(275,139,buttons[7],0);
 
-PlayTrack(Track[level-1]);
+SND.PlayTrack(Track[level-1]); // [PORT] Play tracks in now in SND
 quitLevel=0;    //   screen=1
 selectM=&castle[master].m[1];
 select.co=1;
@@ -311,7 +314,7 @@ do
             }
             if(pl.gen)Generator();
             decisionFaza=0;
-            CheckCD();
+            //CheckCD(); // [PORT] CD Audio is replaced with Sound
         }
         if(grupa==1&&Cmd[0].co==1)Cmd[0].co=3;
         castle[0].SetCmd(&Cmd[0]);
@@ -383,7 +386,7 @@ do
         if(Msg.dzwiek)
         {
             if(Msg.dzwiek<0)Msg.dzwiek=0;
-            if(!SND.jest_odtwarzany)//1996.06.29
+            if(!SND.IsPlaying())//1996.06.29 // [PORT] jest_odtwarzany is replaced with IsPlaying
             {
                 if(Msg.X<ScreenX+22&&Msg.Y<ScreenY+18&&Msg.X>ScreenX-5&&Msg.Y>ScreenY-4)
                 if(dzwiek&&Msg.dzwiek<26)SND(Msg.dzwiek-1);
@@ -405,9 +408,9 @@ do
             if(!Map&&MapY)MapY--;
             if(!zaznaczanie)Scroll();
             ShowSelected();
-            i=mouse.GetMsg13h();
-            ile0=mouse.Ile(0);
-            ile1=mouse.Ile(1);
+            g_polanie->ProcessEvents();i=mouse.IsInputReady(); // [PORT] We need to process events; Replace GetMsg13h with IsInputReady
+            ile0=mouse.ClickCount(0); // [PORT] Replace Ile with ClickCount
+            ile1=mouse.ClickCount(1); // [PORT] Replace Ile with ClickCount
             if(i||ile0||ile1)DispatchEvent();
             if(zaznaczanie&&!mouse.Button)
             {
@@ -431,15 +434,16 @@ do
         if(pl.ide)pl.ide--;
         if(Msg.licznik)Msg.licznik--;
         if(decisionFaza==2&&!quitLevel)endL=EndLevel();
-    }while(!quitLevel&&!endL);
+    }while(!quitLevel&&!endL&&!g_polanie->IsExiting()); // [PORT] Add g_polanie->IsExiting()
 
-}while(!quitLevel&&!endL);
+}while(!quitLevel&&!endL&&!g_polanie->IsExiting()); // [PORT] Add g_polanie->IsExiting()
+if (g_polanie->IsExiting()) return; // [PORT] Add quick return when g_polanie->IsExiting()
 castle[0].FreeUnits();
 castle[1].FreeUnits();
 SetScreen(0);
 if(endL==1)
 {
-    PlayTrack(TRACK_VICTORY);
+    SND.PlayTrack(TRACK_VICTORY); // [PORT] Play tracks in now in SND
     ShowText(level,1);
     if(level<26)
     {
@@ -470,7 +474,7 @@ if(endL==1)
 
 if(endL==2)
 {
-    PlayTrack(TRACK_DEFEAT);
+    SND.PlayTrack(TRACK_DEFEAT); // [PORT] Play tracks in now in SND
     ShowText(level,2);
     if(level==15||level>25)
     {}
@@ -478,7 +482,7 @@ if(endL==2)
 }
 if(quitLevel==2)
 {
-          PlayTrack(TRACK_VICTORY);
+          SND.PlayTrack(TRACK_VICTORY); // [PORT] Play tracks in now in SND
           ShowText(2,3);
           ShowText(3,3);
           ShowText(4,3);
@@ -486,7 +490,7 @@ if(quitLevel==2)
           quitLevel=1;
 }  //zakonczenie gry
 }while(!quitLevel);
-PlayTrack(TRACK_MENU);
+SND.PlayTrack(TRACK_MENU); // [PORT] Play tracks in now in SND
 };
 //============koniec procedury Battle===================
 
@@ -725,7 +729,7 @@ if(select.IFF>=2)if(place[x][y]>255&&place[x][y]<768)M=5;//zaznacz
 
 int k=mouse.Button;
 mouse.Button=1;
-if(mouse.MWindow(11,8,76,74)&&Map&&mouseCommand<2) // na mapie
+if(mouse.IsInBoundary(11,8,76,74)&&Map&&mouseCommand<2) // na mapie // [PORT] Replace MWindow with IsInBoundary
 {
     x=mouse.X-12;
     y=mouse.Y-9;
@@ -847,7 +851,7 @@ else
                 if(M==1){a=2;b=2;}
                 GetImage13h(mouse.X-a,mouse.Y-b,mouse.X-a+16,mouse.Y-b+14,Mysz[0]);
                 mouse.Button=1;
-                if(mouseCommand>1 && mouse.MWindow(11,8,267,190))
+                if(mouseCommand>1 && mouse.IsInBoundary(11,8,267,190)) // [PORT] Replace MWindow with IsInBoundary
                 {
                 }
                 else
@@ -1018,7 +1022,7 @@ if(kody)
     }
 
 }
-if(mouse.MWindow(12,9,76,74)&&Map&&mouse.Button==1&&!zaznaczanie&&(mouseCommand<2))
+if(mouse.IsInBoundary(12,9,76,74)&&Map&&mouse.Button==1&&!zaznaczanie&&(mouseCommand<2)) // [PORT] Replace MWindow with IsInBoundary
                     {
                         ScreenX=mouse.X-12-7;
                         ScreenY=mouse.Y-9-8;
@@ -1044,7 +1048,7 @@ if(mouse.Button==1&&!ile0&&zaznaczanie)
         return;
 }
 
-if(mouse.Button==1&&ile0&&!zaznaczanie&&mouse.MWindow(14,10,260,187)&&mouseCommand==1)
+if(mouse.Button==1&&ile0&&!zaznaczanie&&mouse.IsInBoundary(14,10,260,187)&&mouseCommand==1) // [PORT] Replace MWindow with IsInBoundary
     {
      //   if(Map&&mouse.MWindow(11,8,76,74)){}
      //            else
@@ -1069,7 +1073,7 @@ if(mouse.Key=='=')//=
         }
 */
 // Skrolling
-if(mouse.MWindow(0,0,10,200)||mouse.Key==75)
+if(mouse.IsInBoundary(0,0,10,200)||mouse.Key==75) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenX--;
         if(mouse.Key)ScreenX--;
@@ -1079,7 +1083,7 @@ if(mouse.MWindow(0,0,10,200)||mouse.Key==75)
         RefreshScreen();
         return;
         }
-if(mouse.MWindow(310,0,320,200)||mouse.Key==77)
+if(mouse.IsInBoundary(310,0,320,200)||mouse.Key==77) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenX++;
         if(mouse.Key)ScreenX++;
@@ -1089,7 +1093,7 @@ if(mouse.MWindow(310,0,320,200)||mouse.Key==77)
         RefreshScreen();
         return;
         }
-if(mouse.MWindow(77,0,320,8)||mouse.Key==72)
+if(mouse.IsInBoundary(77,0,320,8)||mouse.Key==72) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenY--;
         if(mouse.Key)ScreenY--;
@@ -1099,7 +1103,7 @@ if(mouse.MWindow(77,0,320,8)||mouse.Key==72)
         RefreshScreen();
         return;
         }
-if(mouse.MWindow(0,192,320,200)||mouse.Key==80)
+if(mouse.IsInBoundary(0,192,320,200)||mouse.Key==80) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenY++;
         if(mouse.Key)ScreenY++;
@@ -1110,12 +1114,12 @@ if(mouse.MWindow(0,192,320,200)||mouse.Key==80)
         return;
         }
 
-if(mouse.MWindow(268,174,305,195))// -------------- SubMenu ----------------
+if(mouse.IsInBoundary(268,174,305,195))// -------------- SubMenu ---------------- // [PORT] Replace MWindow with IsInBoundary
     {
         SubMenu();
         decisionFaza=3;
         if(quitLevel)return;
-        PlayTrack(Track[level-1]);
+        SND.PlayTrack(Track[level-1]); // [PORT] PlayTrack is now in SND
         DownPalette(1);
         LoadExtendedPalette(3);  //<<<<<<<<<<<<<<<<<<< zmienic
         ShowSelected();
@@ -1127,7 +1131,7 @@ if(mouse.MWindow(268,174,305,195))// -------------- SubMenu ----------------
         RefreshScreen();
         return;
     }
-if(mouse.MWindow(268,154,305,175)/*mouse.Key==12909*/)
+if(mouse.IsInBoundary(268,154,305,175)/*mouse.Key==12909*/) // [PORT] Replace MWindow with IsInBoundary
         {
         Options();
         DownPalette(1);
@@ -1146,7 +1150,7 @@ if((ile1&&mouse.Button==2&&mouse.MWindow(274,140,295,155)))    //cel misji
     return;
         }
 */
-if(mouse.Key=='m'||(ile0&&mouse.MWindow(274,140,295,155)))    //m mapa
+if(mouse.Key=='m'||(ile0&&mouse.IsInBoundary(274,140,295,155)))    //m mapa // [PORT] Replace MWindow with IsInBoundary
         {
         if(Map){Map=0;
             PressButton(16,3);//274,138
@@ -1273,7 +1277,7 @@ mouse.Key=='^'||mouse.Key=='&'||mouse.Key=='*'||mouse.Key=='('||mouse.Key==')')
 if(select.co&&select.IFF==master&&((ile0&&mouse.Button==1)||mouse.Key))  // postac i nasza
 {
 
-if((mouse.Key==8051)||mouse.MWindow(274,20,295,35))
+if((mouse.Key==8051)||mouse.IsInBoundary(274,20,295,35)) // [PORT] Replace MWindow with IsInBoundary
 { // stop tu stoj     s
         if(!selectM->type)return;
         Cmd[master].co=1;
@@ -1281,9 +1285,9 @@ if((mouse.Key==8051)||mouse.MWindow(274,20,295,35))
         Cmd[master].nrb=select.nrb;
         Cmd[master].nrm=select.nrm;
         //strcpy(Msg.msg,"Stehe !");
-        strcpy(Msg.msg,"Stoj$ !");
-        if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-        if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+        SDL_strlcpy(Msg.msg,"Stoj$ !", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+        if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+        if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
         Msg.licznik=20;
         /////////////////
         int kk=34+selectM->type*11;
@@ -1291,14 +1295,14 @@ if((mouse.Key==8051)||mouse.MWindow(274,20,295,35))
         {
               kk=177;
 
-              strcpy(Msg.msg,"Stoimy !");
-              if(selectM->type>7){kk=0;strcpy(Msg.msg," ");}
+              SDL_strlcpy(Msg.msg,"Stoimy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+              if(selectM->type>7){kk=0;SDL_strlcpy(Msg.msg," ",sizeof(Msg.msg));} // [PORT] Replace strcpy with SDL_strlcpy
         }
         Msg.X=ScreenX;Msg.Y=ScreenY;
         if(Msg.dzwiek<kk){Msg.dzwiek=kk;}
         return;
 }
-if((ile0&&mouse.MWindow(274,60,295,75))||(mouse.Key=='c')) //c =11875
+if((ile0&&mouse.IsInBoundary(274,60,295,75))||(mouse.Key=='c')) //c =11875 // [PORT] Replace MWindow with IsInBoundary
 {
         if((selectM->type==3||selectM->type==4)&&selectM->magic>79)//kaplan,kaplanka - deszcz ognia
         {
@@ -1308,7 +1312,7 @@ if((ile0&&mouse.MWindow(274,60,295,75))||(mouse.Key=='c')) //c =11875
         }
         return;
 }
-if((ile0&&mouse.MWindow(274,80,295,95))||(mouse.Key==' '))
+if((ile0&&mouse.IsInBoundary(274,80,295,95))||(mouse.Key==' ')) // [PORT] Replace MWindow with IsInBoundary
 {
         if(selectM->type==3||selectM->type==4)//druidka - tarcza /kaplan widzenie
         {
@@ -1318,7 +1322,7 @@ if((ile0&&mouse.MWindow(274,80,295,95))||(mouse.Key==' '))
               Cmd[master].command=9;
               Cmd[master].nrb=select.nrb;
               Cmd[master].nrm=select.nrm;
-              if(selectM->type==3)strcpy(Msg.msg,"");else strcpy(Msg.msg," ");
+              if(selectM->type==3)SDL_strlcpy(Msg.msg,"",sizeof(Msg.msg));else SDL_strlcpy(Msg.msg," ",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
               Msg.licznik=20;
               return;
         }
@@ -1335,7 +1339,7 @@ if(!select.co&&select.IFF==master&&ile0&&mouse.Button==1)
      }
      else
      for(i=0;i<6;i++)  // produkcja postaci  i budynkow
-            if(mouse.MWindow(274,20+i*20,290,35+i*20))
+            if(mouse.IsInBoundary(274,20+i*20,290,35+i*20)) // [PORT] Replace MWindow with IsInBoundary
             {
                 mouseCounter=0;
                 if(castle[0].milk<50+200*(6-i)){return;}
@@ -1360,12 +1364,12 @@ if(!select.co&&select.IFF==master&&ile0&&mouse.Button==1)
 
 x=(int)((mouse.X-11)>>4)+ScreenX;
 y=(int)(mouse.Y-8)/14+ScreenY;
-if(mouse.MWindow(11,8,76,74)&&Map&&mouseMode) // na mapie
+if(mouse.IsInBoundary(11,8,76,74)&&Map&&mouseMode) // na mapie // [PORT] Replace MWindow with IsInBoundary
 {
     x=mouse.X-12;
     y=mouse.Y-9;
 }
-if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,190)))
+if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,266,190))) // [PORT] Replace MWindow with IsInBoundary
         {
         if(!select.IFF&&select.co&&mouseMode&&mouse.Button==2)//zolnierz  nasz
             {
@@ -1395,7 +1399,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                 if(!place[x][y]||!placeN[x][y])mouseCommand=10;//idz
                 if((selectM->type==1)&&(select.co==1)&&(placeG[x][y]==277||place[x][y]==2||(place[x][y]>255&&place[x][y]<511&&placeG[x][y]>126&&placeG[x][y]<256)))mouseCommand=12;//odbudowa
                 if(!selectM->type&&place[x][y]<512&&placeG[x][y]>157&&placeG[x][y]<166)mouseCommand=10;//krowa idz do naszej obory
-                if(place[x][y]&&Map&&mouse.MWindow(11,8,76,74))mouseCommand=10;
+                if(place[x][y]&&Map&&mouse.IsInBoundary(11,8,76,74))mouseCommand=10; // [PORT] Replace MWindow with IsInBoundary
                 }
         switch (mouseCommand)
             {
@@ -1427,10 +1431,10 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                 Cmd[master].x=x;
                 Cmd[master].y=y;
                 //strcpy(Msg.msg,"Ich gehe !");
-                strcpy(Msg.msg,"Id$ !");
-                if(!selectM->type)strcpy(Msg.msg,"MUUUU !");
-                if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-                if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+                SDL_strlcpy(Msg.msg,"Id$ !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type)SDL_strlcpy(Msg.msg,"MUUUU !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=5;
@@ -1443,7 +1447,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                       kk=171;
                       if(selectM->type>7)kk=0;
                       //strcpy(Msg.msg,"Wir gehen !");
-                      strcpy(Msg.msg,"Idziemy !");
+                      SDL_strlcpy(Msg.msg,"Idziemy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 }
                 else
                 {
@@ -1470,10 +1474,10 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                 Cmd[master].x=x;
                 Cmd[master].y=y;
                 //if(selectM->type)strcpy(Msg.msg,"in den Kampf!");
-                if(selectM->type)strcpy(Msg.msg,"Do ataku !!!");
-                if(!selectM->type)strcpy(Msg.msg,"MUUUU !");
-                if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-                if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Do ataku !!!",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type)SDL_strlcpy(Msg.msg,"MUUUU !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -1507,7 +1511,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                 Cmd[master].x=x;
                 Cmd[master].y=y;
 
-                if(selectM->type)strcpy(Msg.msg,"Do pracy !");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Do pracy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -1531,7 +1535,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.MWindow(11,8,266,1
                 Cmd[master].command=7;//czar bojowy
                 Cmd[master].x=x;
                 Cmd[master].y=y;
-                if(selectM->type)strcpy(Msg.msg,"Alartuan !");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Alartuan !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -1628,7 +1632,7 @@ extern char drive[4];
 void InitBattle(int level,int type)   // type 0 zaladuj scenariusz 1-scenariusz zaladowany
 {
 int k=0,i,j,p0=1,p1=1;
-FILE *plikPlansz;
+SDL_IOStream *plikPlansz; // [PORT] Replace FILE with SDL_IOStream
 char name[40],z;
 
 int chatki=1,chaTki=1;
@@ -1681,44 +1685,44 @@ if(!type)
         placeG[i][j]=8;
         place[i][j]=0;
     }
-    sprintf(name,"%slevels/level.dat",drive); // [PORT] Replace \\ with /
+    SDL_snprintf(name, sizeof(name),"%slevels/level.dat",drive); // [PORT] Replace \\ with /; Replace sprintf with SDL_snprintf
     castle[0].Init(1,2000);
     castle[1].Init(2,2000);
     ScreenX=10;ScreenY=10;
 
     if(level<26)
     {
-        plikPlansz=fopen(name,"r");
-        if (plikPlansz==NULL){Close13h();exit(0);}
+        plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"r"); // [PORT] Replace fopen with SDL_IOFromFile
+        if (plikPlansz==NULL){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
 
         do
         {
-            z=getc(plikPlansz);
+            SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
             if(z=='$')k++;
-            if(z=='@'){Close13h();exit(0);}
+            if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
         }
         while(k!=level);
         for(j=0;j<MaxY;j++)
         {
             do
             {
-                z=getc(plikPlansz);
-                if(z=='@'){Close13h();exit(0);}
-                if(z=='D'){z=getc(plikPlansz);pl.decisionType=(char)(z-48);}
-                if(z=='E'){z=getc(plikPlansz);pl.endType=(char)(z-48);}
+                SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
+                if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
+                if(z=='D'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.decisionType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
+                if(z=='E'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.endType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                 if(z=='G')pl.gen=1;
-                if(z=='P'){z=getc(plikPlansz);pl.tp=(char)(z-48);}
-                if(z=='T'){z=getc(plikPlansz);i=(char)(z-48);
-                z=getc(plikPlansz);pl.typ=(char)(z-48)+i*10;}
-                if(z=='M'){z=getc(plikPlansz);pl.maxmilk=(int)(z-48)*200+50;if(pl.maxmilk==50)pl.maxmilk=0;}
-                if(z=='N'){z=getc(plikPlansz);i=(char)(z-48);
-                z=getc(plikPlansz);pl.next=(char)(z-48)+i*10;}
+                if(z=='P'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.tp=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
+                if(z=='T'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/i=(char)(z-48); // [PORT] Replace getc with SDL_ReadU8
+                SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.typ=(char)(z-48)+i*10;} // [PORT] Replace getc with SDL_ReadU8
+                if(z=='M'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.maxmilk=(int)(z-48)*200+50;if(pl.maxmilk==50)pl.maxmilk=0;} // [PORT] Replace getc with SDL_ReadU8
+                if(z=='N'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/i=(char)(z-48); // [PORT] Replace getc with SDL_ReadU8
+                SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.next=(char)(z-48)+i*10;} // [PORT] Replace getc with SDL_ReadU8
                 if(z=='*')
                 {
                     char cc=0;
                     do
                     {
-                        z=getc(plikPlansz);
+                        SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
                         pl.name[cc]=z;
                         cc++;
                     }while(pl.name[cc-1]!='*');
@@ -1733,11 +1737,11 @@ if(!type)
             {
                                 // if(p0>MaxUnitsInCastle-5)p0=MaxUnitsInCastle-5;
                                         // if(p1>MaxUnitsInCastle-5)p1=MaxUnitsInCastle-5;
-                z=getc(plikPlansz);
+                SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
                 if(z=='@')
                 {
                     Close13h();
-                    exit(0);
+                    return; // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                 }
                 place[i][j]=0;
                 if(i==0||i==MaxX-1||j==0||j==MaxY-1)place[i][j]=10;
@@ -2148,7 +2152,7 @@ if(!type)
             }
         }
 
-    fclose(plikPlansz);
+    SDL_CloseIO(plikPlansz); // [PORT] Replace fclose with SDL_CloseIO
     mem.faza=0;
     castle[0].maxmilk=pl.maxmilk;
     castle[0].milk=pl.maxmilk;
@@ -2162,23 +2166,23 @@ if(!type)
 
     ////nowe plansze
 
-    sprintf(name,"%slevels/level.%d",drive,level); // [PORT] Replace \ with /
+    SDL_snprintf(name,sizeof(name),"%slevels/level.%d",drive,level); // [PORT] Replace \ with /; Replace sprintf with SDL_snprintf
    // SetScreen(0);
    // Bar13h(0,0,320,200,0);
    // OutText13h(50,5,"Otwieram plik:",255);
    /// OutText13h(150,5,name,255);
 
-    plikPlansz=fopen(name,"rb");
+    plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
 
     if (plikPlansz==NULL)
     {
         Close13h();
-        printf("Sorry bracie ale nie znalazlem pliku %s.",name);
-        exit(0);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Sorry bracie ale nie znalazlem pliku %s.",name); // [PORT] Replace printf with SDL_LogError
+        return; // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
     }
     //OutText13h(50,15,"Czytam nagl%wek",255);
-    fseek(plikPlansz,MaxX*MaxY*4,SEEK_SET);
-    fread((void*)&E,sizeof(EditStr),1,plikPlansz);
+    SDL_SeekIO(plikPlansz,MaxX*MaxY*4,SDL_IO_SEEK_SET); // [PORT] Replace fseek with SDL_SeekIO
+    SDL_ReadIO(plikPlansz, &E, sizeof(EditStr));//fread((void*)&E,sizeof(EditStr),1,plikPlansz); // [PORT] Replace fread with SDL_ReadIO
 
     //sprintf(name,"x:%d,y:%d,tp:%d,wk:%d,",E.X,E.Y,E.typPlanszy,E.warunekKonca);
     //OutText13h(50,25,name,255);
@@ -2200,11 +2204,11 @@ if(!type)
     pl.typ=E.postac;
     pl.gen=E.generator;
     pl.maxmilk=E.maxmilk;
-    strcpy(pl.name,E.pName);
+    SDL_strlcpy(pl.name,E.pName,sizeof(pl.name)); // [PORT] Replace strcpy with SDL_strlcpy
     if(pl.endType==4&&!p1)p1=1;
 
     ///OutText13h(50,170,"Ustawiam na zero",255);
-    int typ=fseek(plikPlansz,0L,SEEK_SET);
+    int typ=SDL_SeekIO(plikPlansz, 0, SDL_IO_SEEK_SET) < 0 ? -1 : 0;//int typ=fseek(plikPlansz,0L,SEEK_SET); // [PORT] Replace fseek with SDL_SeekIO
     //if(typ)OutText13h(50,120,"Blad",255);
     //OutText13h(50,180,"Czytam dane",255);
 
@@ -2212,7 +2216,7 @@ if(!type)
     for(i=0;i<MaxX;i++)
     {
         //placeN[i][j]=1;//usunac
-        typ=fread((void*)&placeG[i][j],4,1,plikPlansz);
+        typ=SDL_static_cast(int, SDL_ReadIO(plikPlansz, &placeG[i][j], 4)/sizeof(int));//typ=fread((void*)&placeG[i][j],4,1,plikPlansz); // [PORT] Replace fread with SDL_ReadIO
 
 
         if(placeG[i][j]<8)placeG[i][j]=8;
@@ -2400,7 +2404,7 @@ if(!type)
 
     }
     //OutText13h(50,190,"Zamykam plik",255);
-    fclose(plikPlansz);
+    SDL_CloseIO(plikPlansz); // [PORT] Replace fclose with SDL_CloseIO
     mem.faza=0;
     castle[0].maxmilk=E.maxmilk;
     castle[0].milk=E.milk;
@@ -2425,7 +2429,7 @@ if(level<26)
 }
 drzewa0=drzewa+256+512;
 placeG[xleczenie][yleczenie]=256;
-strcpy(Msg.msg,"Zaczynajmy !");
+SDL_strlcpy(Msg.msg,"Zaczynajmy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
 Msg.licznik=50;
 Msg.dzwiek=0;
 }
@@ -2445,70 +2449,70 @@ ShowSubMenu();
 
 do{
  MouseEngine();
-  if(mouse.MWindow(100,30,220,50)||mouse.Key==11386)    //Save Game/ Zapisz gre
+  if(mouse.IsInBoundary(100,30,220,50)||mouse.Key==11386)    //Save Game/ Zapisz gre // [PORT] Replace MWindow with IsInBoundary
         {   // s=8051  z=11386
         PressButton(1,1);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(1,0);
         SaveGame();
         quitMenu=1;
         }
-  if(mouse.MWindow(100,57,220,74)||mouse.Key==4471)    //Load Game/  Wczytaj gre
+  if(mouse.IsInBoundary(100,57,220,74)||mouse.Key==4471)    //Load Game/  Wczytaj gre // [PORT] Replace MWindow with IsInBoundary
         {    // l=9836  w=4471// s=8051  z=11386
         mouseMode=0;
         PressButton(2,1);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(2,0);
         LoadGame();
         Map=0;
         quitMenu=1;
         }
-  if(mouse.MWindow(100,87,220,104)||mouse.Key==6512)   //Restart Level/ Powtorz poziom
+  if(mouse.IsInBoundary(100,87,220,104)||mouse.Key==6512)   //Restart Level/ Powtorz poziom // [PORT] Replace MWindow with IsInBoundary
         {   // r=4978   p=6512  // l=9836  w=4471// s=8051  z=11386
         mouseMode=0;
         PressButton(3,1);
         castle[0].FreeUnits();
         castle[1].FreeUnits();
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(3,0);
         if(level!=15&&level<26)NextConquest();
-        StopPlaying();
-        PlayTrack(TRACK_TXT);
+        SND.StopTrack(); // [PORT] StopPlaying is now SND.StopTrack
+        SND.PlayTrack(TRACK_TXT); // [PORT] PlayTrack is now in SND
         ShowText(level,0);
         DownPalette(1);
         SetScreen(1);
-        StopPlaying();
+        SND.StopTrack(); // [PORT] StopPlaying is now SND.StopTrack
         InitBattle(level,0);
         SetScreen(1);
         ShowBackground();
         ShowSelected();
         quitMenu=1;
         }
-  if(mouse.MWindow(100,114,220,131)||mouse.Key==8807)  //Continue/ Powrot do Gry
+  if(mouse.IsInBoundary(100,114,220,131)||mouse.Key==8807)  //Continue/ Powrot do Gry // [PORT] Replace MWindow with IsInBoundary
         {      // c=11875   g=8807 // r=4978   p=6512  // l=9836  w=4471// s=8051  z=11386
         PressButton(4,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(4,1);
         quitMenu=1;
         }
-  if(mouse.MWindow(100,142,220,159)||mouse.Key==9579)  //End Game /koniec
+  if(mouse.IsInBoundary(100,142,220,159)||mouse.Key==9579)  //End Game /koniec // [PORT] Replace MWindow with IsInBoundary
         {   // quit=4209  k=9579  // c=11875   g=8807 // r=4978   p=6512  // l=9836  w=4471// s=8051  z=11386
         mouseMode=0;
         PressButton(5,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(5,1);
         ShowEndMenu();
 
         do
         {
         MouseEngine();
-        }while(!mouse.MWindow(100,114,220,131)&&!(mouse.MWindow(100,142,220,159)));
+        }while(!mouse.IsInBoundary(100,114,220,131)&&!(mouse.IsInBoundary(100,142,220,159))); // [PORT] Replace MWindow with IsInBoundary
         quitMenu=1;
-        if(mouse.MWindow(100,114,220,131))quitLevel=1;
+        if(mouse.IsInBoundary(100,114,220,131))quitLevel=1;
         }
 
 }while(!quitMenu);
-mouse.GButtonUp();
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
 SetScreen(1);
       //  screen=1
 }
@@ -2563,11 +2567,11 @@ OutText13h(20,76,"Muzyka",kolorTekstu);
 OutText13h(20,108,"Szybkosc przewijania",kolorTekstu);
 OutText13h(20,142,"Szybkosc gry",kolorTekstu);
 */
-MVol=getVolume();
+MVol=SND.GetMusicVolume(); // [PORT] getVolume is now SND.GetMusicVolume()
 PutImage13h(XX[MVol],YY[0],guzik[0],0);
 PutImage13h(XX[skroller],YY[1],guzik[1],0); //skroll
 PutImage13h(XX[5-speed],YY[2],guzik[2],0); //game speed
-if(GetCurrentTrack())Rectangle13h(125,72,151,92,kolorRamki);else Rectangle13h(170,72,196,92,kolorRamki);
+if(SND.GetCurrentTrack())Rectangle13h(125,72,151,92,kolorRamki);else Rectangle13h(170,72,196,92,kolorRamki); // [PORT] GetCurrentTrack is now in SND
 if(mowa)Rectangle13h(125,6,151,26,kolorRamki);else Rectangle13h(170,6,196,26,kolorRamki);
 if(dzwiek)Rectangle13h(125,39,151,59,kolorRamki);else Rectangle13h(170,39,196,59,kolorRamki);
 Rectangle13h(215,39,241,59,0);
@@ -2589,126 +2593,126 @@ do
       case '5': setVolume(5); break;
   }
 #endif
-  if(mouse.MWindow(125,72,151,92))    //MusikOn
+  if(mouse.IsInBoundary(125,72,151,92))    //MusikOn // [PORT] Replace MWindow with IsInBoundary
         {
         musik=1;
-        OnCDAudio();
-        PlayTrack(track);
+        //OnCDAudio(); // [PORT] Not necessary anymore
+        SND.PlayTrack(SND.GetCurrentTrack()); // [PORT] PlayTrack is now in SND; Replace track with GetCurrentTrack
 
         Rectangle13h(125,72,151,92,kolorRamki);
         Rectangle13h(170,72,196,92,0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(170,72,196,92))    //MusikOff
+  if(mouse.IsInBoundary(170,72,196,92))    //MusikOff // [PORT] Replace MWindow with IsInBoundary
         {
         musik=0;
-        StopPlaying();
-        OffCDAudio();
+        SND.StopTrack(); // [PORT] StopPlaying is now SND.StopTrack
+        //OffCDAudio(); // [PORT] Not necessary anymore
         Rectangle13h(125,72,151,92,0);
         Rectangle13h(170,72,196,92,kolorRamki);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(215,39,241,59)&&musik)    //Previous
+  if(mouse.IsInBoundary(215,39,241,59)&&musik)    //Previous // [PORT] Replace MWindow with IsInBoundary
         {
 
 
         Rectangle13h(215,39,241,59,kolorRamki);
         //tu wpisac next CD
-        PlayPrevious();
-        delay(400);
+        SND.PlayPreviousTrack(); // [PORT] PlayPrevious is now in SND as PlayPreviousTrack
+        SDL_Delay(400); // [PORT] Replace delay with SDL_Delay
         Rectangle13h(215,39,241,59,0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(260,39,286,59)&&musik)    //Next
+  if(mouse.IsInBoundary(260,39,286,59)&&musik)    //Next // [PORT] Replace MWindow with IsInBoundary
         {
         Rectangle13h(260,39,286,59,kolorRamki);
         //tu wpisac next CD
-        delay(400);
-        PlayNext();
+        SDL_Delay(400); // [PORT] Replace delay with SDL_Delay
+        SND.PlayNextTrack(); // [PORT] PlayNext is now in SND as PlayNextTrack
         Rectangle13h(260,39,286,59,0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
 
-  if(mouse.MWindow(125,7,151,27))    //mowaOn
+  if(mouse.IsInBoundary(125,7,151,27))    //mowaOn // [PORT] Replace MWindow with IsInBoundary
   {
         mowa=1;
         Rectangle13h(125,6,151,26,kolorRamki);
         Rectangle13h(170,6,196,26,0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(170,7,196,27))    //mowaOff
+  if(mouse.IsInBoundary(170,7,196,27))    //mowaOff // [PORT] Replace MWindow with IsInBoundary
         {
         mowa=0;
         Rectangle13h(125,6,151,26,0);
     Rectangle13h(170,6,196,26,kolorRamki);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(125,39,151,59))    //dzwiekOn
+  if(mouse.IsInBoundary(125,39,151,59))    //dzwiekOn // [PORT] Replace MWindow with IsInBoundary
         {
         dzwiek=1;
         Rectangle13h(125,39,151,59,kolorRamki);
         Rectangle13h(170,39,196,59,0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(170,39,196,59))    //dzwiekOff
+  if(mouse.IsInBoundary(170,39,196,59))    //dzwiekOff // [PORT] Replace MWindow with IsInBoundary
         {
         dzwiek=0;
         Rectangle13h(125,39,151,59,0);
     Rectangle13h(170,39,196,59,kolorRamki);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(200,144,224,155))   //Zwolnij gre
+  if(mouse.IsInBoundary(200,144,224,155))   //Zwolnij gre // [PORT] Replace MWindow with IsInBoundary
         {
         if(speed<5)speed++;
         if(lancuch[(speed&1)]!=NULL)PutImage13h(224,YY[2],lancuch[(speed&1)],0);
         PutImage13h(XX[5-speed],YY[2],guzik[2],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-   if(mouse.MWindow(283,144,298,155)) //Przyspiesz gre
+   if(mouse.IsInBoundary(283,144,298,155)) //Przyspiesz gre // [PORT] Replace MWindow with IsInBoundary
         {
         if(speed)speed--;
         if(lancuch[(speed&1)]!=NULL)PutImage13h(224,YY[2],lancuch[(speed&1)],0);
         PutImage13h(XX[5-speed],YY[2],guzik[2],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-   if(mouse.MWindow(200,111,224,121))   //zwolnij skrolling
+   if(mouse.IsInBoundary(200,111,224,121))   //zwolnij skrolling // [PORT] Replace MWindow with IsInBoundary
         {
         if(skroller>0)skroller--;
         if(lancuch[(skroller&1)]!=NULL)PutImage13h(224,YY[1],lancuch[(skroller&1)],0);
         PutImage13h(XX[skroller],YY[1],guzik[1],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-   if(mouse.MWindow(283,111,298,121)) //Przyspiesz skrolling
+   if(mouse.IsInBoundary(283,111,298,121)) //Przyspiesz skrolling // [PORT] Replace MWindow with IsInBoundary
         {
         if(skroller<5)skroller++;
         if(lancuch[(skroller&1)]!=NULL)PutImage13h(224,YY[1],lancuch[(skroller&1)],0);
         PutImage13h(XX[skroller],YY[1],guzik[1],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
 
-  if(mouse.MWindow(283,77,298,87)) //Zglosnij muzyke
+  if(mouse.IsInBoundary(283,77,298,87)) //Zglosnij muzyke // [PORT] Replace MWindow with IsInBoundary
         {
         if(MVol<5)MVol++;
-        setVolume(MVol);
+        SND.SetMusicVolume(MVol); // [PORT] setVolume is now in SND as SetMusicVolume
         if(lancuch[(MVol&1)]!=NULL)PutImage13h(224,YY[0],lancuch[(MVol&1)],0);
         PutImage13h(XX[MVol],YY[0],guzik[0],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-   if(mouse.MWindow(200,77,224,87))   //zcisz muzyke
+   if(mouse.IsInBoundary(200,77,224,87))   //zcisz muzyke // [PORT] Replace MWindow with IsInBoundary
         {
         if(MVol)MVol--;
-        setVolume(MVol);
+        SND.SetMusicVolume(MVol); // [PORT] setVolume is now in SND as SetMusicVolume
         if(lancuch[(MVol&1)]!=NULL)PutImage13h(224,YY[0],lancuch[(MVol&1)],0);
         PutImage13h(XX[MVol],YY[0],guzik[0],0);
-        mouse.GButtonUp();
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         }
-  if(mouse.MWindow(110,172,207,192)||mouse.Key==9579)  //koniec
+  if(mouse.IsInBoundary(110,172,207,192)||mouse.Key==9579)  //koniec // [PORT] Replace MWindow with IsInBoundary
         {   // quit=4209  k=9579
         quitMenu=1;
         }
 
 }while(!quitMenu);
-mouse.GButtonUp();
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
 SetScreen(1);
       //  screen=1
 }
@@ -2806,12 +2810,12 @@ int sSubMenu()
 {
 int i;
 int Ty[5]={33,60,90,117,145};
-FILE *file;
+SDL_IOStream *file; // [PORT] Replace FILE with SDL_IOStream
 char* name;
 
-name=(char*)malloc(12);
+name=(char*)SDL_malloc(12); // [PORT] Replace malloc with SDL_malloc
 
-mouse.GButtonUp();
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
 DownPalette(2);
 LoadExtendedPalette(1);
 ShowPicture(1,0);
@@ -2824,13 +2828,13 @@ PressButton(5,1);
 
 for(i=0;i<4;i++)
 {
-    strcpy(name,"Pusty");
-    file=fopen(FileName[i],"rb");
+    SDL_strlcpy(name,"Pusty",sizeof(name)); // [PORT] Replace strcpy with SDL_strlcpy
+    file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
     if(file!=NULL)
     {
-        fseek(file,0,0);
-        fread(name,1,12,file);
-        fclose(file);
+        SDL_SeekIO(file, 0, SDL_IO_SEEK_SET);//fseek(file,0,0); // [PORT] Replace fseek with SDL_SeekIO
+        SDL_ReadIO(file, name, 12);//fread(name,1,12,file); // [PORT] Replace fread with SDL_ReadIO
+        SDL_CloseIO(file);//fclose(file); // [PORT] Replace fclose with SDL_CloseIO
     }
     CenterText13h(109,Ty[i]-1,109+106,Ty[i]+13,name,1);
     CenterText13h(110,Ty[i],110+106,Ty[i]+14,name,1);
@@ -2838,41 +2842,41 @@ for(i=0;i<4;i++)
 }
 CenterText13h(109,Ty[4],109+106,Ty[4]+14,"Koniec",1);
 CenterText13h(110,Ty[4]-1,110+106,Ty[4]+13,"Koniec",255);
-free(name);
+SDL_free(name); // [PORT] Replace free with SDL_free
 RisePalette(1);
 mouse.X=0;
 mouse.Y=0;
 do
 {
   MouseEngine();
-  if(mouse.MWindow(100,30,220,47))    //Save 1
+  if(mouse.IsInBoundary(100,30,220,47))    //Save 1 // [PORT] Replace MWindow with IsInBoundary
         {
         PressButton(1,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         return 0;
         }
-  if(mouse.MWindow(100,57,220,74))    //save 2
+  if(mouse.IsInBoundary(100,57,220,74))    //save 2 // [PORT] Replace MWindow with IsInBoundary
         {
         PressButton(2,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         return 1;
         }
-  if(mouse.MWindow(100,87,220,104))   //save 3
+  if(mouse.IsInBoundary(100,87,220,104))   //save 3 // [PORT] Replace MWindow with IsInBoundary
         {
         PressButton(3,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         return 2;
         }
-  if(mouse.MWindow(100,114,220,131))  //save 4
+  if(mouse.IsInBoundary(100,114,220,131))  //save 4 // [PORT] Replace MWindow with IsInBoundary
         {
         PressButton(4,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         return 3;
         }
-  if(mouse.MWindow(100,142,220,159)||mouse.Key==11875)  //cancel
+  if(mouse.IsInBoundary(100,142,220,159)||mouse.Key==11875)  //cancel // [PORT] Replace MWindow with IsInBoundary
         {
         PressButton(5,0);
-        delay(300);
+        SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
         PressButton(5,1);
         return 4;
         }
@@ -2882,7 +2886,8 @@ do
 ////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-int SaveGame()
+/* [PORT] Replace SaveGame() and LoadGame() with SDL friendly implementations
+ * int SaveGame()
 {
         FILE *file;
         int i,j;
@@ -3028,12 +3033,159 @@ int SaveGame()
         fclose(file);
         mouse.GButtonUp();
         return 0;
-}
+}*/
+int SaveGame()
+{
+        SDL_IOStream *file;
+        int i,j;
+        int Ty[4]={32,59,89,116};
+        char name[20];
 
+        i=sSubMenu();
+        if(i==4)
+        {
+            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+            return 1;
+        }
+        file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb");
+        if(file!=NULL)
+        {
+            SDL_ReadIO(file,name,12);
+            SDL_CloseIO(file);
+        }
+        else
+        {
+            SDL_strlcpy(name,"Pusty", sizeof(name));
+        }
+        j=Write13h(110,Ty[i],107,11,name,255,0);
+        if(j==27){do{g_polanie->ProcessEvents();}while(mouse.Button>0);/*mouse.GButtonUp();*/return 1;} // Replace GButtonUp with simple loop
+        file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"wb");
+        if(file==NULL){return 1;}
+        SDL_WriteIO(file,name,12);
+        SDL_WriteIO(file,&pl,sizeof(Plansza));
+        SDL_WriteIO(file,&color2,4);
+        SDL_WriteIO(file,&level,4);
+        SDL_WriteIO(file,&diff,4);
+        for(j=0;j<25;j++)
+               SDL_WriteIO(file,&prowintion[j],1);
+        for(j=0;j<25;j++)
+               SDL_WriteIO(file,&prowintionA[j],1);
+        for(j=0;j<40;j++)
+        {
+               SDL_WriteIO(file,&positioN[j][0],4);
+               SDL_WriteIO(file,&positioN[j][1],4);
+        }
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_WriteIO(file,&place[i][j],4);
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_WriteIO(file,&placeG[i][j],4);
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_WriteIO(file,&placeN[i][j],4);
+        SDL_WriteIO(file,&ScreenY,4);
+        SDL_WriteIO(file,&ScreenY,4);
+        SDL_WriteIO(file,&drzewa,4);
+        SDL_WriteIO(file,&mem,sizeof(Mem) - sizeof(Castle *) + 4); // [PORT] Pointers size shenanigans. Fixes backwards compatibility with DOS saves
+        for(j=0;j<2;j++)
+        {
+        SDL_WriteIO(file,&castle[j].milk,4);
+        SDL_WriteIO(file,&castle[j].maxmilk,4);
+        SDL_WriteIO(file,&castle[j].IFF,4);
+        SDL_WriteIO(file,&castle[j].faza,4);
+        for(i=1;i<MaxUnitsInCastle;i++)
+                {
+                SDL_WriteIO(file,&castle[j].m[i].nr,4);
+                SDL_WriteIO(file,&castle[j].m[i].x,4);
+                SDL_WriteIO(file,&castle[j].m[i].y,4);
+                SDL_WriteIO(file,&castle[j].m[i].type,4);
+                SDL_WriteIO(file,&castle[j].m[i].command,4);
+                SDL_WriteIO(file,&castle[j].m[i].commandN,4);
+                SDL_WriteIO(file,&castle[j].m[i].xe,4);
+                SDL_WriteIO(file,&castle[j].m[i].ye,4);
+                SDL_WriteIO(file,&castle[j].m[i].xp,4);
+                SDL_WriteIO(file,&castle[j].m[i].yp,4);
+                SDL_WriteIO(file,&castle[j].m[i].xm,4);
+                SDL_WriteIO(file,&castle[j].m[i].ym,4);
+                SDL_WriteIO(file,&castle[j].m[i].delay,4);
+                SDL_WriteIO(file,&castle[j].m[i].maxdelay,4);
+                SDL_WriteIO(file,&castle[j].m[i].hp,4);
+                SDL_WriteIO(file,&castle[j].m[i].maxhp,4);
+                SDL_WriteIO(file,&castle[j].m[i].target,4);
+                SDL_WriteIO(file,&castle[j].m[i].exist,4);
+                SDL_WriteIO(file,&castle[j].m[i].inmove,4);
+                SDL_WriteIO(file,&castle[j].m[i].damage,4);
+                SDL_WriteIO(file,&castle[j].m[i].udder,4);
+                SDL_WriteIO(file,&castle[j].m[i].magic,4);
+                SDL_WriteIO(file,&castle[j].m[i].s_range,4);
+                SDL_WriteIO(file,&castle[j].m[i].a_range,4);
+                SDL_WriteIO(file,&castle[j].m[i].armour,4);
+                SDL_WriteIO(file,&castle[j].m[i].ShowHit,4);
+                SDL_WriteIO(file,&castle[j].m[i].nr,4);
+                SDL_WriteIO(file,&castle[j].m[i].IFF,4);
+                SDL_WriteIO(file,&castle[j].m[i].mainTarget,4);
+                SDL_WriteIO(file,&castle[j].m[i].exp,4);
+                }
+        for(i=0;i<20;i++)
+                {
+                int k;
+                SDL_WriteIO(file,&castle[j].b[i].exist,4);
+                SDL_WriteIO(file,&castle[j].b[i].IFF,4);
+                SDL_WriteIO(file,&castle[j].b[i].nr,4);
+                SDL_WriteIO(file,&castle[j].b[i].x,4);
+                SDL_WriteIO(file,&castle[j].b[i].y,4);
+                SDL_WriteIO(file,&castle[j].b[i].type,4);
+                SDL_WriteIO(file,&castle[j].b[i].hp,4);
+                SDL_WriteIO(file,&castle[j].b[i].maxhp,4);
+                SDL_WriteIO(file,&castle[j].b[i].food,4);
+                SDL_WriteIO(file,&castle[j].b[i].maxfood,4);
+                SDL_WriteIO(file,&castle[j].b[i].faza,4);
+                for(k=0;k<6;k++)
+                    {
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].nr,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].x,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].y,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].type,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].command,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].commandN,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].xe,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].ye,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].xp,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].yp,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].xm,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].ym,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].delay,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].maxdelay,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].hp,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].maxhp,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].target,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].exist,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].inmove,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].damage,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].udder,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].magic,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].s_range,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].a_range,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].armour,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].ShowHit,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].nr,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].IFF,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].mainTarget,4);
+                         SDL_WriteIO(file,&castle[j].b[i].m[k].exp,4);
+                        }
+                }
+        }
+        SDL_WriteIO(file,&drzewa0,4);
+        SDL_CloseIO(file);
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        return 0;
+}
 ////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-int LoadGame()
+/* [PORT] Replace SaveGame() and LoadGame() with SDL friendly implementations
+ * int LoadGame()
 {
 
   {
@@ -3183,6 +3335,159 @@ int LoadGame()
         mem.c=&castle[1];
         endL=0;
         mouse.GButtonUp();
+        return(0);
+        }
+}*/
+int LoadGame()
+{
+
+  {
+        SDL_IOStream *file;
+        int i,j;
+        char name[15];
+
+        i=sSubMenu();
+        if(i==4)
+        {
+            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+            return 1;
+        }
+        file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb");
+        if(file==NULL){return 1;}
+        for(int d1=0;d1<10;d1++)
+        for(int d2=0;d2<10;d2++)
+        {
+            posTT[d1][d2][0]=0;
+            posTT[d1][d2][1]=20;
+        }
+        for(i=0;i<10;i++)posT[i].IFF=2;
+        castle[0].FreeUnits();
+        castle[1].FreeUnits();
+
+        SDL_ReadIO(file,name,12);
+        SDL_ReadIO(file,&pl,sizeof(Plansza));
+        SDL_ReadIO(file,&color2,4);
+        SDL_ReadIO(file,&level,4);
+        SDL_ReadIO(file,&diff,4);
+        for(j=0;j<25;j++)
+               SDL_ReadIO(file,&prowintion[j],1);
+        for(j=0;j<25;j++)
+               SDL_ReadIO(file,&prowintionA[j],1);
+        for(j=0;j<40;j++)
+        {
+               SDL_ReadIO(file,&positioN[j][0],4);
+               SDL_ReadIO(file,&positioN[j][1],4);
+        }
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_ReadIO(file,&place[i][j],4);
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_ReadIO(file,&placeG[i][j],4);
+        for(i=0;i<MaxX;i++)
+        for(j=0;j<MaxY;j++)
+               SDL_ReadIO(file,&placeN[i][j],4);
+        SDL_ReadIO(file,&ScreenX,4);
+        SDL_ReadIO(file,&ScreenY,4);
+        SDL_ReadIO(file,&drzewa,4);
+        SDL_ReadIO(file,&mem,sizeof(Mem) - sizeof(Castle *) + 4);  mem.c=&castle[1]; // [PORT] Pointers size shenanigans. Fixes backwards compatibility with DOS saves
+        for(j=0;j<2;j++)
+        {
+        SDL_ReadIO(file,&castle[j].milk,4);
+        SDL_ReadIO(file,&castle[j].maxmilk,4);
+        SDL_ReadIO(file,&castle[j].IFF,4);
+        SDL_ReadIO(file,&castle[j].faza,4);
+        for(i=1;i<MaxUnitsInCastle;i++)
+                {
+                SDL_ReadIO(file,&castle[j].m[i].nr,4);
+                SDL_ReadIO(file,&castle[j].m[i].x,4);
+                SDL_ReadIO(file,&castle[j].m[i].y,4);
+                SDL_ReadIO(file,&castle[j].m[i].type,4);
+                SDL_ReadIO(file,&castle[j].m[i].command,4);
+                SDL_ReadIO(file,&castle[j].m[i].commandN,4);
+                SDL_ReadIO(file,&castle[j].m[i].xe,4);
+                SDL_ReadIO(file,&castle[j].m[i].ye,4);
+                SDL_ReadIO(file,&castle[j].m[i].xp,4);
+                SDL_ReadIO(file,&castle[j].m[i].yp,4);
+                SDL_ReadIO(file,&castle[j].m[i].xm,4);
+                SDL_ReadIO(file,&castle[j].m[i].ym,4);
+                SDL_ReadIO(file,&castle[j].m[i].delay,4);
+                SDL_ReadIO(file,&castle[j].m[i].maxdelay,4);
+                SDL_ReadIO(file,&castle[j].m[i].hp,4);
+                SDL_ReadIO(file,&castle[j].m[i].maxhp,4);
+                SDL_ReadIO(file,&castle[j].m[i].target,4);
+                SDL_ReadIO(file,&castle[j].m[i].exist,4);
+                SDL_ReadIO(file,&castle[j].m[i].inmove,4);
+                SDL_ReadIO(file,&castle[j].m[i].damage,4);
+                SDL_ReadIO(file,&castle[j].m[i].udder,4);
+                SDL_ReadIO(file,&castle[j].m[i].magic,4);
+                SDL_ReadIO(file,&castle[j].m[i].s_range,4);
+                SDL_ReadIO(file,&castle[j].m[i].a_range,4);
+                SDL_ReadIO(file,&castle[j].m[i].armour,4);
+                SDL_ReadIO(file,&castle[j].m[i].ShowHit,4);
+                SDL_ReadIO(file,&castle[j].m[i].nr,4);
+                SDL_ReadIO(file,&castle[j].m[i].IFF,4);
+                SDL_ReadIO(file,&castle[j].m[i].mainTarget,4);
+                SDL_ReadIO(file,&castle[j].m[i].exp,4);
+                castle[j].m[i].missile.exist=0;
+                castle[j].m[i].ispath=0;
+                }
+        for(i=0;i<20;i++)
+                {
+                int k;
+                SDL_ReadIO(file,&castle[j].b[i].exist,4);
+                SDL_ReadIO(file,&castle[j].b[i].IFF,4);
+                SDL_ReadIO(file,&castle[j].b[i].nr,4);
+                SDL_ReadIO(file,&castle[j].b[i].x,4);
+                SDL_ReadIO(file,&castle[j].b[i].y,4);
+                SDL_ReadIO(file,&castle[j].b[i].type,4);
+                SDL_ReadIO(file,&castle[j].b[i].hp,4);
+                SDL_ReadIO(file,&castle[j].b[i].maxhp,4);
+                SDL_ReadIO(file,&castle[j].b[i].food,4);
+                SDL_ReadIO(file,&castle[j].b[i].maxfood,4);
+                SDL_ReadIO(file,&castle[j].b[i].faza,4);
+                for(k=0;k<6;k++)
+                    {
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].nr,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].x,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].y,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].type,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].command,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].commandN,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].xe,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].ye,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].xp,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].yp,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].xm,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].ym,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].delay,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].maxdelay,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].hp,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].maxhp,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].target,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].exist,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].inmove,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].damage,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].udder,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].magic,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].s_range,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].a_range,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].armour,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].ShowHit,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].nr,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].IFF,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].mainTarget,4);
+                         SDL_ReadIO(file,&castle[j].b[i].m[k].exp,4);
+                         castle[j].b[i].m[k].missile.exist=0;
+                         castle[j].b[i].m[k].ispath=0;
+                        }
+                }
+        }
+        SDL_ReadIO(file,&drzewa0,4);
+        SDL_CloseIO(file);
+        mem.c=&castle[1];
+        endL=0;
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
         return(0);
         }
 }
@@ -3700,19 +4005,19 @@ if(mode)
                 {
                     switch (selectM->type)
                     {
-                        case 0:strcpy(Msg.msg,"Muuu ?");break;
-                        case 1:strcpy(Msg.msg,"Tak ?");break;
+                        case 0:SDL_strlcpy(Msg.msg,"Muuu ?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 1:SDL_strlcpy(Msg.msg,"Tak ?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
                         case 10:
                         case 12:
-                        case 2:strcpy(Msg.msg,"Co ?");break;
-                        case 3:strcpy(Msg.msg,"Tak panie ?");break;
+                        case 2:SDL_strlcpy(Msg.msg,"Co ?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 3:SDL_strlcpy(Msg.msg,"Tak panie ?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
                         case 11:
-                        case 4:strcpy(Msg.msg,"Tak ?");break;
-                        case 5:strcpy(Msg.msg,"Na rozkaz");break;
-                        case 6:strcpy(Msg.msg,"Obecny");break;
-                        case 7:strcpy(Msg.msg,"Czekam na rozkazy.");break;
-                        case 8:strcpy(Msg.msg,"Grrh?");break;
-                        case 9:strcpy(Msg.msg,"");break;
+                        case 4:SDL_strlcpy(Msg.msg,"Tak ?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 5:SDL_strlcpy(Msg.msg,"Na rozkaz",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 6:SDL_strlcpy(Msg.msg,"Obecny",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 7:SDL_strlcpy(Msg.msg,"Czekam na rozkazy.",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 8:SDL_strlcpy(Msg.msg,"Grrh?",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
+                        case 9:SDL_strlcpy(Msg.msg,"",sizeof(Msg.msg));break; // [PORT] Replace strcpy with SDL_strlcpy
                     }
                     Msg.licznik=20;
                     kk=25+selectM->type*11+Msg.ddzwiek;
@@ -3846,6 +4151,5 @@ if(select.co==1)
 ///////////////////////////////////////////////////////////////////////////
 void RefreshScreen(void)
 {
-    PORT_SDLPumpEvents(0); // [PORT] Add SDL Event Pumping
     showAll=1;
 }

@@ -4,10 +4,11 @@
 // Mover1
 // Missile
 //////////////////////////////////////////////////////////////////////////
-#include <string.h>
-#include <stdlib.h>
+//#include <string.h> // [PORT] Remove string.h
+//#include <stdlib.h> // [PORT] Remove stdlib.h
 #include "mover.h"
 #include "image13h.h"
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 /////////////////////////////////////////////////////////////////////////
 //---------Zmienne----------------------------------------------------------
 /////////////////////////////////////////////////////////////////////////////
@@ -146,8 +147,8 @@ yt=y2;
 
 dx=x2-x1;
 dy=y2-y1;
-if(abs(dx)-abs(dy)>1)dy=0;
-if(abs(dy)-abs(dx)>1)dx=0;
+if(SDL_abs(dx)-SDL_abs(dy)>1)dy=0; // [PORT] Replace abs with SDL_abs
+if(SDL_abs(dy)-SDL_abs(dx)>1)dx=0; // [PORT] Replace abs with SDL_abs
 if(dx>0)dx=-1;if(dx<0)dx=-1;
 if(dy>0)dy=1;if(dy<0)dy=-1;
 exist=6;
@@ -170,8 +171,8 @@ if(view!=NULL)
     {
     dx=x2-x1;
     dy=y2-y1;
-    max=abs(dx);
-    if(max<abs(dy))max=abs(dy);
+    max=SDL_abs(dx); // [PORT] Replace abs with SDL_abs
+    if(max<SDL_abs(dy))max=SDL_abs(dy); // [PORT] Replace abs with SDL_abs
     max=max<<1;
     if(max<1)max=2;
     dx=(int)(dx<<4)/max;
@@ -908,7 +909,7 @@ void Mover1::Run1()    // rycerze
                     int xx,yy,i,j;
                     for(i=1;i<MaxX;i++)for(j=1;j<MaxY;j++)
                     {
-                        xx=abs(x-i);yy=abs(y-j);
+                        xx=SDL_abs(x-i);yy=SDL_abs(y-j); // [PORT] Replace abs with SDL_abs
                         if(xx+yy<14&&yy<10&&xx<10&&!placeN[i][j])placeN[i][j]=1;
                     }
     
@@ -1320,7 +1321,7 @@ if(exist==1||exist>2)
 if(exist==2)dd=0;//zabitego nie rabac
 if(dd)
     {
-        if(IFF==1){strcpy(Msg.msg,"Wrog w wiosce !!!");
+        if(IFF==1){SDL_strlcpy(Msg.msg,"Wrog w wiosce !!!", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
         Msg.licznik=20;}
         hp-=dd;
         if(hp<=0)

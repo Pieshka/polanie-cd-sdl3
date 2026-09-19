@@ -3,56 +3,47 @@
 # --------------------------------------
 
 set(COMPATLIB_SOURCES
-	src/flic/flic_entry.cpp
-	src/sound/menegdma_entry.cpp
-	src/dos/i86_entry.c
-	src/dos/conio_entry.c
-	src/sound/cd_entry.c
-	src/io/timer.c
-	src/io/mouse.c
-	src/vga/sdl.c
-	src/misc/preinit.c
-		src/misc/fopen.c
+        src/polanieapp.cpp
+        src/mouse.cpp
+        src/sound.cpp
+        src/polaniefiles.cpp
 )
 
 set(COMPATLIB_HEADERS
-	include/i86.h
-	include/bios.h
-	include/cd.h
-	include/graph.h
-	include/menegdma.h
-	include/playfli.h
-	include/dos.h
-	include/conio.h
-	include/constants.h
-	include/mem.h
-	include/process.h
+        include/polanieapp.h
+        include/mouse.h
+        include/sound.h
+        src/compat.h
 )
 
 add_library(compatlib STATIC
-	${COMPATLIB_SOURCES}
-	${COMPATLIB_HEADERS}
+        ${COMPATLIB_SOURCES}
+        ${COMPATLIB_HEADERS}
 )
 
 target_include_directories(compatlib
-	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_include_directories(compatlib
-	PRIVATE
-		${flic_lib_SOURCE_DIR}
+        PRIVATE
+        ${flic_lib_SOURCE_DIR}
 )
 
 target_link_libraries(compatlib
-	PRIVATE
-		SDL3::SDL3
-		SDL3_mixer::SDL3_mixer
-		flic-lib
+        PUBLIC
+        SDL3::SDL3
+        SDL3_mixer::SDL3_mixer
+)
+
+target_link_libraries(compatlib
+        PRIVATE
+        flic-lib
 )
 
 set_target_properties(compatlib PROPERTIES
-	OUTPUT_NAME "compat"
+        OUTPUT_NAME "compat"
 )
 
 # --------------------------------------
@@ -60,10 +51,10 @@ set_target_properties(compatlib PROPERTIES
 # --------------------------------------
 
 target_compile_definitions(compatlib PRIVATE
-		APP_VERSION_STRING="${APP_VERSION_STRING}"
-		APP_VERSION_MAJOR=${APP_VERSION_MAJOR}
-		APP_VERSION_MINOR=${APP_VERSION_MINOR}
-		APP_VERSION_PATCH=${APP_VERSION_PATCH}
+        APP_VERSION_STRING="${APP_VERSION_STRING}"
+        APP_VERSION_MAJOR=${APP_VERSION_MAJOR}
+        APP_VERSION_MINOR=${APP_VERSION_MINOR}
+        APP_VERSION_PATCH=${APP_VERSION_PATCH}
 )
 
 target_compile_definitions(compatlib PRIVATE $<$<CONFIG:Debug>:DEBUG_MODE>)
@@ -73,8 +64,8 @@ target_compile_definitions(compatlib PRIVATE $<$<CONFIG:Debug>:DEBUG_MODE>)
 # --------------------------------------
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-	target_compile_options(compatlib PRIVATE
-			-Wall
-			-Wextra
-	)
+    target_compile_options(compatlib PRIVATE
+            -Wall
+            -Wextra
+    )
 endif()

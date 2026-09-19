@@ -2,18 +2,18 @@
 //   image13h.cpp
 //    kompilowac w modelu Large
 ////////////////////////////////////////////////////////////////////
-#include <stdio.h>
-#include <conio.h>
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <conio.h> // [PORT] Remove conio.h
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <stdlib.h> // [PORT] Remove malloc.h
-#include <dos.h>
-#include <mem.h>
-#include <string.h>
+//#include <dos.h> // [PORT] Remove dos.h
+//#include <mem.h> // [PORT] Remove mem.h
+//#include <string.h> // [PORT] Remove string.h
 #include "image13h.h"
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 //////////////////////////////////////////////////////////////////
 // Zmienne srodowiskowe
 //////////////////////////////////////////////////////////////////
-FILE *palettefile,*graphicfile;
+SDL_IOStream *palettefile,*graphicfile; // [PORT] Replace FILE with SDL_IOStream
 char  *VirtualScreen;
 char  *RealVirtualScreen;
 
@@ -31,9 +31,9 @@ int ClipX1=0,ClipX2=319,ClipY1=0,ClipY2=199;
 ///////////////////////////////////////////////////////////////////////
 int InitVirtualScreen(void)
 {
-RealVirtualScreen=(char  *)malloc(64000);
+RealVirtualScreen=(char  *)SDL_malloc(64000); // [PORT] Replace malloc with SDL_malloc
 if(RealVirtualScreen==NULL)return 0;
-memset(RealVirtualScreen,0,64000);
+SDL_memset(RealVirtualScreen,0,64000); // [PORT] Replace memset with SDL_memset
 return 1;
 }
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ return 1;
 ///////////////////////////////////////////////////////////////////////
 void ClearScreen13h()
 {
-    memset(VirtualScreen,0,64000);             
+    SDL_memset(VirtualScreen,0,64000);              // [PORT] Replace memset with SDL_memset
 }
 //////////////////////////////////////////////////////////////////////
 //kopiowanie virtualnego obrazu na ekran
@@ -49,7 +49,7 @@ void ClearScreen13h()
 void ShowVirtualScreen(void)
 {
 if(RealVirtualScreen==NULL)return;
-memcpy((void*)PORT_getFakeFramebuffer(),(void*)RealVirtualScreen,63680); // [PORT] Replace 0xA0000 with FakeFramebuffer
+memcpy((void*)g_polanie->GetFrameBuffer(),(void*)RealVirtualScreen,63680); // [PORT] Replace 0xA0000 with g_polanie->GetFrameBuffer
 
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ memcpy((void*)PORT_getFakeFramebuffer(),(void*)RealVirtualScreen,63680); // [POR
 void FreeVirtualScreen(void)
 {
 if(RealVirtualScreen==NULL)return;
-free(RealVirtualScreen);
+SDL_free(RealVirtualScreen); // [PORT] Replace free with SDL_free
 RealVirtualScreen=NULL;
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -68,48 +68,48 @@ RealVirtualScreen=NULL;
 void SetScreen(int Screen)
 {
 if((Screen)&&(RealVirtualScreen!=NULL))VirtualScreen=RealVirtualScreen;
-     else VirtualScreen=(char *)PORT_getFakeFramebuffer(); // [PORT] Replace 0xA0000 with FakeFramebuffer
+     else VirtualScreen=(char *)g_polanie->GetFrameBuffer(); // [PORT] Replace 0xA0000 with g_polanie->GetFrameBuffer
 }
 ///////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void Init13h(void)
-{
+{/* [PORT] Remove unnecessary code
     union REGS r;
-    
+
     r.h.ah = 0x0;
     r.h.al = 0x13;
-    int386(0x10, &r, &r);
+    int386(0x10, &r, &r);*/
     SetScreen(0);
-    memset((void*)PORT_getFakeFramebuffer(),0,64000);              // [PORT] Replace 0xA0000 with FakeFramebuffer
+    SDL_memset((void*)g_polanie->GetFrameBuffer(),0,64000);              // [PORT] Replace 0xA0000 with g_polanie->GetFrameBuffer; Replace memset with SDL_memset
    
 }
 ///////////////////////////////////////////////////////////
 int InitBuffers13h()
 {
-    if((rgb=(char*)malloc(768))==NULL)return 1;
-    if((Rgb=(char*)malloc(768))==NULL)return 1;
-    if((Buffer330=(char  *)malloc(330))==NULL)return 1;
+    if((rgb=(char*)SDL_malloc(768))==NULL)return 1; // [PORT] Replace malloc with SDL_malloc
+    if((Rgb=(char*)SDL_malloc(768))==NULL)return 1; // [PORT] Replace malloc with SDL_malloc
+    if((Buffer330=(char  *)SDL_malloc(330))==NULL)return 1; // [PORT] Replace malloc with SDL_malloc
     return 0;
 }
 //////////////
 void FreeBuffers13h()
 {
-    if(rgb!=NULL)free(rgb);
-    if(Rgb!=NULL)free(Rgb);
-    if(Buffer330!=NULL)free(Buffer330);
+    if(rgb!=NULL)SDL_free(rgb); // [PORT] Replace free with SDL_free
+    if(Rgb!=NULL)SDL_free(Rgb); // [PORT] Replace free with SDL_free
+    if(Buffer330!=NULL)SDL_free(Buffer330); // [PORT] Replace free with SDL_free
 }
 
 /////////////////////////////////////////////////////////////////
 //END13H
 ///////////////////////////////////////////////////////////////
 void Close13h(void)
-{
+{/* [PORT] Remove unnecessary code
     union REGS r;
     r.h.ah = 0x0;
     r.h.al = 0x03;
-    int386(0x10, &r, &r);
+    int386(0x10, &r, &r);*/
 }
 ///////////////////////////////////////////////////////////
 //
@@ -136,13 +136,13 @@ void PutPixel13h(int x,int y,int color)
 //////////////////////////////////////////////////////////////////
 // Load image from file "name" to picture
 //////////////////////////////////////////////////////////////////
-
+/* [PORT] Replace LoadImage13h with SDL friendly implementation
 char* LoadImage13h(char*name)
 {//return adres do obrazka lub NULL w przypadku wystapienia bledu
     FILE *file;
     char *picture;
     short int sizex,sizey;
-    
+
     file=fopen(name,"rb");
     if(file==NULL)return NULL;
     fread(&sizex,2,1,file);
@@ -152,7 +152,24 @@ char* LoadImage13h(char*name)
     fseek(file,0,0);
     fread(picture,1,GetImageSize13h(0,0,sizex-1,sizey-1),file);
     fclose(file);
-    return picture;    
+    return picture;
+}*/
+char* LoadImage13h(char*name)
+{//return adres do obrazka lub NULL w przypadku wystapienia bledu
+    SDL_IOStream *file;
+    char *picture;
+    short int sizex,sizey;
+
+    file=SDL_IOFromFile(g_polanie->GetFilePath(name),"rb");
+    if(file==NULL)return NULL;
+    SDL_ReadIO(file,&sizex,2);
+    SDL_ReadIO(file,&sizey,2);
+    picture=(char*)SDL_malloc(GetImageSize13h(0,0,sizex,sizey));
+    if(picture==NULL){SDL_CloseIO(file);return NULL;}
+    SDL_SeekIO(file,0,SDL_IO_SEEK_SET);
+    SDL_ReadIO(file,picture,GetImageSize13h(0,0,sizex-1,sizey-1));
+    SDL_CloseIO(file);
+    return picture;
 }
       
 ////////////////////////////////////////////////////////////////////
@@ -164,14 +181,14 @@ int LoadToScreen13h(int offset,int line)
 
     if(graphicfile==NULL)return 1;
          
-    fseek(graphicfile,Offset,0);
-    fread(&size,2,1,graphicfile);
-    fread(&size,2,1,graphicfile);
-    fread(&size,2,1,graphicfile);
+    SDL_SeekIO(graphicfile,Offset,SDL_IO_SEEK_SET); // [PORT] Replace fseek with SDL_SeekIO
+    SDL_ReadIO(graphicfile,&size,2); // [PORT] Replace fread with SDL_ReadIO
+    SDL_ReadIO(graphicfile,&size,2); // [PORT] Replace fread with SDL_ReadIO
+    SDL_ReadIO(graphicfile,&size,2); // [PORT] Replace fread with SDL_ReadIO
     if(line)j=0;
     for(i=0;i<99+j;i++)
     {
-        size=fread((void*)(VirtualScreen+(line*320)+(i*320)),1,319,graphicfile);
+        size=SDL_ReadIO(graphicfile,(void*)(VirtualScreen+(line*320)+(i*320)),319); // [PORT] Replace fread with SDL_ReadIO
         if(size!=319)j=2;
     }    
     
@@ -181,10 +198,11 @@ int LoadToScreen13h(int offset,int line)
 ////////////////////////////////////////////////////////////////////////////
 // Save picture image to file "name"
 //////////////////////////////////////////////////////////////////////////
-int SaveImage256(char*name,char*picture)
+/* [PORT] Remove unnecessary function
+ * int SaveImage256(char*name,char*picture)
 {//return 0 if OK
     FILE *file;
-    
+
     short int sizex,sizey,*buf=(short int*)picture;
     file=fopen(name,"wb");
     if(file==NULL)return 1;
@@ -193,7 +211,7 @@ int SaveImage256(char*name,char*picture)
     fwrite(picture,1,GetImageSize13h(0,0,sizex-1,sizey-1),file);
     fclose(file);
     return 0;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////
 //  laduje bitmape pod adres map
@@ -240,7 +258,7 @@ void PutImage13h(int x,int y,char *picture,int how)
         picturePos=6;
         for(j=0;j<height;j++)
         {
-                memcpy((void*)&VirtualScreen[line],(void*)&picture[picturePos],length);         
+                SDL_memcpy((void*)&VirtualScreen[line],(void*)&picture[picturePos],length);          // [PORT] Replace memcpy with SDL_memcpy
                 picturePos+=length;   
                 line+=320;
         }
@@ -444,7 +462,7 @@ void Bar13h(int x1,int y1,int x2,int y2, int color)
     length=x2-x1;
     for(int j=y1;j<y2;j++)
     {
-        memset((void*)&VirtualScreen[x1+j*lineLength],color,length);
+        SDL_memset((void*)&VirtualScreen[x1+j*lineLength],color,length); // [PORT] Replace memset with SDL_memset
     }
 }
 
@@ -460,13 +478,13 @@ char * literki;
 literki=LoadImage13h("font.dat"); //??????????
 if (literki==NULL) return 1;
 PutImage13h(0,0,literki,0);
-free(literki);
+SDL_free(literki); // [PORT] Replace free with SDL_free
 
 x1 = 7; x2 = 11;
 for(i=0;i<33;i++)
  {x2 = x1+length[i]-1;
   size = GetImageSize13h(x1,8,x2,20);
-  index[i] = (char*)malloc(size);
+  index[i] = (char*)SDL_malloc(size); // [PORT] Replace malloc with SDL_malloc
   if(index[i]!=NULL)  GetImage13h(x1,8,x2,20,index[i]);
      else return 1;
   x1 = x2;}
@@ -475,7 +493,7 @@ x1 = 8; x2 = 16;
 for(i=33;i<64;i++)
  {x2 = x1+length[i]-1;
   size = GetImageSize13h(x1,32,x2,44);
-  index[i] =(char*) malloc(size);
+  index[i] =(char*) SDL_malloc(size); // [PORT] Replace malloc with SDL_malloc
   if(index[i]!=NULL)  GetImage13h(x1,32,x2,44,index[i]);
      else return 1;
   x1 = x2;}
@@ -484,7 +502,7 @@ x1 = 7; x2 = 11;
 for(i=64;i<91;i++)
  {x2 = x1+length[i]-1;
   size = GetImageSize13h(x1,56,x2,78);
-  index[i] =(char*) malloc(size);
+  index[i] =(char*) SDL_malloc(size); // [PORT] Replace malloc with SDL_malloc
   if(index[i]!=NULL)  GetImage13h(x1,56,x2,78,index[i]);
      else return 1;
   x1 = x2;}
@@ -527,7 +545,7 @@ void ClearText13h()
 {
 int i;
 
-for(i=0;i<92;i++) if(index[i]!=NULL) free(index[i]);
+for(i=0;i<92;i++) if(index[i]!=NULL) SDL_free(index[i]); // [PORT] Replace free with SDL_free
 }
 //--------------------------------------------------------
 //             OutTextDelay13h                wypisywanie liter
@@ -547,7 +565,7 @@ while(*text!=NULL)
      PutImageChange13h(x,y,letter,1,255,colour1);
      x=x+length[znak-32]-1;
      if(x>320)return;
-     PORT_SDLPumpEvents(0); delay(del); // [PORT] Simple Fix to allow delay'ed text-writing
+     g_polanie->ProcessEvents(); SDL_Delay(del); // [PORT] Add event processing to show the effect; Replace delay with SDL_Delay
      text++;}
 }
 //--------------------------------------------------------
@@ -559,14 +577,14 @@ int x,y,dl=0,wsk;
 int i,ile=0;
 
 
-wsk=strlen(text);
+wsk=SDL_strlen(text); // [PORT] Replace strlen with SDL_strlen
 while(*text!=NULL)
 {ile=ile+length[*text-32]-1;
 if(ile>(xp-xl-12))*text=NULL;
 text++; }
 for(i=0;i<wsk;i++) text--;
 
-wsk=strlen(text);
+wsk=SDL_strlen(text); // [PORT] Replace strlen with SDL_strlen
 while(*text!=NULL)
 {dl=dl+length[*text-32]-1;
 text++;}
@@ -604,20 +622,20 @@ int Write13h(int x,int y, int maxx, int maxdl, char *txt, int tcolour,int bcolou
   int cx=0,a,ll,xp,wsk=0,ile=0;
   char k,l;
   char str[2]={0,0};
-wsk=strlen(txt);
+wsk=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
 while(*txt!=NULL)
 {ile=ile+length[*txt-32]-1;
 if(ile>maxx-12)*txt=NULL;
 txt++; }
 for(int i=0;i<wsk;i++) txt--;
-cx=strlen(txt);
+cx=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
   do
   {
   if(maxx==0)
      Bar13h(x,y,x+(maxdl+1)*11-1,y+14,bcolour);
      else Bar13h(x,y,x+maxx,y+14,bcolour);
     xp=x;
-    for(a=0;a<strlen(txt);a++)
+    for(a=0;a<SDL_strlen(txt);a++) // [PORT] Replace strlen with SDL_strlen
        {str[0]=txt[a];
        if(a==cx)
          {Bar13h(xp,y+11,xp+length[txt[a]-32],y+12,tcolour);
@@ -626,11 +644,11 @@ cx=strlen(txt);
           {OutText13h(xp,y,str,tcolour);}
        xp+=length[txt[a]-32]-1;}
 
-    if(cx==strlen(txt))
+    if(cx==SDL_strlen(txt)) // [PORT] Replace strlen with SDL_strlen
       {Bar13h(xp,y+11,xp+8,y+12,tcolour);}
-    ll=strlen(txt);
-    k=getch();
-    if(!k)l=getch();
+    ll=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
+    g_polanie->ProcessEvents(); k=mouse.Key;//k=getch(); // [PORT] Replace with funcionally equivalent code
+    g_polanie->ProcessEvents(); if(!k)l=mouse.Key;//if(!k)l=getch(); // [PORT] Replace with funcionally equivalent code
     if(!k)
       switch(l)
            {case  75:if(cx>0)cx--;break;
@@ -659,14 +677,14 @@ cx=strlen(txt);
 ///////////////////////////////////////////////////////////////
 void OpenGraphicFile()
 {
-    graphicfile=fopen("graf.dat","rb");
+    graphicfile=SDL_IOFromFile(g_polanie->GetFilePath("graf.dat"),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
 }
 /////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////
 void CloseGraphicFile()
 {
-    fclose(graphicfile);
+    SDL_CloseIO(graphicfile); // [PORT] Replace close with SDL_CloseIO
 }
 
 /////////////////////////////////////////////////////////////////
@@ -674,14 +692,14 @@ void CloseGraphicFile()
 ///////////////////////////////////////////////////////////////
 void OpenPaletteFile()
 {
-    palettefile=fopen("pal.dat","rb");
+    palettefile=SDL_IOFromFile(g_polanie->GetFilePath("pal.dat"),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
 }
 /////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////
 void ClosePaletteFile()
 {
-    fclose(palettefile);
+    SDL_CloseIO(palettefile); // [PORT] Replace close with SDL_CloseIO
 }
 
 
@@ -693,18 +711,18 @@ void LoadExtendedPalette(int pal)
         long whence=pal*768;
         if(rgb==NULL)return;
         if(palettefile==NULL)return;
-        fseek(palettefile,whence,0);
-        fread(rgb,768,1,palettefile);
+        SDL_SeekIO(palettefile,whence,SDL_IO_SEEK_SET); // [PORT] Replace fseek with SDL_SeekIO
+        SDL_ReadIO(palettefile,rgb,768); // [PORT] Replace fread with SDL_ReadIO
 }
 
 void LoadPalette13h(char* name)
 {
-        FILE *f=fopen(name,"rb");
+        SDL_IOStream *f=SDL_IOFromFile(g_polanie->GetFilePath(name),"rb"); // [PORT] Replace FILE with SDL_IOStream; Replace fopen with SDL_IOFromFile
         if(f==NULL)return;
         if(rgb==NULL)return;
         if(palettefile==NULL)return;
-        fread(rgb,768,1,f);
-        fclose(f);
+        SDL_ReadIO(f,rgb,768); // [PORT] Replace fread with SDL_ReadIO
+        SDL_CloseIO(f); // [PORT] Replace fclose with SDL_CloseIO
 }
 
 //////////////////////////////////////////////////////////
@@ -725,7 +743,7 @@ for (i=0; i<768; i++)
     Palette[i] = Palette[i] >> 2;
 
 p = Palette;
-
+/* [PORT] Remove unnecesary code
 outp(0x3c6, 0xff);
 for (i=0; i<=255; i++)
     {
@@ -733,7 +751,8 @@ for (i=0; i<=255; i++)
     outp(0x3c9, *p++);
     outp(0x3c9, *p++);
     outp(0x3c9, *p++);
-    }
+    }*/
+g_polanie->SetPalette(SDL_reinterpret_cast(Uint8 *, p)); g_polanie->ProcessEvents(); // [PORT] Replace it with functionally equivalent code
 
 return;
 
@@ -754,7 +773,7 @@ BlackPalette();
 void BlackPalette(void)
 {
     if(rgb==NULL)return;
-    memset(rgb,0,768);
+    SDL_memset(rgb,0,768); // [PORT] Replace memset with SDL_memset
     SetExtendedPalette();
 }
 /////////////////////////////////////////////////////////////////

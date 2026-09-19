@@ -1,14 +1,14 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <conio.h>
-#include <dos.h>
-#include <bios.h>
-#include <string.h>
+//#include <stdlib.h> // [PORT] Remove stdlib.h
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <dos.h> // [PORT] Remove dos.h
+//#include <bios.h> // [PORT] Remove bios.h
+//#include <string.h> // [PORT] Remove string.h
 //#include <malloc.h> // [PORT] Remove malloc.h
 #include "mover.h"
 #include "mouse.h"
 #include "image13h.h"
-
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 //============================================
 int scrollTimer=0; // [PORT] Port licznik from the game
 #pragma pack(push,1) // [PORT] Pack structure for file saving
@@ -107,7 +107,7 @@ int ScreenX=3,ScreenY=1;
 //=========== Zmienne extern ===========
 
 extern int level;
-extern "C" int licznik; // [PORT] Port licznik from the game
+extern int licznik; // [PORT] Port licznik from the game
 extern char  *tree[14];
 extern char  *picture[MaxPictures],*missiles[4][3][3],*tlo,*Mysz[13];
 extern char  *movers[5][13][3][3],*ramka[4];   //faza:typ:dx:dy
@@ -196,9 +196,9 @@ void Edit(int type)
                     Scroll();
                     ShowSelected();
                     
-                    i=mouse.GetMsg();
-                    ile0=mouse.Ile(0);
-                    ile1=mouse.Ile(1);
+                    g_polanie->ProcessEvents();i=mouse.IsInputReady(); // [PORT] We need to process events; Replace GetMsg13h with IsInputReady
+                    ile0=mouse.ClickCount(0); // [PORT] Replace Ile with ClickCount
+                    ile1=mouse.ClickCount(1); // [PORT] Replace Ile with ClickCount
                     if(i)
                     {
                         DispatchEvent();
@@ -366,28 +366,28 @@ if(mouse.Key=='=')//=
         }
 
 // Skrolling
-if(mouse.MWindow(0,0,10,200)||mouse.Key==75)
+if(mouse.IsInBoundary(0,0,10,200)||mouse.Key==75) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenX--;
         if(mouse.Key)ScreenX--;
         if(ScreenX<1)ScreenX=1;
         return;
         }
-if(mouse.MWindow(316,0,320,200)||mouse.Key==77)
+if(mouse.IsInBoundary(316,0,320,200)||mouse.Key==77) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenX++;
         if(mouse.Key)ScreenX++;
         if(ScreenX>MaxX-17)ScreenX=MaxX-17;
         return;
         }
-if(mouse.MWindow(77,0,320,8)||mouse.Key==72)
+if(mouse.IsInBoundary(77,0,320,8)||mouse.Key==72) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenY--;
         if(mouse.Key)ScreenY--;
         if(ScreenY<1)ScreenY=1;
         return;
         }
-if(mouse.MWindow(0,192,320,200)||mouse.Key==80)
+if(mouse.IsInBoundary(0,192,320,200)||mouse.Key==80) // [PORT] Replace MWindow with IsInBoundary
         {
         ScreenY++;
         if(mouse.Key)ScreenY++;
@@ -395,7 +395,7 @@ if(mouse.MWindow(0,192,320,200)||mouse.Key==80)
         return;
         }
 
-if(mouse.MWindow(11,8,11+MaxX,8+MapY))
+if(mouse.IsInBoundary(11,8,11+MaxX,8+MapY)) // [PORT] Replace MWindow with IsInBoundary
 {
     ScreenX=mouse.X-12-9;
     ScreenY=mouse.Y-8-7;
@@ -405,12 +405,12 @@ if(mouse.MWindow(11,8,11+MaxX,8+MapY))
     if(ScreenY<1)ScreenY=1;
     return;
 }
-if(mouse.MWindow(268,0,315,195)&&ile0)// -------------- SubMenu ----------------
+if(mouse.IsInBoundary(268,0,315,195)&&ile0)// -------------- SubMenu ---------------- // [PORT] Replace MWindow with IsInBoundary
 {
     PanelCommand();
     return;
 }
-if(mouse.MWindow(11,8,268,191))
+if(mouse.IsInBoundary(11,8,268,191)) // [PORT] Replace MWindow with IsInBoundary
 {
     int x=((mouse.X-11)/16)+ScreenX;
     int y=((mouse.Y-8)/14)+ScreenY;
@@ -517,7 +517,7 @@ if(mouse.MWindow(11,8,268,191))
 void InitBattle(int level,int type)   // type 0 zaladuj scenariusz 1-scenariusz zaladowany
 {
 int k=0,i,j,p0=1,p1=1;
-FILE *plikPlansz;
+SDL_IOStream *plikPlansz; // [PORT] Replace FILE with SDL_IOStream
 char name[20],z;
 //baronie: 1-Red(YOU) 2-Green 3-Blue 4-Yellow 5-Gray
 int chatki=1,chaTki=1;
@@ -534,8 +534,8 @@ E.yz=0;
 
 if(level>25)
 {
-    sprintf(name,"levels/level.%d",level); // [PORT] Replace \\ with /
-    plikPlansz=fopen(name,"rb");
+    SDL_snprintf(name,sizeof(name),"levels/level.%d",level); // [PORT] Replace \\ with /; Replace sprintf with SDL_snprintf
+    plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
     if(plikPlansz==NULL)
     {
         for(i=0;i<mMaxX;i++)
@@ -554,7 +554,7 @@ if(level>25)
         for(j=0;j<mMaxY;j++)
         for(i=0;i<mMaxX;i++)
         {
-            fread(&placeG[i][j],4,1,plikPlansz);
+            SDL_ReadIO(plikPlansz,&placeG[i][j],4); // [PORT] Replace fread with SDL_ReadIO
             place[i][j]=0;
             placeN[i][j]=1;
             switch(placeG[i][j])
@@ -575,13 +575,13 @@ if(level>25)
             }
             
         }
-        fread((void*)&E,sizeof(EditStr),1,plikPlansz);
+        SDL_ReadIO(plikPlansz,(void*)&E,sizeof(EditStr));  // [PORT] Replace fread with SDL_ReadIO
         ScreenX=E.X;
         ScreenY=E.Y;
         //E.X=ScreenX;
         //E.Y=ScreenY;
         
-        fclose(plikPlansz);
+        SDL_CloseIO(plikPlansz); // [PORT] Replace fclose with SDL_CloseIO
         return;
     }
      
@@ -606,38 +606,38 @@ for(j=0;j<MaxY;j++)
  placeN[i][j]=0;
 for(j=0;j<MaxY;j++)
 for(i=0;i<MaxX;i++)place[i][j]=0;
-strcpy(name,"graf/level.dat"); // [PORT] Replace \\ with /
+SDL_strlcpy(name,"graf/level.dat",sizeof(name)); // [PORT] Replace \\ with /; Replace strcpy with SDL_strlcpy
 ScreenX=10;ScreenY=10;
-plikPlansz=fopen(name,"r");
-if (plikPlansz==NULL){Close13h();exit(0);}
+plikPlansz=SDL_IOFromFile(g_polanie->GetFilePath(name),"r"); // [PORT] Replace fopen with SDL_IOFromFile
+if (plikPlansz==NULL){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
         {
         do
            {
-                z=getc(plikPlansz);
+                SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
                 if(z=='$')k++;
-                if(z=='@'){Close13h();exit(0);}
+                if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
            }
         while(k!=level);
         for(j=0;j<MaxY;j++)
                 {
                 do
                   {
-                        z=getc(plikPlansz);
-                        if(z=='@'){Close13h();exit(0);}
-                        if(z=='D'){z=getc(plikPlansz);pl.decisionType=(char)(z-48);}
-                        if(z=='E'){z=getc(plikPlansz);pl.endType=(char)(z-48);}
+                        SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
+                        if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
+                        if(z=='D'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.decisionType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
+                        if(z=='E'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.endType=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
                         if(z=='G')pl.gen=1;
-                        if(z=='P'){z=getc(plikPlansz);pl.tp=(char)(z-48);}
-                        if(z=='T'){z=getc(plikPlansz);i=(char)(z-48);
-                       z=getc(plikPlansz);pl.typ=(char)(z-48)+i*10;}
-                        if(z=='M'){z=getc(plikPlansz);pl.maxmilk=(int)(z-48)*200+50;if(pl.maxmilk==50)pl.maxmilk=0;}
-                        if(z=='N'){z=getc(plikPlansz);i=(char)(z-48);
-                       z=getc(plikPlansz);pl.next=(char)(z-48)+i*10;}
+                        if(z=='P'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.tp=(char)(z-48);} // [PORT] Replace getc with SDL_ReadU8
+                        if(z=='T'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/i=(char)(z-48); // [PORT] Replace getc with SDL_ReadU8
+                       SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.typ=(char)(z-48)+i*10;} // [PORT] Replace getc with SDL_ReadU8
+                        if(z=='M'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.maxmilk=(int)(z-48)*200+50;if(pl.maxmilk==50)pl.maxmilk=0;} // [PORT] Replace getc with SDL_ReadU8
+                        if(z=='N'){SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/i=(char)(z-48); // [PORT] Replace getc with SDL_ReadU8
+                       SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));/*z=getc(plikPlansz);*/pl.next=(char)(z-48)+i*10;} // [PORT] Replace getc with SDL_ReadU8
                         if(z=='*'){
                                     char cc=0;
                         do
                     {
-                                    z=getc(plikPlansz);
+                                          SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
                     pl.name[cc]=z;
                     cc++;
                     }while(pl.name[cc-1]!='*');
@@ -648,8 +648,8 @@ if (plikPlansz==NULL){Close13h();exit(0);}
                 while(z!='!');
                 if(pl.endType==4&&!p1)p1=1;
                 for(i=0;i<MaxX;i++){
-                                         z=getc(plikPlansz);
-                                         if(z=='@'){Close13h();exit(0);}
+                                         SDL_ReadU8(plikPlansz, SDL_reinterpret_cast(Uint8 *, &z));//z=getc(plikPlansz); // [PORT] Replace getc with SDL_ReadU8
+                                         if(z=='@'){Close13h();return;} // [PORT] [TODO] Replace exit with return. Not the best way but the easiest
                                          place[i][j]=0;
                                          if(i==0||i==MaxX-1||j==0||j==MaxY-1)place[i][j]=10;
                                          i=8;
@@ -824,7 +824,7 @@ if (plikPlansz==NULL){Close13h();exit(0);}
                                   }
                  }
         }
-fclose(plikPlansz);
+SDL_CloseIO(plikPlansz); // [PORT] Replace fclose with SDL_CloseIO
 
 }
 if(ScreenX<1)ScreenX=1;
@@ -856,45 +856,45 @@ void SubMenu(void)
     do
     {
         MouseEngine();
-        if(mouse.MWindow(100,30,220,50)||mouse.Key==11386)    //Save Level
+        if(mouse.IsInBoundary(100,30,220,50)||mouse.Key==11386)    //Save Level // [Port] Replace MWindow with IsInBoundary
         {   
             PressButton(1,1);
-            delay(300);
+            SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
             PressButton(1,0);
             SaveLevel();
             quitMenu=1;
         }
-        if(mouse.MWindow(100,57,220,74)||mouse.Key==4471)    //Load Level
+        if(mouse.IsInBoundary(100,57,220,74)||mouse.Key==4471)    //Load Level // [Port] Replace MWindow with IsInBoundary
         { 
     
             PressButton(2,1);
-            delay(300);
+            SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
             PressButton(2,0);
             InitBattle(level,0);
             quitMenu=1;
         }
-        if(mouse.MWindow(100,87,220,104)||mouse.Key==6512)   //Clear Level
+        if(mouse.IsInBoundary(100,87,220,104)||mouse.Key==6512)   //Clear Level // [Port] Replace MWindow with IsInBoundary
         { 
             quitMenu=1;
         }
-        if(mouse.MWindow(100,114,220,131)||mouse.Key==8807)  //Cancel
+        if(mouse.IsInBoundary(100,114,220,131)||mouse.Key==8807)  //Cancel // [Port] Replace MWindow with IsInBoundary
         { 
             PressButton(4,0);
-            delay(300);
+            SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
             PressButton(4,1);
             quitMenu=1;
         }
-        if(mouse.MWindow(100,142,220,159)||mouse.Key==9579)  //End Game /koniec
+        if(mouse.IsInBoundary(100,142,220,159)||mouse.Key==9579)  //End Game /koniec // [Port] Replace MWindow with IsInBoundary
         {   // quit=4209  k=9579  // c=11875   g=8807 // r=4978   p=6512  // l=9836  w=4471// s=8051  z=11386
             PressButton(5,0);
-            delay(300);
+            SDL_Delay(300); // [PORT] Replace delay with SDL_Delay
             PressButton(5,1);
             quitMenu=1;
             quitLevel=1;
         }
     
     }while(!quitMenu);
-    mouse.ButtonUp();
+    do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.ButtonUp(); // Replace ButtonUp with simple loop
     SetScreen(1);
           
 }
@@ -926,23 +926,23 @@ int sSubMenu()
 int SaveLevel()
 {
         
-        FILE *file;
+        SDL_IOStream *file; // [PORT] Replace FILE with SDL_IOStream
         int i,j;
         int Ty[4]={32,59,89,116};
         char name[30];
         E.X=ScreenX;
         E.Y=ScreenY;
-        sprintf(name,"levels\\level.%d",level);
-        file=fopen(name,"wb");
+        SDL_snprintf(name,sizeof(name),"levels\\level.%d",level); // [PORT] Replace sprintf with SDL_snprintf
+        file=SDL_IOFromFile(g_polanie->GetFilePath(name),"wb"); // [PORT] Replace fopen with SDL_IOFromFile
         if(file!=NULL)
         {
             for(j=0;j<mMaxY;j++)
             for(i=0;i<mMaxX;i++)
             {
-                fwrite(&placeG[i][j],4,1,file);
+                SDL_WriteIO(file,&placeG[i][j],4); // [PORT] Replace fwrite with SDL_WriteIO
             }
-            fwrite((void*)&E,sizeof(EditStr),1,file); 
-            fclose(file);
+            SDL_WriteIO(file,(void*)&E,sizeof(EditStr));  // [PORT] Replace fwrite with SDL_WriteIO
+            SDL_CloseIO(file); // [PORT] Replace fclose with SDL_CloseIO
         }
      
         return 0;
@@ -1002,7 +1002,7 @@ void ShowPanel()
         {
             Rectangle13h(Xe[0],Ye[7],Xe[1]+16,Ye[7]+14,LightGray);
             char ss[10];
-            sprintf(ss,"%d chat",E.postac);
+            SDL_snprintf(ss,sizeof(ss),"%d chat",E.postac); // [PORT] Replace sprintf with SDL_snprintf
             OutText13h(Xe[0],Ye[7],ss,White);
             
         }
@@ -1036,9 +1036,9 @@ void ShowPanel()
         OutText13h(Xe[0],Ye[5],"Maxmleko",LightGray);
         
         char ss[10];
-        sprintf(ss,"%d",E.milk);
+        SDL_snprintf(ss,sizeof(ss),"%d",E.milk); // [PORT] Replace sprintf with SDL_snprintf
         OutText13h(Xe[0],Ye[4],ss,White);//ilosc mleka
-        sprintf(ss,"%d",E.maxmilk);
+        SDL_snprintf(ss,sizeof(ss),"%d",E.maxmilk); // [PORT] Replace sprintf with SDL_snprintf
         OutText13h(Xe[0],Ye[6],ss,White);//ilosc mleka
         switch(E.generator)
         {
@@ -1082,7 +1082,7 @@ int PanelCommand()
     int Ye[11];
     for(int j=0;j<11;j++)Ye[j]=8+(j*16);
 
-    if(mouse.MWindow(Xe[0],Ye[0],Xe[1]+20,Ye[3]))//wybierz mod
+    if(mouse.IsInBoundary(Xe[0],Ye[0],Xe[1]+20,Ye[3]))//wybierz mod // [PORT] Replace MWindow with IsInBoundary
     {
         int i=(mouse.X-280)/20;
         int j=(mouse.Y-8)/16;
@@ -1091,14 +1091,14 @@ int PanelCommand()
         Bar13h(280,0,319,199,Black);
         return 0;
     }
-    if(mouse.MWindow(Xe[0],Ye[3],Xe[1]+20,Ye[8])&&E.mode<5)//wybierz obj
+    if(mouse.IsInBoundary(Xe[0],Ye[3],Xe[1]+20,Ye[8])&&E.mode<5)//wybierz obj // [PORT] Replace MWindow with IsInBoundary
     {
         int i=(mouse.X-280)/20;
         int j=(mouse.Y-8)/16;
         E.obj=E.panel+i+(j-3)*2;
         return 0;
     }
-    if(mouse.MWindow(Xe[0],Ye[3],Xe[1]+20,Ye[8])&&E.mode==5)
+    if(mouse.IsInBoundary(Xe[0],Ye[3],Xe[1]+20,Ye[8])&&E.mode==5) // [PORT] Replace MWindow with IsInBoundary
     {
         if(!E.panel)
         {
@@ -1128,20 +1128,20 @@ int PanelCommand()
             return 0;
         }
     }
-    if(mouse.MWindow(Xe[0],Ye[8],Xe[0]+16,Ye[8]+15))//Up
+    if(mouse.IsInBoundary(Xe[0],Ye[8],Xe[0]+16,Ye[8]+15))//Up // [PORT] Replace MWindow with IsInBoundary
     {
         if(E.panel>1)E.panel-=2;
         if(E.mode==5){E.panel=0;Bar13h(280,0,319,199,Black);}
         return 0;
     }
-    if(mouse.MWindow(Xe[1],Ye[8],Xe[1]+16,Ye[8]+15))//down
+    if(mouse.IsInBoundary(Xe[1],Ye[8],Xe[1]+16,Ye[8]+15))//down // [PORT] Replace MWindow with IsInBoundary
     {
         if(E.panel<24)E.panel+=2;
         if(E.mode==5){E.panel=1;Bar13h(280,0,319,199,Black);}
         return 0;
     }
      
-    if(mouse.MWindow(Xe[0],Ye[9],Xe[0]+33,Ye[9]+15))//mapa
+    if(mouse.IsInBoundary(Xe[0],Ye[9],Xe[0]+33,Ye[9]+15))//mapa // [PORT] Replace MWindow with IsInBoundary
     {
         if(Map)
         {
@@ -1153,7 +1153,7 @@ int PanelCommand()
         }
         return 0;  
     }
-    if(mouse.MWindow(Xe[0],Ye[10],Xe[0]+33,Ye[10]+15))//menu
+    if(mouse.IsInBoundary(Xe[0],Ye[10],Xe[0]+33,Ye[10]+15))//menu // [PORT] Replace MWindow with IsInBoundary
     {
         SubMenu();
         if(quitLevel)return 0;
@@ -1435,7 +1435,6 @@ void Rocks(int x,int y,int ox,int oy)
 /* // [PORT] Port licznik from the game */
 void RefreshScreen(void)
 {
-    PORT_SDLPumpEvents(0);
     showAll=1;
 }
 // END [PORT] Port licznik from the game

@@ -11,8 +11,8 @@ void Attack()
     mem.delay++;  
     if(debug)
     {
-        if(mem.delay<1000)sprintf(Msg.msg,"%d",1000-mem.delay);
-        else sprintf(Msg.msg,"Atak!");
+        if(mem.delay<1000)SDL_snprintf(Msg.msg,sizeof(Msg.msg),"%d",1000-mem.delay); // [PORT] Replace sprintf with SDL_snprintf
+        else SDL_snprintf(Msg.msg,sizeof(Msg.msg),"Atak!"); // [PORT] Replace sprintf with SDL_snprintf
         Msg.licznik=10;
     }
     if(mem.delay>1100)

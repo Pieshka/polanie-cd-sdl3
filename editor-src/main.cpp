@@ -2,22 +2,23 @@
 //
 //    Modul glowny
 /////////////////////////////////////////
-#include <stdio.h>
-#include <conio.h>
-#include <dos.h>
+//#include <stdio.h> // [PORT] Remove stdio.h
+//#include <conio.h> // [PORT] Remove conio.h
+//#include <dos.h> // [PORT] Remove dos.h
 //#include <malloc.h> // [PORT] Remove malloc.h
-#include <graph.h>
+//#include <graph.h> // [PORT] Remove graph.h
 #include "mouse.h"
 #include "mover.h"
 #include "image13h.h"
 //#include "menegdma.h" // [PORT] Remove menegdma.h as it is not needed
-#include <process.h>
+//#include <process.h> // [PORT] Remove process.h
 //#include "ems.h" // [PORT] Remove ems.h as it is not needed
 //#include "instrum.h" // [PORT] Remove instrum.h as it is not needed
-
+#include "polanieapp.h" // [PORT] Add polanieapp.h
 
 //========zmienne=====================
 
+PolanieApp *g_polanie; char EndMap; // [PORT] Add g_polanie global and EndMap
 int   endGame=0;
 int   level=26;
 char  *picture[MaxPictures],*missiles[4][3][3],*tlo,*Mysz[13];
@@ -69,7 +70,7 @@ extern int FreePaternMemory();
 ///////////////////////////////////////////////////////////////////////////
 int main() // [PORT] main must return int
 {
-PORT_setEditor(); // [PORT] Set editor flag
+g_polanie = new PolanieApp; if (g_polanie->Init(0)) return 1; // [PORT] Create PolanieApp and initialize
 if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram wymaga 586kB RAM\n"); return 1;} // [PORT] main must return int
 //Init13h(); // [PORT] Unnecessary
 //BlackPalette(); // [PORT] Unnecessary
@@ -78,7 +79,7 @@ if(InitBuffers13h()){cprintf("BLAD !!!\n\rBrak pamieci operacyjnej. \n\rProgram 
 // [PORT] Moved to line 115
 //getch();
 //Close13h(); // [PORT] Unnecessary
-if(!mouse.MouseInit()){FreeBuffers13h();ClearText13h();cprintf("BLAD !!!\n\r----------- Brak sterownika myszy.---------");return 1;} // [PORT] main must return int
+//if(!mouse.MouseInit()){FreeBuffers13h();ClearText13h();cprintf("BLAD !!!\n\r----------- Brak sterownika myszy.---------");return;} // [PORT] Disable mouse init as it is not needed
 //------------------------------------------
 //cprintf("Alokacja pamieci EMS ..................................  \n\r");
 //if(!EMS::SegmentRamki()){FreeBuffers13h();ClearText13h();cprintf("BLAD !!!\n\r----------- Brak pamieci EMS ! Patrz instrukcja.-------------");return;}
@@ -162,13 +163,13 @@ Close13h();
 
 void MainMenuDispatchEvent(void)
 {
-    if(mouse.MWindow(100,160,200,180)||mouse.Key==9579||mouse.Key=='k') //k=9579 q=4209
+    if(mouse.IsInBoundary(100,160,200,180)||mouse.Key==9579||mouse.Key=='k') //k=9579 q=4209 // [PORT] Replace MWindow is IsInBoundary
     {
         endGame=1;
         return;
     }
     
-    if(mouse.MWindow(100,30,200,50)||mouse.Key=='e') // Edit level
+    if(mouse.IsInBoundary(100,30,200,50)||mouse.Key=='e') // Edit level // [PORT] Replace MWindow is IsInBoundary
     {
         Edit(1);
         endGame=0;
@@ -178,12 +179,12 @@ void MainMenuDispatchEvent(void)
         return;
     }
         
-    if(mouse.MWindow(205,30,225,50)||mouse.Key==75) 
+    if(mouse.IsInBoundary(205,30,225,50)||mouse.Key==75)  // [PORT] Replace MWindow is IsInBoundary
     {
         if(level<60)level++;
         return;
     }
-    if(mouse.MWindow(75,30,95,50)||mouse.Key==77) 
+    if(mouse.IsInBoundary(75,30,95,50)||mouse.Key==77)  // [PORT] Replace MWindow is IsInBoundary
     {
         if(level>26)level--;
         return;
@@ -216,34 +217,32 @@ switch(B)
 
 void MouseEngine()
 {
- 
-  mouse.ReadMouse();
-  if(mouse.X>300){mouse.X=300;mouse.MoveCursor(600,mouse.Y);}
-  if(mouse.Y>180){mouse.Y=180;mouse.MoveCursor(mouse.X*2,180);}
-  
-  
-  mouse.oldX=mouse.X;
-  mouse.oldY=mouse.Y;
-  GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
-  PutImage13h(mouse.X,mouse.Y,buttons[6],1);
-  do
-  {
-  }while(mouse.GetMsg());
-  do
-  {
-      if(mouse.oldX!=mouse.X||mouse.oldY!=mouse.Y)
-      {
-          PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
-          if(mouse.X>300){mouse.X=300;mouse.MoveCursor(600,mouse.Y);}
-          if(mouse.Y>180){mouse.Y=180;mouse.MoveCursor(mouse.X*2,180);}
-          mouse.oldX=mouse.X;
-          mouse.oldY=mouse.Y;
-          GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
-          PutImage13h(mouse.X,mouse.Y,buttons[6],1);
-      }
-  }while(!mouse.GetMsg());
-  PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
- 
+
+    g_polanie->ProcessEvents(); //mouse.ReadMouse13h(); // [PORT] Instead of ReadMouse13h, we need to process events
+    if(mouse.X>300){mouse.X=300;/*mouse.GMoveCursor(600,mouse.Y);*/} // [PORT] Remove moving cursor
+    if(mouse.Y>180){mouse.Y=180;/*mouse.GMoveCursor(mouse.X*2,180);*/} // [PORT] Remove moving cursor
+
+
+    mouse.oldX=mouse.X;
+    mouse.oldY=mouse.Y;
+    GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
+    PutImage13h(mouse.X,mouse.Y,buttons[6],1);
+    do
+    {
+        if(mouse.oldX!=mouse.X||mouse.oldY!=mouse.Y)
+        {
+            PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
+            if(mouse.X>300){mouse.X=300;/*mouse.GMoveCursor(600,mouse.Y);*/} // [PORT] Remove moving cursor
+            if(mouse.Y>180){mouse.Y=180;/*mouse.GMoveCursor(mouse.X*2,180);*/} // [PORT] Remove moving cursor
+            mouse.oldX=mouse.X;
+            mouse.oldY=mouse.Y;
+            GetImage13h(mouse.X,mouse.Y,mouse.X+15,mouse.Y+14,Mysz[0]);
+            PutImage13h(mouse.X,mouse.Y,buttons[6],1);
+        }
+        g_polanie->ProcessEvents(); // [PORT] Instead of ReadMouse13h, we need to process events
+    }while(!mouse.IsInputReady() && !g_polanie->IsExiting()); // [PORT] Replace GetMsg13h with IsInputReady; Add && !g_polanie->IsExiting()
+    PutImage13h(mouse.oldX,mouse.oldY,Mysz[0],0);
+
 }
 
 void ShowMainEditMenu()
@@ -255,6 +254,6 @@ void ShowMainEditMenu()
     Rectangle13h(100,160,200,180,255);
     OutText13h(130,165,"Koniec",255);
     char ss[50];
-    sprintf(ss,"Edytuj poziom %d",level-25);
+    SDL_snprintf(ss,sizeof(ss),"Edytuj poziom %d",level-25); // [PORT] Replace sprintf with SDL_snprintf
     OutText13h(110,35,ss,255);
 }
