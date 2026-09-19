@@ -1285,9 +1285,9 @@ if((mouse.Key==8051)||mouse.IsInBoundary(274,20,295,35)) // [PORT] Replace MWind
         Cmd[master].nrb=select.nrb;
         Cmd[master].nrm=select.nrm;
         //strcpy(Msg.msg,"Stehe !");
-        strcpy(Msg.msg,"Stoj$ !");
-        if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-        if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+        SDL_strlcpy(Msg.msg,"Stoj$ !", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+        if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+        if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...", sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
         Msg.licznik=20;
         /////////////////
         int kk=34+selectM->type*11;
@@ -1295,8 +1295,8 @@ if((mouse.Key==8051)||mouse.IsInBoundary(274,20,295,35)) // [PORT] Replace MWind
         {
               kk=177;
 
-              strcpy(Msg.msg,"Stoimy !");
-              if(selectM->type>7){kk=0;strcpy(Msg.msg," ");}
+              SDL_strlcpy(Msg.msg,"Stoimy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+              if(selectM->type>7){kk=0;SDL_strlcpy(Msg.msg," ",sizeof(Msg.msg));} // [PORT] Replace strcpy with SDL_strlcpy
         }
         Msg.X=ScreenX;Msg.Y=ScreenY;
         if(Msg.dzwiek<kk){Msg.dzwiek=kk;}
@@ -1322,7 +1322,7 @@ if((ile0&&mouse.IsInBoundary(274,80,295,95))||(mouse.Key==' ')) // [PORT] Replac
               Cmd[master].command=9;
               Cmd[master].nrb=select.nrb;
               Cmd[master].nrm=select.nrm;
-              if(selectM->type==3)strcpy(Msg.msg,"");else strcpy(Msg.msg," ");
+              if(selectM->type==3)SDL_strlcpy(Msg.msg,"",sizeof(Msg.msg));else SDL_strlcpy(Msg.msg," ",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
               Msg.licznik=20;
               return;
         }
@@ -1431,10 +1431,10 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,
                 Cmd[master].x=x;
                 Cmd[master].y=y;
                 //strcpy(Msg.msg,"Ich gehe !");
-                strcpy(Msg.msg,"Id$ !");
-                if(!selectM->type)strcpy(Msg.msg,"MUUUU !");
-                if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-                if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+                SDL_strlcpy(Msg.msg,"Id$ !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type)SDL_strlcpy(Msg.msg,"MUUUU !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=5;
@@ -1447,7 +1447,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,
                       kk=171;
                       if(selectM->type>7)kk=0;
                       //strcpy(Msg.msg,"Wir gehen !");
-                      strcpy(Msg.msg,"Idziemy !");
+                      SDL_strlcpy(Msg.msg,"Idziemy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 }
                 else
                 {
@@ -1474,10 +1474,10 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,
                 Cmd[master].x=x;
                 Cmd[master].y=y;
                 //if(selectM->type)strcpy(Msg.msg,"in den Kampf!");
-                if(selectM->type)strcpy(Msg.msg,"Do ataku !!!");
-                if(!selectM->type)strcpy(Msg.msg,"MUUUU !");
-                if(!selectM->type==8)strcpy(Msg.msg,"GROARRR !");
-                if(!selectM->type==9)strcpy(Msg.msg,"Ssssss...");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Do ataku !!!",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type)SDL_strlcpy(Msg.msg,"MUUUU !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==8)SDL_strlcpy(Msg.msg,"GROARRR !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
+                if(!selectM->type==9)SDL_strlcpy(Msg.msg,"Ssssss...",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -1511,7 +1511,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,
                 Cmd[master].x=x;
                 Cmd[master].y=y;
 
-                if(selectM->type)strcpy(Msg.msg,"Do pracy !");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Do pracy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -1535,7 +1535,7 @@ if(((mouse.Button==1&&ile0)||(mouse.Button==2&&ile1))&&(mouse.IsInBoundary(11,8,
                 Cmd[master].command=7;//czar bojowy
                 Cmd[master].x=x;
                 Cmd[master].y=y;
-                if(selectM->type)strcpy(Msg.msg,"Alartuan !");
+                if(selectM->type)SDL_strlcpy(Msg.msg,"Alartuan !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
                 Msg.licznik=20;
                 /////////////////
                 Msg.count=11;
@@ -2204,7 +2204,7 @@ if(!type)
     pl.typ=E.postac;
     pl.gen=E.generator;
     pl.maxmilk=E.maxmilk;
-    strcpy(pl.name,E.pName);
+    SDL_strlcpy(pl.name,E.pName,sizeof(pl.name)); // [PORT] Replace strcpy with SDL_strlcpy
     if(pl.endType==4&&!p1)p1=1;
 
     ///OutText13h(50,170,"Ustawiam na zero",255);
@@ -2429,7 +2429,7 @@ if(level<26)
 }
 drzewa0=drzewa+256+512;
 placeG[xleczenie][yleczenie]=256;
-strcpy(Msg.msg,"Zaczynajmy !");
+SDL_strlcpy(Msg.msg,"Zaczynajmy !",sizeof(Msg.msg)); // [PORT] Replace strcpy with SDL_strlcpy
 Msg.licznik=50;
 Msg.dzwiek=0;
 }
@@ -2828,7 +2828,7 @@ PressButton(5,1);
 
 for(i=0;i<4;i++)
 {
-    strcpy(name,"Pusty");
+    SDL_strlcpy(name,"Pusty",sizeof(name)); // [PORT] Replace strcpy with SDL_strlcpy
     file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
     if(file!=NULL)
     {
