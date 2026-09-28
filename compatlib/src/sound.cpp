@@ -177,8 +177,8 @@ int Sound::PlayTrack(int p_trackNumber)
     MIX_SetTrackAudio(m_musicTrack, musicAudio);
     MIX_DestroyAudio(musicAudio);
 
-    MIX_SetTrackLoops(m_musicTrack, -1);
     MIX_PlayTrack(m_musicTrack,0);
+    MIX_SetTrackLoops(m_musicTrack, -1);
 
     m_track = p_trackNumber;
     return 0;
