@@ -26,7 +26,7 @@ We do not recommend using ISO disk images, as they do not preserve the original 
 
 ## Library substitutions
 
-To achieve our goal of platform independence, we need to replace any Windows-only libraries with platform-independent alternatives. This ensures that our codebase remains versatile and compatible across various systems. The following table serves as an overview of major libraries / subsystems and their chosen replacements. For any significant changes or additions, it's recommended to discuss them with the team on the [Discussions](/discussions) page first to ensure consistency and alignment with our project's objectives.
+To achieve our goal of platform independence, we need to replace any Windows-only libraries with platform-independent alternatives. This ensures that our codebase remains versatile and compatible across various systems. The following table serves as an overview of major libraries / subsystems and their chosen replacements. For any significant changes or additions, it's recommended to discuss them with the team on the [Discussions](https://github.com/Pieshka/polanie-cd-sdl3/discussions) page first to ensure consistency and alignment with our project's objectives.
 
 | Library/subsystem              | Substitution                                | Status |
 |--------------------------------|---------------------------------------------|--------|
