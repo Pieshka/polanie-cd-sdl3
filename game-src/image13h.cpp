@@ -740,8 +740,8 @@ cx=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
     if(cx==SDL_strlen(txt)) // [PORT] Replace strlen with SDL_strlen
       {Bar13h(xp,y+11,xp+8,y+12,tcolour);}
     ll=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
-    g_polanie->ProcessEvents(); k=mouse.Key;//k=getch(); // [PORT] Replace with funcionally equivalent code
-    g_polanie->ProcessEvents(); if(!k)l=mouse.Key;//if(!k)l=getch(); // [PORT] Replace with funcionally equivalent code
+    g_polanie->ProcessEvents(); k=mouse.Key; mouse.Key=0;//k=getch(); // [PORT] Replace with funcionally equivalent code
+    //if(!k)l=getch(); // [PORT] Comment out unnecessary code
     if(!k)
       switch(l)
            {case  75:if(cx>0)cx--;break;

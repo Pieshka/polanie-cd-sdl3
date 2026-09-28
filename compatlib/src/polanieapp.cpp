@@ -95,7 +95,6 @@ int PolanieApp::Init(int p_isEditor)
     SDL_SetTextureScaleMode(m_texture, SDL_SCALEMODE_PIXELART);
 
     SDL_HideCursor();
-    SDL_StartTextInput(m_window);
 
     if (!VerifyFilesystem())
         return 1;
@@ -110,6 +109,20 @@ void PolanieApp::Close()
     SDL_DestroyWindow(m_window);
     SDL_ShowCursor();
     SDL_Quit();
+}
+
+static int ConvSDLToDOSCode(SDL_Scancode sc)
+{
+    switch (sc)
+    {
+        case SDL_SCANCODE_UP:    return 72;
+        case SDL_SCANCODE_DOWN:  return 80;
+        case SDL_SCANCODE_LEFT:  return 75;
+        case SDL_SCANCODE_RIGHT: return 77;
+
+        default:
+            return static_cast<int>(sc);
+    }
 }
 
 void PolanieApp::ProcessEvents()
@@ -136,36 +149,34 @@ void PolanieApp::ProcessEvents()
                 m_exiting = quitLevel = endGame = EndMap = 1;
                 break;
 
-            case SDL_EVENT_TEXT_INPUT:
-            {
-                const char* text = event.text.text;
-                while (*text)
-                {
-                    m_mouse->Key = SDL_static_cast(Uint8, *text++);
-                    m_mouse->SetKeyReady(1);
-                }
-                break;
-            }
-
+            // Best getch() emulator
             case SDL_EVENT_KEY_DOWN:
             {
-                switch (event.key.key)
+                // Ignore modifier events
+                if (event.key.key == SDLK_LSHIFT ||
+                    event.key.key == SDLK_RSHIFT ||
+                    event.key.key == SDLK_LCTRL  ||
+                    event.key.key == SDLK_RCTRL  ||
+                    event.key.key == SDLK_LALT   ||
+                    event.key.key == SDLK_RALT   ||
+                    event.key.key == SDLK_LGUI   ||
+                    event.key.key == SDLK_RGUI)
                 {
-                    case SDLK_ESCAPE:
-                        m_mouse->Key = 27;
-                        m_mouse->SetKeyReady(1);
-                        break;
-                    case SDLK_RETURN:
-                        m_mouse->Key = '\r';
-                        m_mouse->SetKeyReady(1);
-                        break;
-                    case SDLK_BACKSPACE:
-                        m_mouse->Key = '\b';
-                        m_mouse->SetKeyReady(1);
-                        break;
-                    default:
-                        break;
+                    break;
                 }
+
+                // If not ASCII - put the scan code
+                if (event.key.key > 0xFF)
+                {
+                    m_mouse->Key = ConvSDLToDOSCode(event.key.scancode);
+                    SDL_Log("%d, %c", event.key.scancode, event.key.scancode);
+                    m_mouse->SetKeyReady(1);
+                    break;
+                }
+
+                SDL_Keycode keycode = SDL_GetKeyFromScancode(event.key.scancode, event.key.mod, false);
+                m_mouse->Key = SDL_static_cast(int, keycode);
+                m_mouse->SetKeyReady(1);
                 break;
             }
 
