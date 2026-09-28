@@ -20,13 +20,13 @@ We are actively working to support more platforms. If you have experience with a
 
 **An existing copy of Polanie CD is required to use this project. This project is NOT compatible with the floppy disk version of Polanie.**
 
-Detailed information about installing the game can be found on our [Wiki](https://github.com/Pieshka/polanie-cd-sdl3/wiki). In a nutshell—insert the CD into your computer and copy all the folders and .DAT files to your hard drive. You can find instructions on exactly where to place these files on the Wiki.
+Detailed information about installing the game can be found on our [Wiki](/wiki). In a nutshell - insert the CD into your computer and copy all the folders and .DAT files to your hard drive. You can find instructions on exactly where to place these files on the Wiki.
 
 We do not recommend using ISO disk images, as they do not preserve the original audio tracks with music. Music isn't required for the game to run, but it's nice to have, isn't it?
 
 ## Library substitutions
 
-To achieve our goal of platform independence, we need to replace any Windows-only libraries with platform-independent alternatives. This ensures that our codebase remains versatile and compatible across various systems. The following table serves as an overview of major libraries / subsystems and their chosen replacements. For any significant changes or additions, it's recommended to discuss them with the team on the Matrix chat first to ensure consistency and alignment with our project's objectives.
+To achieve our goal of platform independence, we need to replace any Windows-only libraries with platform-independent alternatives. This ensures that our codebase remains versatile and compatible across various systems. The following table serves as an overview of major libraries / subsystems and their chosen replacements. For any significant changes or additions, it's recommended to discuss them with the team on the [Discussions](/discussions) page first to ensure consistency and alignment with our project's objectives.
 
 | Library/subsystem              | Substitution                                | Status |
 |--------------------------------|---------------------------------------------|--------|

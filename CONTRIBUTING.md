@@ -39,8 +39,6 @@ PlayTrack(2);
 /* END [PORT] Comment out unnecessary code */
 ```
 
-If you add new functions from the `compatlib` library to your game code, those functions must have names that begin with `PORT`, in addition to the accompanying comments when using them.
-
 ### Everything else
 
 For the remaining code (including replacement classes), there are no strict requirements; you should simply follow the format of the existing files and the conventions used there.
