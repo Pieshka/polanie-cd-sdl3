@@ -2512,7 +2512,7 @@ do{
         }
 
 }while(!quitMenu);
-do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
 SetScreen(1);
       //  screen=1
 }
@@ -2601,7 +2601,7 @@ do
 
         Rectangle13h(125,72,151,92,kolorRamki);
         Rectangle13h(170,72,196,92,0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(170,72,196,92))    //MusikOff // [PORT] Replace MWindow with IsInBoundary
         {
@@ -2610,7 +2610,7 @@ do
         //OffCDAudio(); // [PORT] Not necessary anymore
         Rectangle13h(125,72,151,92,0);
         Rectangle13h(170,72,196,92,kolorRamki);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(215,39,241,59)&&musik)    //Previous // [PORT] Replace MWindow with IsInBoundary
         {
@@ -2621,7 +2621,7 @@ do
         SND.PlayPreviousTrack(); // [PORT] PlayPrevious is now in SND as PlayPreviousTrack
         SDL_Delay(400); // [PORT] Replace delay with SDL_Delay
         Rectangle13h(215,39,241,59,0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(260,39,286,59)&&musik)    //Next // [PORT] Replace MWindow with IsInBoundary
         {
@@ -2630,7 +2630,7 @@ do
         SDL_Delay(400); // [PORT] Replace delay with SDL_Delay
         SND.PlayNextTrack(); // [PORT] PlayNext is now in SND as PlayNextTrack
         Rectangle13h(260,39,286,59,0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
 
   if(mouse.IsInBoundary(125,7,151,27))    //mowaOn // [PORT] Replace MWindow with IsInBoundary
@@ -2638,56 +2638,56 @@ do
         mowa=1;
         Rectangle13h(125,6,151,26,kolorRamki);
         Rectangle13h(170,6,196,26,0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(170,7,196,27))    //mowaOff // [PORT] Replace MWindow with IsInBoundary
         {
         mowa=0;
         Rectangle13h(125,6,151,26,0);
     Rectangle13h(170,6,196,26,kolorRamki);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(125,39,151,59))    //dzwiekOn // [PORT] Replace MWindow with IsInBoundary
         {
         dzwiek=1;
         Rectangle13h(125,39,151,59,kolorRamki);
         Rectangle13h(170,39,196,59,0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(170,39,196,59))    //dzwiekOff // [PORT] Replace MWindow with IsInBoundary
         {
         dzwiek=0;
         Rectangle13h(125,39,151,59,0);
     Rectangle13h(170,39,196,59,kolorRamki);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(200,144,224,155))   //Zwolnij gre // [PORT] Replace MWindow with IsInBoundary
         {
         if(speed<5)speed++;
         if(lancuch[(speed&1)]!=NULL)PutImage13h(224,YY[2],lancuch[(speed&1)],0);
         PutImage13h(XX[5-speed],YY[2],guzik[2],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
    if(mouse.IsInBoundary(283,144,298,155)) //Przyspiesz gre // [PORT] Replace MWindow with IsInBoundary
         {
         if(speed)speed--;
         if(lancuch[(speed&1)]!=NULL)PutImage13h(224,YY[2],lancuch[(speed&1)],0);
         PutImage13h(XX[5-speed],YY[2],guzik[2],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
    if(mouse.IsInBoundary(200,111,224,121))   //zwolnij skrolling // [PORT] Replace MWindow with IsInBoundary
         {
         if(skroller>0)skroller--;
         if(lancuch[(skroller&1)]!=NULL)PutImage13h(224,YY[1],lancuch[(skroller&1)],0);
         PutImage13h(XX[skroller],YY[1],guzik[1],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
    if(mouse.IsInBoundary(283,111,298,121)) //Przyspiesz skrolling // [PORT] Replace MWindow with IsInBoundary
         {
         if(skroller<5)skroller++;
         if(lancuch[(skroller&1)]!=NULL)PutImage13h(224,YY[1],lancuch[(skroller&1)],0);
         PutImage13h(XX[skroller],YY[1],guzik[1],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
 
   if(mouse.IsInBoundary(283,77,298,87)) //Zglosnij muzyke // [PORT] Replace MWindow with IsInBoundary
@@ -2696,7 +2696,7 @@ do
         SND.SetMusicVolume(MVol); // [PORT] setVolume is now in SND as SetMusicVolume
         if(lancuch[(MVol&1)]!=NULL)PutImage13h(224,YY[0],lancuch[(MVol&1)],0);
         PutImage13h(XX[MVol],YY[0],guzik[0],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
    if(mouse.IsInBoundary(200,77,224,87))   //zcisz muzyke // [PORT] Replace MWindow with IsInBoundary
         {
@@ -2704,7 +2704,7 @@ do
         SND.SetMusicVolume(MVol); // [PORT] setVolume is now in SND as SetMusicVolume
         if(lancuch[(MVol&1)]!=NULL)PutImage13h(224,YY[0],lancuch[(MVol&1)],0);
         PutImage13h(XX[MVol],YY[0],guzik[0],0);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         }
   if(mouse.IsInBoundary(110,172,207,192)||mouse.Key==9579)  //koniec // [PORT] Replace MWindow with IsInBoundary
         {   // quit=4209  k=9579
@@ -2712,7 +2712,7 @@ do
         }
 
 }while(!quitMenu);
-do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
 SetScreen(1);
       //  screen=1
 }
@@ -2815,7 +2815,7 @@ char* name;
 
 name=(char*)SDL_malloc(12); // [PORT] Replace malloc with SDL_malloc
 
-do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
 DownPalette(2);
 LoadExtendedPalette(1);
 ShowPicture(1,0);
@@ -3044,7 +3044,7 @@ int SaveGame()
         i=sSubMenu();
         if(i==4)
         {
-            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
             return 1;
         }
         file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb");
@@ -3058,7 +3058,7 @@ int SaveGame()
             SDL_strlcpy(name,"Pusty", sizeof(name));
         }
         j=Write13h(110,Ty[i],107,11,name,255,0);
-        if(j==27){do{g_polanie->ProcessEvents();}while(mouse.Button>0);/*mouse.GButtonUp();*/return 1;} // Replace GButtonUp with simple loop
+        if(j==27){do{g_polanie->ProcessEvents();}while(mouse.Button>0);/*mouse.GButtonUp();*/return 1;} // [PORT] Replace GButtonUp with simple loop
         file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"wb");
         if(file==NULL){return 1;}
         SDL_WriteIO(file,name,12);
@@ -3178,7 +3178,7 @@ int SaveGame()
         }
         SDL_WriteIO(file,&drzewa0,4);
         SDL_CloseIO(file);
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         return 0;
 }
 ////////////////////////////////////////////////////////////////////
@@ -3349,7 +3349,7 @@ int LoadGame()
         i=sSubMenu();
         if(i==4)
         {
-            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+            do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
             return 1;
         }
         file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb");
@@ -3487,7 +3487,7 @@ int LoadGame()
         SDL_CloseIO(file);
         mem.c=&castle[1];
         endL=0;
-        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // Replace GButtonUp with simple loop
+        do{g_polanie->ProcessEvents();}while(mouse.Button>0);//mouse.GButtonUp(); // [PORT] Replace GButtonUp with simple loop
         return(0);
         }
 }
