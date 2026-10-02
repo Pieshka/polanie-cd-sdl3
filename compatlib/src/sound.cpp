@@ -108,6 +108,7 @@ int Sound::IsPlaying()
 int Sound::PlayWAV(const char *filepath)
 {
     if (g_polanie->IsExiting()) return 1;
+    MIX_StopTrack(m_musicTrack, 0);
     Uint32 dataLength;
     Uint8 *buffer;
 
@@ -162,6 +163,8 @@ int Sound::PlayTrack(int p_trackNumber)
         MIX_ResumeTrack(m_musicTrack);
         return 0;
     }
+
+    MIX_StopTrack(m_musicTrack, 0);
 
     char buffer[512];
     SDL_snprintf(buffer, sizeof(buffer), "music/track%d.flac", p_trackNumber);
