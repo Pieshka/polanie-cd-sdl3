@@ -3084,7 +3084,7 @@ int SaveGame()
         for(i=0;i<MaxX;i++)
         for(j=0;j<MaxY;j++)
                SDL_WriteIO(file,&placeN[i][j],4);
-        SDL_WriteIO(file,&ScreenY,4);
+        SDL_WriteIO(file,&ScreenX,4);
         SDL_WriteIO(file,&ScreenY,4);
         SDL_WriteIO(file,&drzewa,4);
         SDL_WriteIO(file,&mem,sizeof(Mem) - sizeof(Castle *) + 4); // [PORT] Pointers size shenanigans. Fixes backwards compatibility with DOS saves
