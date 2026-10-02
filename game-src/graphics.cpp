@@ -1116,7 +1116,7 @@ if(t==3&&level==15)// wstep do gry
 
 RisePalette(1);
 
-plik=SDL_IOFromFile(name,"r"); // [PORT] Replace fopen with SDL_IOFromFile
+plik=SDL_IOFromFile(g_polanie->GetFilePath(name),"r"); // [PORT] Replace fopen with SDL_IOFromFile
 if (plik==NULL)return;
 if(level<26)
 {
@@ -1250,9 +1250,7 @@ void ShowPicture2(int nr)
 }*/
 void ShowPicture2(int nr)
 {
-    char PicName[40];
-    SDL_snprintf(PicName, sizeof(PicName), g_polanie->GetFilePath("pic.dat"));
-    SDL_IOStream *f = SDL_IOFromFile(PicName, "rb");
+    SDL_IOStream *f = SDL_IOFromFile(g_polanie->GetFilePath("pic.dat"), "rb");
     DownPalette(1);
     ClearScreen13h();
     SDL_SeekIO(f, nr * 64768, SDL_IO_SEEK_SET);

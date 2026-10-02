@@ -770,9 +770,9 @@ cx=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
 ///////////////////////////////////////////////////////////////
 void OpenGraphicFile()
 {
-    char ss[50];
-    SDL_snprintf(ss,sizeof(ss),"graf.dat"); // [PORT] Replace sprintf with SDL_snprintf
-    graphicfile=SDL_IOFromFile(g_polanie->GetFilePath(ss),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
+    //char ss[50]; // [PORT] Remove unnecessary ss buffer
+    //sprintf(ss,sizeof(ss),"graf.dat"); // [PORT] Remove unnecessary ss buffer
+    graphicfile=SDL_IOFromFile(g_polanie->GetFilePath("graf.dat"),"rb"); // [PORT] Replace fopen with SDL_IOFromFile, Remove unnecessary ss buffer
 }
 /////////////////////////////////////////////////////////////////
 //
@@ -787,9 +787,9 @@ void CloseGraphicFile()
 ///////////////////////////////////////////////////////////////
 void OpenPaletteFile()
 {
-    char ss[50];
-    SDL_snprintf(ss,sizeof(ss),"pal.dat"); // [PORT] Replace sprintf with SDL_snprintf
-    palettefile=SDL_IOFromFile(g_polanie->GetFilePath(ss),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
+    //char ss[50]; // [PORT] Remove unnecessary ss buffer
+    //sprintf(ss,sizeof(ss),"pal.dat"); // [PORT] Remove unnecessary ss buffer
+    palettefile=SDL_IOFromFile(g_polanie->GetFilePath("pal.dat"),"rb"); // [PORT] Replace fopen with SDL_IOFromFile, Remove unnecessary ss buffer
 }
 /////////////////////////////////////////////////////////////////
 //
