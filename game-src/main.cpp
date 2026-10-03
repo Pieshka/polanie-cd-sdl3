@@ -81,7 +81,7 @@ cprintf("                        SHAREWARE                1996                  
 #else
 cprintf("                        ver. 4.27               1997                          \n\n\r");
 #endif
-SDL_Delay(500); // [PORT] replace delay with SDL_Delay
+//delay(500); // [PORT] Remove unnecessary code
 //cprintf(" Wersja do wylacznego uzytku Ryszarda Cieslika szefa spolki CBS - Elektronik\n\r\n\r");
 //cprintf("                       Rozpowszechnianie zabronione!\n\r");
 

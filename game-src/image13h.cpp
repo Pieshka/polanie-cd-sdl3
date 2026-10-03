@@ -862,6 +862,13 @@ if(Rgb==NULL){SetExtendedPalette();return;}
 // przepisanie rgb->Rgb i wyzerowanie rgb
 for(int x=0;x<768;x++)Rgb[x]=rgb[x]<<2;
 //  ---- zciemnienie palety
+    /* [PORT] Add better delay handling */
+    const Uint64 freq = SDL_GetPerformanceFrequency();
+    const Uint64 step =
+    (freq * (Uint64)speed) / 1000;
+
+    Uint64 next = SDL_GetPerformanceCounter();
+    /* END [PORT] Add better delay handling */
 for(int i=1;i<128;i++)
 {
     for(int x=0;x<768;x++)
@@ -870,7 +877,7 @@ for(int i=1;i<128;i++)
         else rgb[x]=0;
     }
     SetExtendedPalette();
-    SDL_Delay(speed); // [PORT] Replace delay with SDL_Delay
+    next += step; while (SDL_GetPerformanceCounter() < next) SDL_Delay(0); // [PORT] Replace delay with better delay
 }
 BlackPalette();
 }
@@ -890,6 +897,13 @@ if(Rgb==NULL){SetExtendedPalette();return;}
 // przepisanie rgb->Rgb i wyzerowanie rgb
 for(int x=0;x<768;x++)Rgb[x]=rgb[x];
 //  ---- rozjasnienie palety
+    /* [PORT] Add better delay handling */
+    const Uint64 freq = SDL_GetPerformanceFrequency();
+    const Uint64 step =
+    (freq * (Uint64)speed) / 1000;
+
+    Uint64 next = SDL_GetPerformanceCounter();
+    /* END [PORT] Add better delay handling */
 for(int i=128;i>0;i--)
 {
     for(int x=0;x<768;x++)
@@ -898,7 +912,7 @@ for(int i=128;i>0;i--)
         else rgb[x]=0;
     }
     SetExtendedPalette();
-    SDL_Delay(speed); // [PORT] Replace delay with SDL_Delay
+    next += step; while (SDL_GetPerformanceCounter() < next) SDL_Delay(0); // [PORT] Replace delay with better delay
 }
 for(int x=0;x<768;x++)rgb[x]=Rgb[x];
 SetExtendedPalette();

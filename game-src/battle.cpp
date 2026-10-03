@@ -2828,7 +2828,7 @@ PressButton(5,1);
 
 for(i=0;i<4;i++)
 {
-    SDL_strlcpy(name,"Pusty",sizeof(name)); // [PORT] Replace strcpy with SDL_strlcpy
+    SDL_strlcpy(name,"Pusty",12); // [PORT] Replace strcpy with SDL_strlcpy
     file=SDL_IOFromFile(g_polanie->GetFilePath(FileName[i]),"rb"); // [PORT] Replace fopen with SDL_IOFromFile
     if(file!=NULL)
     {
