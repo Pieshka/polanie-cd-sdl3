@@ -40,6 +40,9 @@ private:
     int m_exiting;
 
     Mouse *m_mouse;
+    SDL_Gamepad *m_gamepad;
+    float m_virtualMouseX, m_virtualMouseY;
+    int m_virtualMouseButton;
 };
 
 extern PolanieApp* g_polanie;

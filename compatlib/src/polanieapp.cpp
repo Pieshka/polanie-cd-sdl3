@@ -18,6 +18,9 @@ PolanieApp::PolanieApp()
     m_windowWidth = 320;
     m_windowHeight = 200;
     m_exiting = 0;
+    m_virtualMouseX = 0;
+    m_virtualMouseY = 0;
+    m_virtualMouseButton = 0;
     SDL_zero(m_palette);
     SDL_zero(m_dosFramebuffer);
 }
@@ -99,11 +102,26 @@ int PolanieApp::Init(int p_isEditor)
     if (!VerifyFilesystem())
         return 1;
 
+    int count = 0;
+    SDL_JoystickID* ids = SDL_GetGamepads(&count);
+    m_gamepad = nullptr;
+
+    for (int i = 0; i < count; i++)
+    {
+        SDL_Gamepad* gpad = SDL_OpenGamepad(ids[i]);
+        if (gpad != nullptr)
+        {
+            m_gamepad = gpad;
+            break;
+        }
+    }
+
     return 0;
 }
 
 void PolanieApp::Close()
 {
+    SDL_CloseGamepad(m_gamepad);
     SDL_DestroyTexture(m_texture);
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
@@ -128,7 +146,6 @@ static int ConvSDLToDOSCode(SDL_Scancode sc)
 void PolanieApp::ProcessEvents()
 {
     SDL_Event event;
-    int mouseStateUpdated = 0;
 
     RenderFramebuffer();
     TickCounter();
@@ -182,26 +199,155 @@ void PolanieApp::ProcessEvents()
 
             case SDL_EVENT_MOUSE_MOTION:
             {
-                m_mouse->X = SDL_static_cast(int, event.motion.x * scale);
-                m_mouse->Y = SDL_static_cast(int, event.motion.y * scale);
-                m_mouse->Button = SDL_static_cast(int, event.motion.state);
-                mouseStateUpdated = 1;
+                m_virtualMouseX = event.motion.x * scale;
+                m_virtualMouseY = event.motion.y * scale;
+                m_virtualMouseButton = SDL_static_cast(int, event.motion.state);
                 break;
             }
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
-                m_mouse->X = SDL_static_cast(int, event.button.x * scale);
-                m_mouse->Y = SDL_static_cast(int, event.button.y * scale);
-                m_mouse->Button |= SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
+                m_virtualMouseX = event.button.x * scale;
+                m_virtualMouseY = event.button.y * scale;
+                m_virtualMouseButton |= SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
                 m_mouse->IncrementPresses(event.button.button);
-                mouseStateUpdated = 1;
                 break;
             }
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
             {
-                m_mouse->Button &= ~SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
+                m_virtualMouseButton &= ~SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
+                break;
+            }
+
+            case SDL_EVENT_GAMEPAD_ADDED:
+            {
+                if (m_gamepad != nullptr)
+                    break;
+
+                m_gamepad = SDL_OpenGamepad(event.jdevice.which);
+                break;
+            }
+
+            case SDL_EVENT_GAMEPAD_REMOVED:
+            {
+                if (m_gamepad == nullptr || event.jdevice.which != SDL_GetGamepadID(m_gamepad))
+                    break;
+
+                SDL_CloseGamepad(m_gamepad);
+                m_gamepad = nullptr;
+                break;
+            }
+
+            case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+            {
+                Sint16 axisValue = 0;
+                if (event.gaxis.value < -3000 || event.gaxis.value > 3000)
+                {
+                    // Ignore small axis values
+                    axisValue = event.gaxis.value;
+                    m_mouse->SetIsInMotion(1);
+                }
+                else
+                {
+                    m_mouse->SetIsInMotion(0);
+                }
+
+                switch (event.gaxis.axis)
+                {
+                    case SDL_GAMEPAD_AXIS_LEFTX:
+                        m_mouse->SetAxisValue(0, axisValue);
+                        break;
+
+                    case SDL_GAMEPAD_AXIS_LEFTY:
+                        m_mouse->SetAxisValue(1, axisValue);
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+            }
+
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+            {
+                switch (event.gbutton.button)
+                {
+                    // Map to Left Button
+                    case SDL_GAMEPAD_BUTTON_SOUTH:
+                    {
+                        m_virtualMouseButton |= 1;
+                        m_mouse->IncrementPresses(SDL_BUTTON_LEFT);
+                        break;
+                    }
+
+                    // Map to Right Button
+                    case SDL_GAMEPAD_BUTTON_EAST:
+                    {
+                        m_virtualMouseButton |= 2;
+                        m_mouse->IncrementPresses(SDL_BUTTON_RIGHT);
+                        break;
+                    }
+
+                    // Map to ESC button
+                    case SDL_GAMEPAD_BUTTON_WEST:
+                    {
+                        m_mouse->Key = 27;
+                        m_mouse->SetKeyReady(1);
+                        break;
+                    }
+
+                    // Increase gamepad speed [TEMPORARY]
+                    case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
+                    {
+                        m_mouse->IncreaseGamepadSpeed();
+                        break;
+                    }
+
+                    // Decrease gamepad speed [TEMPORARY]
+                    case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
+                    {
+                        m_mouse->DecreaseGamepadSpeed();
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+
+                break;
+            }
+
+            case SDL_EVENT_GAMEPAD_BUTTON_UP:
+            {
+                switch (event.gbutton.button)
+                {
+                    // Map to Left Button
+                    case SDL_GAMEPAD_BUTTON_SOUTH:
+                    {
+                        m_virtualMouseButton &= ~1;
+                        break;
+                    }
+
+                    // Map to Right Button
+                    case SDL_GAMEPAD_BUTTON_EAST:
+                    {
+                        m_virtualMouseButton &= ~2;
+                        break;
+                    }
+
+                    // Map to ESC button
+                    case SDL_GAMEPAD_BUTTON_WEST:
+                    {
+                        m_mouse->Key = 0;
+                        m_mouse->SetKeyReady(0);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+
                 break;
             }
 
@@ -211,14 +357,21 @@ void PolanieApp::ProcessEvents()
         }
     }
 
-    if (!mouseStateUpdated)
+    // Gamepad motion and 10 ms elapsed
+    static Uint64 gamepadRefreshedLastTime = SDL_GetTicks();
+    Uint64 gamepadRefreshedNow = SDL_GetTicks();
+
+    if (m_mouse->GetIsInMotion() && gamepadRefreshedNow - gamepadRefreshedLastTime >= 10)
     {
-        float mouseX, mouseY;
-        m_mouse->Button = SDL_static_cast(int, SDL_GetMouseState(&mouseX, &mouseY));
-        m_mouse->X = SDL_static_cast(int, mouseX * scale);
-        m_mouse->Y = SDL_static_cast(int, mouseY * scale);
-        m_mouse->ClearPresses();
+        gamepadRefreshedLastTime = gamepadRefreshedNow;
+        m_virtualMouseX = SDL_clamp(m_virtualMouseX + SDL_static_cast(float,m_mouse->GetGamepadSpeed() * m_mouse->GetAxisValue(0)) / SDL_JOYSTICK_AXIS_MAX, 0, m_windowWidth);
+        m_virtualMouseY = SDL_clamp(m_virtualMouseY + SDL_static_cast(float,m_mouse->GetGamepadSpeed() * m_mouse->GetAxisValue(1)) / SDL_JOYSTICK_AXIS_MAX, 0, m_windowHeight);
     }
+
+    // Update mouse position
+    m_mouse->X = SDL_static_cast(int, m_virtualMouseX);
+    m_mouse->Y = SDL_static_cast(int, m_virtualMouseY);
+    m_mouse->Button = m_virtualMouseButton;
 }
 
 void PolanieApp::RenderFramebuffer()
@@ -308,6 +461,12 @@ void PolanieApp::PlayFlic(const char *filename)
         }
 
         ProcessEvents();
+
+        if (m_exiting)
+        {
+            fclose(f);
+            return;
+        }
 
         if (m_mouse->IsInputReady() && m_mouse->Key == 27)
         {

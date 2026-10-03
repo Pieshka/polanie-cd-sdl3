@@ -15,6 +15,8 @@ Mouse::Mouse()
     m_keyReady = 0;
     m_rightPresses = 0;
     m_leftPresses = 0;
+
+    m_gamepadSpeed = 5;
 }
 
 int Mouse::ClickCount(int p_button)
@@ -56,6 +58,24 @@ int Mouse::IsInBoundary(int p_x1, int p_y1, int p_x2, int p_y2)
     return 0;
 }
 
+int Mouse::GetGamepadSpeed()
+{
+    return m_gamepadSpeed;
+}
+
+int Mouse::GetIsInMotion()
+{
+    return m_isInMotion;
+}
+
+int Mouse::GetAxisValue(int p_axis)
+{
+    if (p_axis == 0)
+        return m_axisXValue;
+
+    return m_axisYValue;
+}
+
 void Mouse::SetKeyReady(int p_keyReady)
 {
     m_keyReady = p_keyReady;
@@ -70,4 +90,32 @@ void Mouse::IncrementPresses(int p_button)
 void Mouse::ClearPresses()
 {
     m_leftPresses = m_rightPresses = 0;
+}
+
+void Mouse::SetIsInMotion(int p_isInMotion)
+{
+    m_isInMotion = p_isInMotion;
+}
+
+void Mouse::SetAxisValue(int p_axis, int p_value)
+{
+    if (p_axis == 0)
+    {
+        m_axisXValue = p_value;
+    }
+
+    if (p_axis == 1)
+    {
+        m_axisYValue = p_value;
+    }
+}
+
+void Mouse::IncreaseGamepadSpeed()
+{
+    m_gamepadSpeed++;
+}
+
+void Mouse::DecreaseGamepadSpeed()
+{
+    m_gamepadSpeed = SDL_max(0, m_gamepadSpeed-1);
 }
