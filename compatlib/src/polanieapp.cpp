@@ -547,7 +547,7 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
 #ifdef __EMSCRIPTEN__
     constexpr const char* savePath = "/save";
 #else
-    char* prefPath = SDL_GetPrefPath("polaniecd", "polanie");
+    char* savePath = SDL_GetPrefPath("polaniecd", "polanie");
 #endif
     if (SDL_strcasecmp(p_filename, "save") > 0)
     {
