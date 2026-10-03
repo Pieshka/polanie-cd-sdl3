@@ -61,6 +61,30 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 # --------------------------------------
+# Platform-specific code
+# --------------------------------------
+
+if(EMSCRIPTEN)
+	target_compile_definitions(polanie PRIVATE "POLANIE_EMSCRIPTEN_HOST=\"${POLANIE_EMSCRIPTEN_HOST}\"")
+	add_dependencies(polanie emscripten_version)
+	target_link_options(polanie PRIVATE
+			--pre-js ${CMAKE_SOURCE_DIR}/compatlib/emscripten/stacktracelimit.js
+			--post-js ${POLANIE_EMSCRIPTEN_VERSION_DIR}/version.js
+	)
+	set_property(TARGET polanie PROPERTY LINK_DEPENDS
+			${CMAKE_SOURCE_DIR}/compatlib/emscripten/stacktracelimit.js
+			${POLANIE_EMSCRIPTEN_VERSION_DIR}/version.js
+	)
+	add_custom_command(TARGET polanie POST_BUILD
+			COMMAND ${LLVM_OBJCOPY_BIN} --remove-section=sourceMappingURL
+				--add-section=sourceMappingURL=${POLANIE_EMSCRIPTEN_VERSION_DIR}/sourceMappingURL
+				$<TARGET_FILE_DIR:polanie>/polanie.wasm
+			COMMENT "Patching sourceMappingURL with build-time git hash"
+	)
+	set_property(TARGET polanie PROPERTY SUFFIX ".html")
+endif()
+
+# --------------------------------------
 # Install definitions
 # --------------------------------------
 
@@ -82,4 +106,10 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 			DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
+endif()
+
+if(EMSCRIPTEN)
+	install(FILES "$<TARGET_FILE_DIR:polanie>/polanie.js" "$<TARGET_FILE_DIR:polanie>/polanie.wasm"
+			DESTINATION "${CMAKE_INSTALL_BINDIR}"
+	)
 endif()

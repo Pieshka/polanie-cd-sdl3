@@ -1,8 +1,11 @@
-//
-// Created by Pieszka on 03/10/2026.
-//
+#ifndef EMSCRIPTEN_WINDOW_H
+#define EMSCRIPTEN_WINDOW_H
 
-#ifndef POLANIE_WINDOW_H
-#define POLANIE_WINDOW_H
+#include <SDL3/SDL.h>
 
-#endif //POLANIE_WINDOW_H
+void Emscripten_SetupWindow(SDL_Window* p_window, int p_targetWidth, int p_targetHeight);
+void Emscripten_SetScaleAspect(bool p_scaleAspect);
+void Emscripten_SetOriginalResolution(bool p_originalResolution);
+void Emscripten_ConvertEventToRenderCoordinates(SDL_Event* event);
+
+#endif // EMSCRIPTEN_WINDOW_H

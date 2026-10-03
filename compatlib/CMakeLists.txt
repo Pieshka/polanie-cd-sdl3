@@ -16,6 +16,14 @@ set(COMPATLIB_HEADERS
         src/compat.h
 )
 
+if(EMSCRIPTEN)
+    list(APPEND COMPATLIB_SOURCES
+         emscripten/filesystem.cpp
+         emscripten/messagebox.cpp
+         emscripten/window.cpp
+    )
+endif()
+
 add_library(compatlib STATIC
         ${COMPATLIB_SOURCES}
         ${COMPATLIB_HEADERS}
@@ -29,6 +37,7 @@ target_include_directories(compatlib
 target_include_directories(compatlib
         PRIVATE
         ${flic_lib_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/
 )
 
 target_link_libraries(compatlib

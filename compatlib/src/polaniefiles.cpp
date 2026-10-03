@@ -35,3 +35,13 @@ const char* g_files[35] = {
     "levels/level.51",
     "levels/level.52"
 };
+
+const char* g_optionalFiles[7] = {
+    "data/i001.dat",
+    "data/i002.dat",
+    "data/i003.dat",
+    "data/s000.dat",
+    "data/s001.dat",
+    "data/s002.dat",
+    "data/s003.dat"
+};

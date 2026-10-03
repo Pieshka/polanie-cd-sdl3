@@ -1,8 +1,13 @@
-//
-// Created by Pieszka on 03/10/2026.
-//
+#ifndef EMSCRIPTEN_MESSAGEBOX_H
+#define EMSCRIPTEN_MESSAGEBOX_H
 
-#ifndef POLANIE_MESSAGEBOX_H
-#define POLANIE_MESSAGEBOX_H
+#include <SDL3/SDL_messagebox.h>
 
-#endif //POLANIE_MESSAGEBOX_H
+bool Emscripten_ShowSimpleMessageBox(
+    SDL_MessageBoxFlags flags,
+    const char* title,
+    const char* message,
+    SDL_Window* window
+);
+
+#endif //EMSCRIPTEN_MESSAGEBOX_H

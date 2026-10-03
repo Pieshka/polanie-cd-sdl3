@@ -1,6 +1,15 @@
 #include "sound.h"
-#include "compat.h"
+
 #include "polanieapp.h"
+
+#ifdef __EMSCRIPTEN__
+#include "emscripten/messagebox.h"
+#include "emscripten/window.h"
+
+#include <emscripten/threading.h>
+#endif
+
+#include "compat.h"
 
 Sound::Sound()
 {

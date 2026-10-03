@@ -1,7 +1,20 @@
 #include "polanieapp.h"
-#include "compat.h"
+
 #include "icons.h"
 #include <flic.h>
+
+#include "../emscripten/window.h"
+
+#ifdef __EMSCRIPTEN__
+#include "emscripten/filesystem.h"
+#include "emscripten/messagebox.h"
+#include "emscripten/window.h"
+
+#include <emscripten/threading.h>
+#endif
+
+#include "compat.h"
+
 
 int licznik = 0; // For battle.cpp
 extern int quitLevel; // From battle.cpp
@@ -70,6 +83,13 @@ int PolanieApp::Init(int p_isEditor)
         );
         return 1;
     }
+
+#ifdef __EMSCRIPTEN__
+    Emscripten_SetOriginalResolution(true);
+    Emscripten_SetScaleAspect(true);
+    Emscripten_SetupWindow(m_window, m_windowWidth, m_windowHeight);
+    Emscripten_SetupFilesystem();
+#endif
 
     SDL_SetRenderLogicalPresentation(m_renderer, m_windowWidth, m_windowHeight, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
@@ -145,8 +165,12 @@ static int ConvSDLToDOSCode(SDL_Scancode sc)
 
 void PolanieApp::ProcessEvents()
 {
-    SDL_Event event;
+#ifdef __EMSCRIPTEN__
+    if (emscripten_is_main_browser_thread())
+        return;
+#endif
 
+    SDL_Event event;
     RenderFramebuffer();
     TickCounter();
 
@@ -205,6 +229,9 @@ void PolanieApp::ProcessEvents()
 
             case SDL_EVENT_MOUSE_MOTION:
             {
+#ifdef __EMSCRIPTEN__
+                Emscripten_ConvertEventToRenderCoordinates(&event);
+#endif
                 m_virtualMouseX = event.motion.x * scale;
                 m_virtualMouseY = event.motion.y * scale;
                 m_virtualMouseButton = SDL_static_cast(int, event.motion.state);
@@ -213,6 +240,9 @@ void PolanieApp::ProcessEvents()
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
+#ifdef __EMSCRIPTEN__
+                Emscripten_ConvertEventToRenderCoordinates(&event);
+#endif
                 m_virtualMouseX = event.button.x * scale;
                 m_virtualMouseY = event.button.y * scale;
                 m_virtualMouseButton |= SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
@@ -222,6 +252,9 @@ void PolanieApp::ProcessEvents()
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
             {
+#ifdef __EMSCRIPTEN__
+                Emscripten_ConvertEventToRenderCoordinates(&event);
+#endif
                 m_virtualMouseButton &= ~SDL_static_cast(int, SDL_BUTTON_MASK(event.button.button));
                 break;
             }
@@ -378,6 +411,11 @@ void PolanieApp::ProcessEvents()
     m_mouse->X = SDL_static_cast(int, m_virtualMouseX);
     m_mouse->Y = SDL_static_cast(int, m_virtualMouseY);
     m_mouse->Button = m_virtualMouseButton;
+
+#ifdef __EMSCRIPTEN__
+    // Not every events works without this
+    SDL_Delay(0);
+#endif
 }
 
 void PolanieApp::RenderFramebuffer()
@@ -505,14 +543,20 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
 #else
     static char buffer[256];
     static char upper_file[256];
-
+#ifdef __EMSCRIPTEN__
+    char prefPath[6] = "/save";
+#else
     char* prefPath = SDL_GetPrefPath("polaniecd", "polanie");
+#endif
     if (SDL_strcasecmp(p_filename, "save") > 0)
     {
         sprintf(buffer, "%s/%s", prefPath, p_filename);
         return buffer;
     }
-
+#ifdef __EMSCRIPTEN__
+    SDL_snprintf(buffer, sizeof(buffer), "/PolanieCD/%s", p_filename);
+    return buffer;
+#else
     SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
 
     if (SDL_GetPathInfo(buffer, NULL))
@@ -529,6 +573,7 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
     SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
 
     return buffer;
+#endif
 #endif
 }
 

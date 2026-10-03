@@ -21,12 +21,25 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 # --------------------------------------
+# Options
+# --------------------------------------
+
+include(CMakeDependentOption)
+set(POLANIE_EMSCRIPTEN_HOST "" CACHE STRING "Host URL for Emscripten streaming (e.g., https://test.com)")
+
+# --------------------------------------
 # Position Independent Code settings
 # --------------------------------------
 
 include(CheckPIESupported)
 check_pie_supported()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# --------------------------------------
+# External platforms
+# --------------------------------------
+
+include(cmake/EmscriptenSupport.cmake)
 
 # --------------------------------------
 # Dependencies

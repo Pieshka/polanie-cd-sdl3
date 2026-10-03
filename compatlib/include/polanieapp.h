@@ -4,7 +4,9 @@
 #include <SDL3/SDL.h>
 #include "mouse.h"
 
+#ifndef NULL
 #define NULL 0
+#endif
 #define cprintf SDL_Log
 
 class PolanieApp
