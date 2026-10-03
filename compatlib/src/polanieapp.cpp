@@ -169,6 +169,13 @@ void PolanieApp::ProcessEvents()
             // Best getch() emulator
             case SDL_EVENT_KEY_DOWN:
             {
+                // Press F11 to fullscreen
+                if (event.key.key == SDLK_F11)
+                {
+                    SDL_SetWindowFullscreen(m_window, !(SDL_GetWindowFlags(m_window) & SDL_WINDOW_FULLSCREEN));
+                    break;
+                }
+
                 // Ignore modifier events
                 if (event.key.key == SDLK_LSHIFT ||
                     event.key.key == SDLK_RSHIFT ||
@@ -186,7 +193,6 @@ void PolanieApp::ProcessEvents()
                 if (event.key.key > 0xFF)
                 {
                     m_mouse->Key = ConvSDLToDOSCode(event.key.scancode);
-                    SDL_Log("%d, %c", event.key.scancode, event.key.scancode);
                     m_mouse->SetKeyReady(1);
                     break;
                 }
@@ -540,6 +546,23 @@ void PolanieApp::SetPalette(const Uint8 *palette)
         m_palette[i].b = palette[i * 3 + 2] << 2;
         m_palette[i].a = 255;
     }
+}
+
+void PolanieApp::EnableTextInput(int x, int y, int width, int height)
+{
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = width;
+    rect.h = height;
+
+    SDL_SetTextInputArea(m_window, &rect, 0);
+    SDL_StartTextInput(m_window);
+}
+
+void PolanieApp::DisableTextInput()
+{
+    SDL_StopTextInput(m_window);
 }
 
 bool PolanieApp::VerifyFilesystem()

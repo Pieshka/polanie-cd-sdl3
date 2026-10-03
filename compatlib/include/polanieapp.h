@@ -28,6 +28,9 @@ public:
 
     void SetPalette(const Uint8* palette);
 
+    void EnableTextInput(int x, int y, int width, int height);
+    void DisableTextInput();
+
     bool VerifyFilesystem();
 
 private:

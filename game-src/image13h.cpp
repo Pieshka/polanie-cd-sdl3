@@ -715,6 +715,7 @@ int Write13h(int x,int y, int maxx, int maxdl, char *txt, int tcolour,int bcolou
   int cx=0,a,ll,xp,wsk=0,ile=0;
   char k,l;
   char str[2]={0,0};
+g_polanie->EnableTextInput(x,y,maxdl,maxx); // [PORT] Enable text input
 wsk=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
 while(*txt!=NULL)
 {ile=ile+length[*txt-32]-1;
@@ -763,6 +764,7 @@ cx=SDL_strlen(txt); // [PORT] Replace strlen with SDL_strlen
       }
   }
   while((k!=13)&&(k!=27));
+  g_polanie->DisableTextInput(); // [PORT] Disable text input
   return(k);
 }
 /////////////////////////////////////////////////////////////////
