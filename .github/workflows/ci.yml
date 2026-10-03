@@ -32,7 +32,7 @@ jobs:
           - { name: 'macOS',               os: 'macos-latest',   generator: 'Ninja',                 dx5: false, config: true,  brew: true,  werror: true,   clang-tidy: false,  cmake-args: '-DCMAKE_OSX_DEPLOYMENT_TARGET=12.0' }
           - { name: 'macOS (Intel)',       os: 'macos-15-intel', generator: 'Ninja',                 dx5: false, config: true,  brew: true,  werror: true,   clang-tidy: false,  cmake-args: '-DCMAKE_OSX_DEPLOYMENT_TARGET=12.0' }
           #- { name: 'iOS',                 os: 'macos-15',       generator: 'Xcode',                 dx5: false, config: false, brew: true,  werror: true,   clang-tidy: false,  cmake-args: '-DCMAKE_SYSTEM_NAME=iOS', ios: true }
-          #- { name: 'Emscripten',          os: 'ubuntu-latest',  generator: 'Ninja',                 dx5: false, config: false, emsdk: true, werror: true,   clang-tidy: false,  cmake-wrapper: 'emcmake' }
+          - { name: 'Emscripten',          os: 'ubuntu-latest',  generator: 'Ninja',                 dx5: false, config: false, emsdk: true, werror: true,   clang-tidy: false,  cmake-wrapper: 'emcmake' }
           #- { name: 'Nintendo 3DS',        os: 'ubuntu-latest',  generator: 'Ninja',                 dx5: false, config: false, n3ds: true,  werror: true,   clang-tidy: false,  container: 'devkitpro/devkitarm:latest', cmake-args: '-DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/3DS.cmake' }
           #- { name: 'Nintendo Switch',     os: 'ubuntu-latest',  generator: 'Ninja',                 dx5: false, config: false, nx: true,    werror: true,   clang-tidy: false,  container: 'devkitpro/devkita64:latest', cmake-args: '-DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake' }
           #- { name: 'Xbox One',            os: 'windows-latest', generator: 'Visual Studio 18 2026', dx5: false, config: false, msvc: true,  werror: false,  clang-tidy: false,  vc-arch: 'amd64', cmake-args: '-DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0.26100.0', xbox-one: true }
@@ -74,6 +74,10 @@ jobs:
           brew uninstall cmake || true
           brew install cmake ninja ${{ matrix.clang-tidy && 'llvm' || '' }}
           echo "LLVM_ROOT=$(brew --prefix llvm)/bin" >> $GITHUB_ENV
+
+      - name: Setup Emscripten
+        uses: emscripten-core/setup-emsdk@v15
+        if: ${{ matrix.emsdk }}
 
       - name: Setup ninja
         if: ${{ matrix.msvc }}
