@@ -541,38 +541,43 @@ const char * PolanieApp::GetFilePath(const char *p_filename)
 #ifdef SDL_PLATFORM_WINDOWS
     return p_filename;
 #else
-    static char buffer[256];
-    static char upper_file[256];
+    static char path[256];
+    static char uppercaseFilename[256];
+
 #ifdef __EMSCRIPTEN__
-    char prefPath[6] = "/save";
+    constexpr const char* savePath = "/save";
 #else
     char* prefPath = SDL_GetPrefPath("polaniecd", "polanie");
 #endif
     if (SDL_strcasecmp(p_filename, "save") > 0)
     {
-        sprintf(buffer, "%s/%s", prefPath, p_filename);
-        return buffer;
+        sprintf(path, "%s/%s", prefPath, p_filename);
+#ifndef __EMSCRIPTEN__
+        SDL_free(savePath);
+#endif
+        return path;
     }
 #ifdef __EMSCRIPTEN__
-    SDL_snprintf(buffer, sizeof(buffer), "/PolanieCD/%s", p_filename);
-    return buffer;
+    SDL_snprintf(path, sizeof(path), "/PolanieCD/%s", p_filename);
+    return path;
 #else
-    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
+    const char* home = SDL_GetUserFolder(SDL_FOLDER_HOME);
+    SDL_snprintf(path, sizeof(path), "%sGames/PolanieCD/%s", home, p_filename);
 
-    if (SDL_GetPathInfo(buffer, NULL))
-        return buffer;
+    if (SDL_GetPathInfo(path, NULL))
+        return path;
 
-    SDL_strlcpy(upper_file, p_filename, sizeof(upper_file));
-    SDL_strupr(upper_file);
+    SDL_strlcpy(uppercaseFilename, p_filename, sizeof(uppercaseFilename));
+    SDL_strupr(uppercaseFilename);
 
-    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), upper_file);
+    SDL_snprintf(path, sizeof(path), "%sGames/PolanieCD/%s", home, uppercaseFilename);
 
-    if (SDL_GetPathInfo(buffer, NULL))
-        return buffer;
+    if (SDL_GetPathInfo(path, NULL))
+        return path;
 
-    SDL_snprintf(buffer, sizeof(buffer), "%sGames/PolanieCD/%s", SDL_GetUserFolder(SDL_FOLDER_HOME), p_filename);
+    SDL_snprintf(path, sizeof(path), "%sGames/PolanieCD/%s", home, p_filename);
 
-    return buffer;
+    return path;
 #endif
 #endif
 }
